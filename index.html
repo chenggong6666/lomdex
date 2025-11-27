@@ -1815,7 +1815,7 @@ function updatePositionDisplay(share, positionValue, userCfx, userLom) {
   const noLiquidityHint = document.getElementById('noLiquidityHint');
   
   // 如果没有流动性份额，显示提示信息
-  if (share < 0.0001) {
+  if (share < 0.00001) {
     if (!noLiquidityHint) {
       // 创建无流动性提示
       const hint = document.createElement('div');
