@@ -6,6 +6,7 @@
   <title>龙脉DEX</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
+    /* 样式保持不变，只修改JavaScript部分 */
     :root {
       --web3-blue: #4361ee;
       --web3-purple: #7209b7;
@@ -1009,7 +1010,7 @@
       <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
         预估Gas费: 计算中...
       </div>
-      <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认全部添加流动池</button>
+      <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
     </div>
   </div>
 
@@ -1467,21 +1468,34 @@
       }
     }
 
-    // CFX Max按钮功能
+    // 修复CFX Max按钮功能
     document.getElementById("cfxMaxBtn").onclick = async () => {
       try {
         if (!account) return;
         
         const cfxBal = await provider.getBalance(account);
         const cfxAmt = parseFloat(ethers.utils.formatEther(cfxBal));
+        const lomBal = await lom.balanceOf(account);
+        const lomAmt = parseFloat(ethers.utils.formatUnits(lomBal, 18));
         
         if (cfxAmt > 0) {
           const maxCfx = Math.max(0, cfxAmt - 0.1);
-          document.getElementById("addCfx").value = maxCfx.toFixed(4);
           
           if (currentRatio > 0) {
-            const lomAmount = maxCfx * currentRatio;
-            document.getElementById("addLom").value = lomAmount.toFixed(6);
+            const requiredLom = maxCfx * currentRatio;
+            
+            if (requiredLom <= lomAmt) {
+              // 如果LOM余额足够，使用最大CFX
+              document.getElementById("addCfx").value = maxCfx.toFixed(4);
+              document.getElementById("addLom").value = requiredLom.toFixed(6);
+            } else {
+              // 如果LOM余额不足，根据LOM余额计算CFX
+              const adjustedCfx = lomAmt / currentRatio;
+              document.getElementById("addCfx").value = Math.min(adjustedCfx, maxCfx).toFixed(4);
+              document.getElementById("addLom").value = lomAmt.toFixed(6);
+            }
+          } else {
+            document.getElementById("addCfx").value = maxCfx.toFixed(4);
           }
           
           updateButtonState();
@@ -1492,21 +1506,35 @@
       }
     };
 
-    // LOM Max按钮功能
+    // 修复LOM Max按钮功能
     document.getElementById("lomMaxBtn").onclick = async () => {
       try {
         if (!account || !lom) return;
         
         const lomBal = await lom.balanceOf(account);
         const lomAmt = parseFloat(ethers.utils.formatUnits(lomBal, 18));
+        const cfxBal = await provider.getBalance(account);
+        const cfxAmt = parseFloat(ethers.utils.formatEther(cfxBal));
         
         if (lomAmt > 0) {
           const maxLom = lomAmt * 1;
-          document.getElementById("addLom").value = maxLom.toFixed(6);
           
           if (currentRatio > 0) {
-            const cfxAmount = maxLom / currentRatio;
-            document.getElementById("addCfx").value = cfxAmount.toFixed(4);
+            const requiredCfx = maxLom / currentRatio;
+            const availableCfx = Math.max(0, cfxAmt - 0.1);
+            
+            if (requiredCfx <= availableCfx) {
+              // 如果CFX余额足够，使用最大LOM
+              document.getElementById("addLom").value = maxLom.toFixed(6);
+              document.getElementById("addCfx").value = requiredCfx.toFixed(4);
+            } else {
+              // 如果CFX余额不足，根据CFX余额计算LOM
+              const adjustedLom = availableCfx * currentRatio;
+              document.getElementById("addLom").value = Math.min(adjustedLom, maxLom).toFixed(6);
+              document.getElementById("addCfx").value = availableCfx.toFixed(4);
+            }
+          } else {
+            document.getElementById("addLom").value = maxLom.toFixed(6);
           }
           
           updateButtonState();
@@ -1770,7 +1798,7 @@
       }
     }
 
-    // 兑换功能
+    // 兑换功能 - 修复成功提示
     document.getElementById("swapBtn").onclick = async () => {
       // 统一钱包检查
       if (!account) {
@@ -1779,6 +1807,7 @@
       }
       
       const amt = document.getElementById("fromAmount").value;
+      const toAmount = document.getElementById("toAmount").innerText;
       
       if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0) {
         showBeautifulAlert(isChinese ? "请输入有效的兑换数量" : "Please enter a valid amount", 'info');
@@ -1807,7 +1836,14 @@
         }
         await tx.wait();
         document.getElementById("loading").style.display = "none";
-        showBeautifulAlert(isChinese ? "交换成功！" : "Swap successful!", 'success');
+        
+        // 优化成功提示，显示实际获得的代币数量
+        const tokenName = isCfxToLom ? "LOM" : "CFX";
+        const successMessage = isChinese ? 
+          `兑换成功！获得 ${toAmount} ${tokenName}` : 
+          `Swap successful! Received ${toAmount} ${tokenName}`;
+        
+        showBeautifulAlert(successMessage, 'success');
         document.getElementById("fromAmount").value = "";
         refreshAll();
         initializeSwapButton();
