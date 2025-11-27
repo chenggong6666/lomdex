@@ -1733,67 +1733,161 @@
 
     // 刷新数据
     async function refreshAll() {
-      if (!account) return;
-      
-      try {
-        const cfx = ethers.utils.formatEther(await provider.getBalance(account));
-        document.getElementById("cfxBal").innerText = parseFloat(cfx).toFixed(6); // 改为6位小数
+  if (!account) return;
+  
+  try {
+    const cfx = ethers.utils.formatEther(await provider.getBalance(account));
+    // 优化余额显示：小余额显示更多小数，大余额显示更少小数
+    const cfxNum = parseFloat(cfx);
+    document.getElementById("cfxBal").innerText = formatBalance(cfxNum);
 
-        const lomBal = await lom.balanceOf(account);
-        const lomAmt = ethers.utils.formatUnits(lomBal, 18);
-        document.getElementById("lomBal").innerText = parseFloat(lomAmt).toFixed(6); // 改为6位小数
+    const lomBal = await lom.balanceOf(account);
+    const lomAmt = ethers.utils.formatUnits(lomBal, 18);
+    const lomNum = parseFloat(lomAmt);
+    document.getElementById("lomBal").innerText = formatBalance(lomNum);
 
-        const lpBal = await pair.balanceOf(account);
-        const lpAmt = ethers.utils.formatUnits(lpBal, 18);
-        document.getElementById("lpBal").innerText = parseFloat(lpAmt).toFixed(6); // 改为6位小数
-        document.getElementById("removeBtn").disabled = lpBal.isZero();
+    const lpBal = await pair.balanceOf(account);
+    const lpAmt = ethers.utils.formatUnits(lpBal, 18);
+    const lpNum = parseFloat(lpAmt);
+    document.getElementById("lpBal").innerText = formatBalance(lpNum);
+    
+    // 根据LP余额启用/禁用移除按钮
+    document.getElementById("removeBtn").disabled = lpBal.isZero();
 
-        // 获取池子储备和计算总流动性
-        const [r0, r1] = await pair.getReserves();
-        const t0 = await pair.token0();
-        const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
-        const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
-        
-        const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-        const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
-        
-        const price = lomReserve / cfxReserve;
-        document.getElementById("price").innerText = price.toFixed(6);
+    // 获取池子储备和计算总流动性
+    const [r0, r1] = await pair.getReserves();
+    const t0 = await pair.token0();
+    const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+    const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+    
+    const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+    const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+    
+    const price = lomReserve / cfxReserve;
+    document.getElementById("price").innerText = price.toFixed(6);
 
-        // 计算池子总流动性
-        const totalLiquidity = (cfxReserve * 0.1) + (lomReserve * 0.01);
-        document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
+    // 更准确的总流动性计算（使用模拟价格）
+    const totalLiquidity = (cfxReserve * 0.3) + (lomReserve * 0.03); // 调整价格系数
+    document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
 
-        // 更新流动性页面数据
-        const total = await pair.totalSupply();
-        const share = total.isZero() ? 0 : (lpBal.mul(10000).div(total)/100).toFixed(2);
-        document.getElementById("myLiquidityShare").innerText = share + "%";
-        document.getElementById("positionShare").innerText = share;
-        
-        // 计算用户头寸价值
-        const userCfx = cfxReserve * (parseFloat(share) / 100);
-        const userLom = lomReserve * (parseFloat(share) / 100);
-        const positionValue = (userCfx * 0.1) + (userLom * 0.01);
-        
-        document.getElementById("positionValue").innerText = positionValue.toFixed(2);
-        document.getElementById("positionCfx").innerText = userCfx.toFixed(6); // 改为6位小数
-        document.getElementById("positionLom").innerText = userLom.toFixed(6); // 改为6位小数
+    // 更新流动性页面数据
+    const total = await pair.totalSupply();
+    const share = total.isZero() ? 0 : (lpBal.mul(10000).div(total).toNumber() / 100);
+    document.getElementById("myLiquidityShare").innerText = share.toFixed(4) + "%";
+    document.getElementById("positionShare").innerText = share.toFixed(4);
+    
+    // 计算用户头寸价值 - 更准确的计算
+    const userCfx = cfxReserve * (share / 100);
+    const userLom = lomReserve * (share / 100);
+    const positionValue = (userCfx * 0.3) + (userLom * 0.03);
+    
+    // 更新头寸显示
+    updatePositionDisplay(share, positionValue, userCfx, userLom);
+    
+    // 估算其他数据
+    document.getElementById("dailyVolume").innerText = "$" + (totalLiquidity * 0.15).toFixed(2);
+    document.getElementById("poolAPR").innerText = (totalLiquidity > 0 ? "12.5%" : "0%");
 
-        // 估算其他数据
-        document.getElementById("dailyVolume").innerText = "$" + (totalLiquidity * 0.1).toFixed(2);
-        document.getElementById("poolAPR").innerText = (totalLiquidity > 0 ? "12.5%" : "0%");
+    // 更新添加流动性模态框的余额
+    document.getElementById("addCfxBal").innerText = formatBalance(cfxNum);
+    document.getElementById("addLomBal").innerText = formatBalance(lomNum);
 
-        // 更新添加流动性模态框的余额
-        document.getElementById("addCfxBal").innerText = parseFloat(cfx).toFixed(6); // 改为6位小数
-        document.getElementById("addLomBal").innerText = parseFloat(lomAmt).toFixed(6); // 改为6位小数
+    updateBalances();
+    updateOutput();
+  } catch (error) {
+    console.error("刷新数据失败:", error);
+  }
+}
 
-        updateBalances();
-        updateOutput();
-      } catch (error) {
-        console.error("刷新数据失败:", error);
-      }
+// ==================== 优化余额显示格式 ====================
+function formatBalance(balance) {
+  if (balance === 0) return "0";
+  if (balance < 0.000001) return balance.toFixed(8);
+  if (balance < 0.001) return balance.toFixed(6);
+  if (balance < 1) return balance.toFixed(4);
+  if (balance < 1000) return balance.toFixed(2);
+  return balance.toFixed(0);
+}
+
+// ==================== 更新头寸显示逻辑 ====================
+function updatePositionDisplay(share, positionValue, userCfx, userLom) {
+  const positionItem = document.querySelector('.position-item');
+  const noLiquidityHint = document.getElementById('noLiquidityHint');
+  
+  // 如果没有流动性份额，显示提示信息
+  if (share < 0.0001) {
+    if (!noLiquidityHint) {
+      // 创建无流动性提示
+      const hint = document.createElement('div');
+      hint.id = 'noLiquidityHint';
+      hint.className = 'no-liquidity-hint';
+      hint.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🌊</div>
+          <div style="font-size: 16px; margin-bottom: 8px;">${isChinese ? '暂无流动性头寸' : 'No Liquidity Positions'}</div>
+          <div style="font-size: 14px;">${isChinese ? '添加流动性开始赚取交易费用' : 'Add liquidity to start earning fees'}</div>
+        </div>
+      `;
+      document.getElementById('liquidityPositions').appendChild(hint);
     }
+    positionItem.style.display = 'none';
+    document.getElementById('noLiquidityHint').style.display = 'block';
+  } else {
+    // 有流动性，显示头寸卡片
+    if (noLiquidityHint) {
+      noLiquidityHint.style.display = 'none';
+    }
+    positionItem.style.display = 'block';
+    
+    // 更新头寸数据
+    document.getElementById("positionValue").innerText = positionValue.toFixed(2);
+    document.getElementById("positionShare").innerText = share.toFixed(4);
+    document.getElementById("positionCfx").innerText = formatBalance(userCfx);
+    document.getElementById("positionLom").innerText = formatBalance(userLom);
+    
+    // 估算未收取费用（基于交易量的简单估算）
+    const estimatedFees = positionValue * 0.002; // 0.2% 的费用估算
+    document.getElementById("unclaimedFees").innerText = "$" + estimatedFees.toFixed(4);
+  }
+}
 
+// ==================== 移除流动性估算优化 ====================
+async function updateRemoveEstimate() {
+  try {
+    const percent = document.getElementById("removeSlider").value;
+    const lpBal = await pair.balanceOf(account);
+    
+    if (lpBal.isZero()) {
+      document.getElementById("removeEst").innerText = "0 CFX + 0 LOM";
+      document.getElementById("confirmRemove").disabled = true;
+      return;
+    }
+    
+    const liquidity = lpBal.mul(percent).div(100);
+    
+    const total = await pair.totalSupply();
+    const [r0, r1] = await pair.getReserves();
+    const t0 = await pair.token0();
+    
+    const rCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+    const rLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+    
+    const cfxOut = rCfx.mul(liquidity).div(total);
+    const lomOut = rLom.mul(liquidity).div(total);
+    
+    const cfxAmount = parseFloat(ethers.utils.formatEther(cfxOut));
+    const lomAmount = parseFloat(ethers.utils.formatUnits(lomOut, 18));
+    
+    document.getElementById("removeEst").innerText = 
+      `${formatBalance(cfxAmount)} CFX + ${formatBalance(lomAmount)} LOM`;
+    
+    document.getElementById("confirmRemove").disabled = false;
+  } catch (error) {
+    console.error("更新移除估算失败:", error);
+    document.getElementById("removeEst").innerText = "计算失败";
+    document.getElementById("confirmRemove").disabled = true;
+  }
+}
     function updateBalances() {
       const cfxBal = document.getElementById("cfxBal").innerText;
       const lomBal = document.getElementById("lomBal").innerText;
