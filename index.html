@@ -60,8 +60,8 @@
   overflow: hidden;
 }
 
-.logo::after {
-  content: "龙脉DEX";
+.logo::before {
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -73,14 +73,12 @@
     rgba(255, 255, 255, 1),
     rgba(255, 255, 255, 0.8),
     transparent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: goldShine 3s ease-in-out infinite;
+  transform: skewX(-15deg);
+  animation: lightShine 3s ease-in-out infinite;
   animation-delay: 1s;
 }
 
-@keyframes goldShine {
+@keyframes lightShine {
   0% {
     left: -100%;
   }
