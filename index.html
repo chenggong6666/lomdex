@@ -1048,7 +1048,7 @@
 
   <!-- 等待提示 -->
   <div id="loading" style="display:none">
-    <div id="loadingText">等待区块确认...</div>
+    <div id="loadingText">等待区块链确认中</div>
   </div>
 
   <!-- 安全提示浮层 -->
@@ -1349,7 +1349,7 @@
       document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
       
       // 加载提示
-      document.getElementById("loadingText").innerText = isChinese ? "等待区块确认..." : "Waiting for confirmation...";
+      document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
       document.getElementById("footerText").innerText = isChinese ? "Web3 Swap · Conflux eSpace" : "Web3 Swap · Conflux eSpace";
       
       // 风险提示
@@ -1615,7 +1615,7 @@
       }
       
       document.getElementById("loading").style.display = "flex";
-      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块确认..." : "Waiting for confirmation...");
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
       
       try {
         const cfxAmt = document.getElementById("addCfx").value;
@@ -1832,7 +1832,7 @@
       }
       
       document.getElementById("loading").style.display = "flex";
-      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块确认..." : "Waiting for confirmation...");
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
       
       const amountIn = ethers.utils.parseUnits(amt, 18);
       const path = isCfxToLom ? [WCFX, LOM] : [LOM, WCFX];
@@ -1851,7 +1851,7 @@
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LOM代币..." : "Approving LOM token...");
             const atx = await lom.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
             await atx.wait();
-            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块确认..." : "Waiting for confirmation...");
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "" : "Waiting for confirmation...");
           }
           tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, {gasLimit:350000});
         }
@@ -1915,7 +1915,7 @@
 
     document.getElementById("confirmRemove").onclick = async () => {
       document.getElementById("loading").style.display = "flex";
-      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块确认..." : "Waiting for confirmation...");
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
       
       try {
         const percent = document.getElementById("removeSlider").value;
@@ -1936,7 +1936,7 @@
           document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LP代币" : "Approving LP token");
           const approveTx = await lpToken.approve(ROUTER, ethers.constants.MaxUint256);
           await approveTx.wait();
-          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块确认..." : "Waiting for confirmation...");
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
         }
 
         document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "正在移除流动性" : "Removing liquidity...");
