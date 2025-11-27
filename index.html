@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
@@ -1723,7 +1723,6 @@ document.head.appendChild(styleSheet);
           deadline,
           {
             value: amountCfx,
-            gasLimit: 400000
           }
         );
         
@@ -2000,16 +1999,16 @@ async function updateRemoveEstimate() {
 
         let tx;
         if (isCfxToLom) {
-          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn, gasLimit:350000});
+          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn});
         } else {
           const allowance = await lom.allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LOM代币..." : "Approving LOM token...");
-            const atx = await lom.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await lom.approve(ROUTER, ethers.constants.MaxUint256, );
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "" : "Waiting for confirmation...");
           }
-          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, {gasLimit:350000});
+          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, );
         }
         await tx.wait();
         document.getElementById("loading").style.display = "none";
@@ -2106,7 +2105,7 @@ async function updateRemoveEstimate() {
           account, 
           deadline,
           {
-            gasLimit: 400000
+           value: amountCfx
           }
         );
         
