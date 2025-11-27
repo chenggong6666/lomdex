@@ -1198,7 +1198,7 @@ document.head.appendChild(styleSheet);
         if (e.target === alertOverlay) closeAlert();
       });
       
-      // 3秒后自动关闭
+      // 5秒后自动关闭
       setTimeout(closeAlert, 3000);
     }
 
@@ -2100,8 +2100,8 @@ async function updateRemoveEstimate() {
         const tx = await router.removeLiquidityETHSupportingFeeOnTransferTokens(
           LOM, 
           liquidity, 
-          0, 
-          0, 
+          minLomOut,
+          minCfxOut,
           account, 
           deadline,
         );
