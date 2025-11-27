@@ -549,13 +549,17 @@
     }
     
     .position-item {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 16px;
-      padding: 14px; /* 减少内边距 */
-      border: 1px solid rgba(76, 201, 240, 0.2);
-      margin-bottom: 10px; /* 减少底部边距 */
-      transition: all 0.3s ease;
-    }
+  background: rgba(76, 201, 240, 0.05);
+  border-radius: 16px;
+  padding: 20px; /* 增加内边距 */
+  border: 1px solid rgba(76, 201, 240, 0.2);
+  margin-bottom: 16px; /* 增加底部间距 */
+  transition: all 0.3s ease;
+  min-height: 140px; /* 设置最小高度 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 内容均匀分布 */
+}
     
     .position-item:hover {
       transform: translateY(-3px);
@@ -563,11 +567,11 @@
     }
     
     .position-pair {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px; /* 减少底部边距 */
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* 增加底部间距 */
+}
     
     .token-pair {
       display: flex;
@@ -585,35 +589,43 @@
     }
     
     .position-value .value {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--web3-light);
-    }
-    
-    .position-value .share {
-      font-size: 12px;
-      color: #94a3b8;
-      text-align: right;
-    }
-    
-    .position-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      padding-top: 10px; /* 减少内边距 */
-      border-top: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .detail {
-      font-size: 12px;
-      color: #cbd5e1;
-    }
-    
-    .detail span:first-child {
-      color: #94a3b8;
-      display: block;
-      margin-bottom: 4px;
-    }
+  font-size: 20px; /* 增大字体 */
+  font-weight: 700; /* 加粗 */
+  color: var(--web3-light);
+}
+
+.position-value .share {
+  font-size: 14px; /* 增大字体 */
+  color: #94a3b8;
+  text-align: right;
+}
+
+.position-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px; /* 增加间距 */
+  padding-top: 16px; /* 增加内边距 */
+  border-top: 1px solid rgba(76, 201, 240, 0.2);
+}
+
+.detail {
+  font-size: 13px; /* 增大字体 */
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail span:first-child {
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 6px; /* 增加间距 */
+  font-size: 12px;
+}
+
+.detail span:last-child {
+  font-weight: 600;
+  color: var(--web3-light);
+}
     
     .stake-card {
       background: linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(114, 9, 183, 0.1));
