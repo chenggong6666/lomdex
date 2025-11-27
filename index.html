@@ -1713,7 +1713,7 @@
         document.getElementById("addModal").style.display = "none";
         document.getElementById("addCfx").value = "";
         document.getElementById("addLom").value = "";
-        refreshAll();
+        await refreshAll();
       } catch (e) { 
         document.getElementById("loading").style.display = "none";
         console.error("添加流动性失败:", e);
@@ -1899,6 +1899,7 @@
         }
         await tx.wait();
         document.getElementById("loading").style.display = "none";
+        await refreshAll();
         
         // 优化成功提示，显示实际获得的代币数量
         const tokenName = isCfxToLom ? "LOM" : "CFX";
@@ -1999,7 +2000,7 @@
         document.getElementById("loading").style.display = "none";
         showBeautifulAlert(isChinese ? "移除流动性成功！" : "Remove liquidity successful!", 'success');
         document.getElementById("removeModal").style.display = "none";
-        refreshAll();
+        await refreshAll();
       } catch (e) { 
         document.getElementById("loading").style.display = "none";
         console.error("移除流动性失败:", e);
