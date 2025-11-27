@@ -69,10 +69,12 @@
   height: 100%;
   background: linear-gradient(90deg, 
     transparent, 
-    rgba(255, 255, 255, 0.8), 
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0.8),
+    rgba(255, 215, 0, 0.6), 
+    rgba(255, 215, 0, 0.9),
+    rgba(255, 215, 0, 0.6),
     transparent);
+  -webkit-mask: linear-gradient(to right, transparent, #fff 20%, #fff 80%, transparent);
+  mask: linear-gradient(to right, transparent, #fff 20%, #fff 80%, transparent);
   transform: skewX(-15deg);
   animation: lightShine 3s ease-in-out infinite;
   animation-delay: 1s;
