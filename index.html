@@ -1327,7 +1327,7 @@
       // 模态框
       document.getElementById("addTitle").innerText = isChinese ? "添加流动性" : "Add Liquidity";
       document.getElementById("removeTitle").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
-      document.getElementById("confirmAdd").innerText = isChinese ? "确认全部添加流动池" : "Confirm Add All to Pool";
+      document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
       document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
       document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
       document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
@@ -1339,7 +1339,7 @@
       // 风险提示
       document.getElementById("riskTitle").innerText = isChinese ? "风险提示" : "Risk Warning";
       document.getElementById("riskText").innerText = isChinese ? 
-        "本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。" :
+        "本应用仅作为学习交流，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎请理性对待数字资产交易。" :
         "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
       
       initializeSwapButton();
@@ -1415,7 +1415,7 @@
       
       if (validation.isValid) {
         confirmButton.disabled = false;
-        confirmButton.innerText = isChinese ? "确认全部添加流动池" : "Confirm Add All to Pool";
+        confirmButton.innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
       } else {
         confirmButton.disabled = true;
         if (validation.message) {
@@ -1911,12 +1911,12 @@
         const allowance = await lpToken.allowance(account, ROUTER);
         
         if (allowance.lt(liquidity)) {
-          document.getElementById("loadingText").innerText = "授权LP代币...";
+          document.getElementById("loadingText").innerText = "授权LP代币";
           const approveTx = await lpToken.approve(ROUTER, ethers.constants.MaxUint256);
           await approveTx.wait();
         }
 
-        document.getElementById("loadingText").innerText = "移除流动性...";
+        document.getElementById("loadingText").innerText = "正在移除流动性";
         
         const tx = await router.removeLiquidityETHSupportingFeeOnTransferTokens(
           LOM, 
