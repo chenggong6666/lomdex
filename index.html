@@ -54,12 +54,19 @@
   font-size: 42px;
   font-family: 'Georgia', 'Times New Roman', 'SimSun', serif;
   font-weight: 900;
-  color: #4cc9f0; /* 使用主题中的蓝色 */
+  background: linear-gradient(135deg, 
+    #4361ee 0%, 
+    #7209b7 50%, 
+    #4cc9f0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   position: relative;
   letter-spacing: 2px;
   text-transform: uppercase;
   font-style: italic;
   overflow: hidden;
+  display: inline-block;
 }
 
 .logo::before {
