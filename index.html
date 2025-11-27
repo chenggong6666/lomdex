@@ -1677,7 +1677,7 @@
         console.error("添加流动性失败:", e);
         
         let errorMsg = e.message || "未知错误";
-        if (errorMsg.includes("insufficient") || errorMsg.includes("确认全部添加")) {
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额不足")) {
           errorMsg = isChinese ? "余额不足，请检查您的代币余额" : "Insufficient balance, please check your token balance";
         } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
           errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
