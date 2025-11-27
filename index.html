@@ -1293,7 +1293,7 @@
           showBeautifulAlert(isChinese ? "确认全部添加" : "Insufficient balance", 'warning');
         }
       } else {
-        showBeautifulAlert(isChinese ? "余额为0" : "Balance is zero", 'info');
+        showBeautifulAlert(isChinese ? "余额不足" : "Balance is zero", 'info');
       }
     }
 
@@ -1963,7 +1963,7 @@
         console.error("移除流动性失败:", e);
         
         let errorMsg = e.message || "未知错误";
-        if (errorMsg.includes("insufficient") || errorMsg.includes("余额不足")) {
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额为0")) {
           errorMsg = isChinese ? "LP代币余额不足" : "Insufficient LP token balance";
         } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
           errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
