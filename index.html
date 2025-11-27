@@ -1248,7 +1248,7 @@
       },
       LOM: {
         symbol: "LOM",
-        name: "龙脉代币",
+        name: "龙脉",
         address: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
         decimals: 18,
         icon: "L",
@@ -1420,8 +1420,6 @@
     function initializeTokenDropdowns() {
       const fromDropdown = document.getElementById("fromTokenDropdown");
       const toDropdown = document.getElementById("toTokenDropdown");
-      
-      // 清空现有选项
       fromDropdown.innerHTML = '';
       toDropdown.innerHTML = '';
       
@@ -1475,30 +1473,38 @@
     }
 
     // 设置下拉菜单事件
-    function setupDropdownEvents() {
-      const fromSelector = document.getElementById("fromTokenSelector");
-      const toSelector = document.getElementById("toTokenSelector");
-      const fromDropdown = document.getElementById("fromTokenDropdown");
-      const toDropdown = document.getElementById("toTokenDropdown");
-      
-      fromSelector.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fromDropdown.style.display = fromDropdown.style.display === 'block' ? 'none' : 'block';
-        toDropdown.style.display = 'none';
-      });
-      
-      toSelector.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toDropdown.style.display = toDropdown.style.display === 'block' ? 'none' : 'block';
-        fromDropdown.style.display = 'none';
-      });
-      
-      // 点击其他地方关闭下拉菜单
-      document.addEventListener('click', () => {
-        fromDropdown.style.display = 'none';
-        toDropdown.style.display = 'none';
-      });
-    }
+function setupDropdownEvents() {
+  const fromSelector = document.getElementById("fromTokenSelector");
+  const toSelector = document.getElementById("toTokenSelector");
+  const fromDropdown = document.getElementById("fromTokenDropdown");
+  const toDropdown = document.getElementById("toTokenDropdown");
+  fromSelector.replaceWith(fromSelector.cloneNode(true));
+  toSelector.replaceWith(toSelector.cloneNode(true));
+  
+  // 重新获取元素
+  const newFromSelector = document.getElementById("fromTokenSelector");
+  const newToSelector = document.getElementById("toTokenSelector");
+  const newFromDropdown = document.getElementById("fromTokenDropdown");
+  const newToDropdown = document.getElementById("toTokenDropdown");
+  
+  newFromSelector.addEventListener('click', (e) => {
+    e.stopPropagation();
+    newFromDropdown.style.display = newFromDropdown.style.display === 'block' ? 'none' : 'block';
+    newToDropdown.style.display = 'none';
+  });
+  
+  newToSelector.addEventListener('click', (e) => {
+    e.stopPropagation();
+    newToDropdown.style.display = newToDropdown.style.display === 'block' ? 'none' : 'block';
+    newFromDropdown.style.display = 'none';
+  });
+  
+  // 点击其他地方关闭下拉菜单
+  document.addEventListener('click', () => {
+    newFromDropdown.style.display = 'none';
+    newToDropdown.style.display = 'none';
+  });
+  }
 
     // 选择代币
     function selectToken(token, type) {
