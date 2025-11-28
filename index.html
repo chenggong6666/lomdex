@@ -1037,29 +1037,50 @@
         <div style="color:var(--web3-yellow);font-size:14px">✦</div>
       </div>
       <div class="asset-list">
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">C</div>
-            <span>CFX</span>
-          </div>
-          <div class="asset-balance" id="cfxBal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">L</div>
-            <span>LOM</span>
-          </div>
-          <div class="asset-balance" id="lomBal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">LP</div>
-            <span>LP Token</span>
-          </div>
-          <div class="asset-balance" id="lpBal">0.000000</div>
-        </div>
-      </div>
+      <div class="asset-list">
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">C</div>
+      <span>CFX</span>
     </div>
+    <div class="asset-balance" id="cfxBal">0.000000</div>
+  </div>
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">L</div>
+      <span>LOM</span>
+    </div>
+    <div class="asset-balance" id="lomBal">0.000000</div>
+  </div>
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">A</div>
+      <span>AxCNH</span>
+    </div>
+    <div class="asset-balance" id="axcnhBal">0.000000</div>
+  </div>
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">U</div>
+      <span>USDT0</span>
+    </div>
+    <div class="asset-balance" id="usdt0Bal">0.000000</div>
+  </div>
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">C</div>
+      <span>CNHT0</span>
+    </div>
+    <div class="asset-balance" id="cnht0Bal">0.000000</div>
+  </div>
+  <div class="asset-item">
+    <div class="asset-name">
+      <div class="token-icon">LP</div>
+      <span>LP Token</span>
+    </div>
+    <div class="asset-balance" id="lpBal">0.000000</div>
+  </div>
+</div>
     
     <!-- 流动性页面 -->
     <div class="tab-content" id="liquidityTab">
@@ -1982,18 +2003,22 @@ function setupDropdownEvents() {
         document.getElementById("cfxBal").innerText = parseFloat(cfx).toFixed(6);
 
         // 更新其他代币余额
-        for (const token of Object.values(TOKENS)) {
-          if (token.symbol !== 'CFX' && tokenContracts[token.symbol]) {
-            const balance = await tokenContracts[token.symbol].balanceOf(account);
-            const formattedBalance = parseFloat(ethers.utils.formatUnits(balance, token.decimals)).toFixed(6);
-            
-            // 更新资产列表中的余额
-            const assetElement = document.getElementById(`${token.symbol.toLowerCase()}Bal`);
-            if (assetElement) {
-              assetElement.innerText = formattedBalance;
-            }
-          }
-        }
+for (const token of Object.values(TOKENS)) {
+  if (token.symbol !== 'CFX' && tokenContracts[token.symbol]) {
+    try {
+      const balance = await tokenContracts[token.symbol].balanceOf(account);
+      const formattedBalance = parseFloat(ethers.utils.formatUnits(balance, token.decimals)).toFixed(6);
+      
+      // 更新资产列表中的余额
+      const assetElement = document.getElementById(`${token.symbol.toLowerCase()}Bal`);
+      if (assetElement) {
+        assetElement.innerText = formattedBalance;
+      }
+    } catch (error) {
+      console.error(`获取 ${token.symbol} 余额失败:`, error);
+    }
+  }
+}
 
         // 更新LP代币余额
         const lpBal = await pair.balanceOf(account);
