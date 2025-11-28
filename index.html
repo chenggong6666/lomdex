@@ -51,48 +51,48 @@
     }
     
     @keyframes textGlow {
-  0% {
-    text-shadow: 
-      -30px 0 20px rgba(255, 215, 0, 0.8),
-      -60px 0 30px rgba(67, 97, 238, 0.6);
-    background-position: 0% 50%;
-    filter: brightness(0.9);
-  }
-  50% {
-    text-shadow: 
-      0 0 25px rgba(255, 215, 0, 0.9),
-      0 0 40px rgba(114, 9, 183, 0.7);
-    background-position: 50% 50%;
-    filter: brightness(1.2);
-  }
-  100% {
-    text-shadow: 
-      30px 0 20px rgba(255, 215, 0, 0.8),
-      60px 0 30px rgba(255, 209, 102, 0.6);
-    background-position: 100% 50%;
-    filter: brightness(0.9);
-  }
-}
+      0% {
+        text-shadow: 
+          -30px 0 20px rgba(255, 215, 0, 0.8),
+          -60px 0 30px rgba(67, 97, 238, 0.6);
+        background-position: 0% 50%;
+        filter: brightness(0.9);
+      }
+      50% {
+        text-shadow: 
+          0 0 25px rgba(255, 215, 0, 0.9),
+          0 0 40px rgba(114, 9, 183, 0.7);
+        background-position: 50% 50%;
+        filter: brightness(1.2);
+      }
+      100% {
+        text-shadow: 
+          30px 0 20px rgba(255, 215, 0, 0.8),
+          60px 0 30px rgba(255, 209, 102, 0.6);
+        background-position: 100% 50%;
+        filter: brightness(0.9);
+      }
+    }
 
-.logo {
-  font-size: 42px;
-  font-weight: 900;
-  background: linear-gradient(90deg, 
-    var(--web3-blue), 
-    var(--web3-purple), 
-    var(--web3-yellow),
-    var(--web3-purple),
-    var(--web3-blue)
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  position: relative;
-  display: inline-block;
-  animation: textGlow 4s ease-in-out infinite;
-  margin-top: 2px;
-}
+    .logo {
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(90deg, 
+        var(--web3-blue), 
+        var(--web3-purple), 
+        var(--web3-yellow),
+        var(--web3-purple),
+        var(--web3-blue)
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      display: inline-block;
+      animation: textGlow 4s ease-in-out infinite;
+      margin-top: 2px;
+    }
     
     .btn {
       background: var(--web3-card);
@@ -109,6 +109,7 @@
       display: flex; 
       justify-content: center; 
       align-items: center; 
+      outline: none;
     }
     
     #langBtn {
@@ -128,7 +129,6 @@
       border-radius: 24px;
       padding: 18px;
       margin-bottom: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
       border: 1px solid rgba(76, 201, 240, 0.2);
       position: relative;
       overflow: hidden;
@@ -243,6 +243,7 @@
       align-items: center;
       margin: 8px 0;
       gap: 12px;
+      position: relative;
     }
     
     .token-info {
@@ -274,22 +275,22 @@
       height: 48px;
       background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
       border-radius: 50%;
-      margin: -8px auto;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 18px;
       cursor: pointer;
-      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 2;
-      box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
-      transition: all 0.3s ease;
       border: 2px solid var(--web3-dark);
+      outline: none;
     }
     
     .swap-btn:hover {
-      transform: rotate(180deg);
-      box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+      transform: translate(-50%, -50%) rotate(180deg);
     }
     
     .action {
@@ -304,29 +305,13 @@
       cursor: pointer;
       margin-top: 16px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
       position: relative;
       overflow: hidden;
-    }
-    
-    .action::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-    
-    .action:hover::before {
-      left: 100%;
+      outline: none;
     }
     
     .action:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
     }
     
     .action:disabled {
@@ -334,11 +319,6 @@
       color: #94a3b8;
       cursor: not-allowed;
       transform: none;
-      box-shadow: none;
-    }
-    
-    .action:disabled::before {
-      display: none;
     }
     
     .info {
@@ -402,6 +382,7 @@
       text-align: center;
       transition: all 0.2s ease;
       border: 1px solid transparent;
+      outline: none;
     }
     
     .slip-btn:hover {
@@ -440,7 +421,6 @@
       width: 90%;
       max-width: 420px;
       border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     
     #loading {
@@ -461,7 +441,6 @@
       text-align: center;
       font-size: 18px;
       border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       color: var(--web3-light);
     }
     
@@ -488,12 +467,12 @@
       cursor: pointer;
       transition: all 0.3s;
       font-size: 16px;
+      outline: none;
     }
     
     .tab-btn.active {
       background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
       color: #fff;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
     }
     
     .tab-content {
@@ -523,6 +502,7 @@
       cursor: pointer;
       transition: all 0.2s;
       min-width: 44px;
+      outline: none;
     }
     
     .percent-btn:hover {
@@ -556,7 +536,6 @@
     
     .stat-item:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
     }
     
     .stat-label {
@@ -586,7 +565,6 @@
     
     .position-item:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
     }
     
     .position-pair {
@@ -692,11 +670,11 @@
       transition: all 0.3s ease;
       text-decoration: none;
       display: inline-block;
+      outline: none;
     }
     
     .stake-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 209, 102, 0.3);
     }
     
     .risk-warning {
@@ -709,7 +687,6 @@
       font-size: 12px;
       color: var(--web3-light);
       line-height: 1.6;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.1);
     }
     
     #securityTips {
@@ -725,7 +702,6 @@
       color: var(--web3-light);
       z-index: 9999;
       display: none;
-      box-shadow: 0 4px 20px rgba(255, 209, 102, 0.2);
     }
     
     #securityIndicator {
@@ -742,7 +718,6 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     }
     
     /* 美化提示样式 */
@@ -768,7 +743,6 @@
       border-radius: 20px;
       max-width: 320px;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.2);
       animation: slideIn 0.3s ease-out;
     }
@@ -795,7 +769,7 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      outline: none;
     }
     
     .beautiful-alert-button:hover {
@@ -906,7 +880,6 @@
       width: 90%;
       max-width: 400px;
       border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     
     .token-list {
@@ -946,6 +919,15 @@
     .token-item-balance {
       font-size: 14px;
       color: var(--web3-light);
+    }
+    
+    /* 兑换页面布局优化 */
+    .swap-container {
+      position: relative;
+    }
+    
+    .swap-input-group {
+      margin-bottom: 10px; /* 约1厘米距离 */
     }
     
     @media (max-width: 400px) {
@@ -991,54 +973,57 @@
         </div>
         
         <!-- 从代币输入 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="fromTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="fromTokenIcon">
-                    <img id="fromTokenImg" src="" alt="" style="display:none">
-                    <span id="fromTokenInitial">C</span>
+        <div class="swap-container">
+          <div class="swap-input-group">
+            <div class="token-row">
+              <div class="token-info">
+                <div class="token-selector" id="fromTokenSelector">
+                  <div class="token-selector-content">
+                    <div class="token-selector-info">
+                      <div class="token-icon" id="fromTokenIcon">
+                        <span id="fromTokenInitial">C</span>
+                      </div>
+                      <div class="token-selector-name" id="fromTokenName">CFX</div>
+                    </div>
+                    <span class="token-selector-arrow">▼</span>
                   </div>
-                  <div class="token-selector-name" id="fromTokenName">CFX</div>
                 </div>
-                <span class="token-selector-arrow">▼</span>
+                <div class="balance">余额: <span id="fromBal">0</span></div>
+              </div>
+              <div class="token-input-container">
+                <button class="percent-btn" id="fromMaxBtn" style="margin:0">MAX</button>
+                <input class="input" id="fromAmount" placeholder="0" type="number">
               </div>
             </div>
-            <div class="balance">余额: <span id="fromBal">0</span></div>
+            <div class="input-hint">输入数量</div>
           </div>
-          <div class="token-input-container">
-            <button class="percent-btn" id="fromMaxBtn" style="margin:0">MAX</button>
-            <input class="input" id="fromAmount" placeholder="0" type="number">
-          </div>
-        </div>
-        
-        <div class="input-hint">输入数量</div>
 
-        <div class="swap-btn" id="reverse">⇅</div>
+          <button class="swap-btn" id="reverse">⇅</button>
 
-        <!-- 到代币输入 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="toTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="toTokenIcon">
-                    <img id="toTokenImg" src="" alt="" style="display:none">
-                    <span id="toTokenInitial">L</span>
+          <!-- 到代币输入 -->
+          <div class="swap-input-group">
+            <div class="token-row">
+              <div class="token-info">
+                <div class="token-selector" id="toTokenSelector">
+                  <div class="token-selector-content">
+                    <div class="token-selector-info">
+                      <div class="token-icon" id="toTokenIcon">
+                        <span id="toTokenInitial">L</span>
+                      </div>
+                      <div class="token-selector-name" id="toTokenName">LOM</div>
+                    </div>
+                    <span class="token-selector-arrow">▼</span>
                   </div>
-                  <div class="token-selector-name" id="toTokenName">LOM</div>
                 </div>
-                <span class="token-selector-arrow">▼</span>
+                <div class="balance">余额: <span id="toBal">0</span></div>
+              </div>
+              <div class="token-input-container">
+                <div class="input" id="toAmount" style="color:#94a3b8;font-size:28px;text-align:right;width:100%;padding:8px 0;">0</div>
               </div>
             </div>
-            <div class="balance">余额: <span id="toBal">0</span></div>
-          </div>
-          <div class="token-input-container">
-            <div class="input" id="toAmount" style="color:#94a3b8;font-size:28px;text-align:right;width:100%;padding:8px 0;">0</div>
+            <div class="input-hint">获得数量</div>
           </div>
         </div>
-        <div class="input-hint">获得数量</div>
 
         <!-- 详细信息面板 -->
         <div class="details-panel">
@@ -1192,86 +1177,6 @@
       </div>
     </div>
 
-    <!-- 添加流动性模态框 -->
-    <div class="modal" id="addModal">
-      <div class="modal-card">
-        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="addTitle">添加流动性</h3>
-        
-        <!-- 基础代币输入部分 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="addBaseTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="addBaseTokenIcon">
-                    <img id="addBaseTokenImg" src="" alt="" style="display:none">
-                    <span id="addBaseTokenInitial">C</span>
-                  </div>
-                  <div class="token-selector-name" id="addBaseTokenName">CFX</div>
-                </div>
-                <span class="token-selector-arrow">▼</span>
-              </div>
-            </div>
-            <div class="balance">余额: <span id="addBaseBal">0</span></div>
-          </div>
-          <div class="token-input-container">
-            <button class="percent-btn" id="baseMaxBtn" style="margin:0">MAX</button>
-            <input class="input" id="addBase" placeholder="0" type="number" style="text-align:right;width:100%">
-          </div>
-        </div>
-        
-        <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
-        
-        <!-- 报价代币输入部分 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="addQuoteTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="addQuoteTokenIcon">
-                    <img id="addQuoteTokenImg" src="" alt="" style="display:none">
-                    <span id="addQuoteTokenInitial">L</span>
-                  </div>
-                  <div class="token-selector-name" id="addQuoteTokenName">LOM</div>
-                </div>
-                <span class="token-selector-arrow">▼</span>
-              </div>
-            </div>
-            <div class="balance">余额: <span id="addQuoteBal">0</span></div>
-          </div>
-          <div class="token-input-container">
-            <button class="percent-btn" id="quoteMaxBtn" style="margin:0">MAX</button>
-            <input class="input" id="addQuote" placeholder="0" type="number" style="text-align:right;width:100%">
-          </div>
-        </div>
-        
-        <div class="info" id="ratioLabel">比例: <span id="addRatio">1 CFX = 0 LOM</span></div>
-        <div class="info" style="color: var(--web3-yellow); font-size: 12px; text-align: center;">
-          提示：请确保两种代币的比例接近当前市场价格
-        </div>
-        <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
-          预估Gas费: 计算中...
-        </div>
-        <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
-      </div>
-    </div>
-
-    <!-- 移除流动性模态框 -->
-    <div class="modal" id="removeModal">
-      <div class="modal-card">
-        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
-        <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
-        <div style="text-align:center;font-size:18px">
-          <span id="removePercent">100%</span>
-          <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
-        </div>
-        <div class="info" id="removeGasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
-          预估Gas费: 计算中...
-        </div>
-        <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
-      </div>
-    </div>
-
     <!-- 等待提示 -->
     <div id="loading" style="display:none">
       <div id="loadingText">等待区块链确认中</div>
@@ -1362,7 +1267,6 @@
           border-radius: 20px;
           max-width: 400px;
           text-align: center;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
           border: 2px solid var(--web3-warning);
         ">
           <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
@@ -1412,10 +1316,8 @@
       });
       
       document.getElementById('closePage').addEventListener('click', () => {
-        window.location.href = 'about:blank';
-        setTimeout(() => {
-          window.close();
-        }, 100);
+        // 直接关闭页面，不跳转到浏览器
+        window.close();
       });
     }
 
@@ -1437,7 +1339,10 @@
         return false;
       }
       
-      createSecurityIndicator();
+      // 如果用户手动点击了同意，就不显示安全验证通过
+      if (!warningAcknowledged) {
+        createSecurityIndicator();
+      }
       
       setTimeout(() => {
         document.getElementById('securityTips').style.display = 'block';
@@ -1453,7 +1358,6 @@
         name: "Conflux",
         address: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
         decimals: 18,
-        logo: "https://cryptologos.cc/logos/conflux-cfx-logo.svg",
         isNative: true
       },
       "LOM": {
@@ -1461,7 +1365,6 @@
         name: "龙脉代币",
         address: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
         decimals: 18,
-        logo: "",
         isNative: false
       },
       "USDT": {
@@ -1469,7 +1372,6 @@
         name: "Tether USD",
         address: "0xfe97e85d13abd9c1c33384e796f10b73905637ce",
         decimals: 6,
-        logo: "https://cryptologos.cc/logos/tether-usdt-logo.svg",
         isNative: false
       }
     };
@@ -1569,17 +1471,6 @@
         openTokenSelector("to");
       });
       
-      // 添加流动性页面代币选择器
-      document.getElementById("addBaseTokenSelector").addEventListener("click", (e) => {
-        e.stopPropagation();
-        openTokenSelector("addBase");
-      });
-      
-      document.getElementById("addQuoteTokenSelector").addEventListener("click", (e) => {
-        e.stopPropagation();
-        openTokenSelector("addQuote");
-      });
-      
       // 代币搜索
       document.getElementById("tokenSearch").addEventListener("input", (e) => {
         filterTokenList(e.target.value);
@@ -1622,8 +1513,7 @@
         tokenItem.className = "token-item";
         tokenItem.innerHTML = `
           <div class="token-icon">
-            ${token.logo ? `<img src="${token.logo}" alt="${token.symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
-            <span style="${token.logo ? 'display:none' : ''}">${token.symbol.charAt(0)}</span>
+            <span>${token.symbol.charAt(0)}</span>
           </div>
           <div class="token-item-info">
             <div class="token-item-name">${token.name}</div>
@@ -1677,14 +1567,6 @@
         case "to":
           toToken = token;
           break;
-        case "addBase":
-          baseToken = token;
-          updateTokenSelector("addBaseTokenSelector", "addBaseTokenIcon", "addBaseTokenImg", "addBaseTokenInitial", "addBaseTokenName", token);
-          break;
-        case "addQuote":
-          quoteToken = token;
-          updateTokenSelector("addQuoteTokenSelector", "addQuoteTokenIcon", "addQuoteTokenImg", "addQuoteTokenInitial", "addQuoteTokenName", token);
-          break;
       }
       
       updateTokenSelectorDisplay();
@@ -1705,22 +1587,11 @@
 
     function updateTokenSelector(selectorId, iconId, imgId, initialId, nameId, token) {
       const icon = document.getElementById(iconId);
-      const img = document.getElementById(imgId);
       const initial = document.getElementById(initialId);
       const name = document.getElementById(nameId);
       
       name.textContent = token.symbol;
-      
-      if (token.logo) {
-        img.src = token.logo;
-        img.alt = token.symbol;
-        img.style.display = "block";
-        initial.style.display = "none";
-      } else {
-        img.style.display = "none";
-        initial.style.display = "block";
-        initial.textContent = token.symbol.charAt(0);
-      }
+      initial.textContent = token.symbol.charAt(0);
     }
 
     // ==================== 交换功能 ====================
@@ -1850,12 +1721,6 @@
       document.getElementById("baseAmountLabel").innerText = isChinese ? `${baseToken.symbol}数量:` : `${baseToken.symbol} Amount:`;
       document.getElementById("quoteAmountLabel").innerText = isChinese ? `${quoteToken.symbol}数量:` : `${quoteToken.symbol} Amount:`;
       document.getElementById("feesLabel").innerText = isChinese ? "未收取费用:" : "Unclaimed Fees:";
-      document.getElementById("addTitle").innerText = isChinese ? "添加流动性" : "Add Liquidity";
-      document.getElementById("removeTitle").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
-      document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
-      document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
-      document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
-      document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
       document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
       document.getElementById("footerText").innerText = isChinese ? "龙脉 DEX · Conflux eSpace" : "龙脉 DEX · Conflux eSpace";
       document.getElementById("riskTitle").innerText = isChinese ? "风险提示" : "Risk Warning";
@@ -1971,8 +1836,7 @@
         assetItem.innerHTML = `
           <div class="asset-name">
             <div class="token-icon">
-              ${token.logo ? `<img src="${token.logo}" alt="${token.symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
-              <span style="${token.logo ? 'display:none' : ''}">${token.symbol.charAt(0)}</span>
+              <span>${token.symbol.charAt(0)}</span>
             </div>
             <span>${token.symbol}</span>
           </div>
@@ -1997,8 +1861,6 @@
     function updateBalances() {
       document.getElementById("fromBal").innerText = fromToken.balance || "0";
       document.getElementById("toBal").innerText = toToken.balance || "0";
-      document.getElementById("addBaseBal").innerText = baseToken.balance || "0";
-      document.getElementById("addQuoteBal").innerText = quoteToken.balance || "0";
     }
 
     // ==================== 兑换计算功能 ====================
@@ -2119,44 +1981,6 @@
         showBeautifulAlert(isChinese ? "兑换失败，请重试" : "Swap failed, please try again", 'error'); 
       }
     };
-
-    // ==================== 流动性功能 ====================
-    document.getElementById("addBtn").onclick = () => {
-      document.getElementById("addModal").style.display = "flex";
-      calculateOptimalRatio();
-      document.getElementById("addBase").value = "";
-      document.getElementById("addQuote").value = "";
-      document.getElementById("confirmAdd").disabled = true;
-      document.getElementById("confirmAdd").innerText = isChinese ? "请输入数量" : "Enter Amount";
-    };
-
-    async function calculateOptimalRatio() {
-      try {
-        if (!pair) {
-          document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = 0 ${quoteToken.symbol}`;
-          currentRatio = 0;
-          return 0;
-        }
-        
-        const [r0, r1] = await pair.getReserves();
-        const t0 = await pair.token0();
-        
-        const reserveBase = t0.toLowerCase() === baseToken.address.toLowerCase() ? r0 : r1;
-        const reserveQuote = t0.toLowerCase() === baseToken.address.toLowerCase() ? r1 : r0;
-        
-        const baseReserve = parseFloat(ethers.utils.formatUnits(reserveBase, baseToken.decimals));
-        const quoteReserve = parseFloat(ethers.utils.formatUnits(reserveQuote, quoteToken.decimals));
-        
-        currentRatio = quoteReserve / baseReserve;
-        document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = ${currentRatio.toFixed(6)} ${quoteToken.symbol}`;
-        return currentRatio;
-      } catch (error) {
-        console.error("比例计算失败:", error);
-        document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = 0 ${quoteToken.symbol}`;
-        currentRatio = 0;
-        return 0;
-      }
-    }
 
     // ==================== 滑点设置 ====================
     document.querySelectorAll(".slip-btn").forEach(b => b.onclick = () => {
