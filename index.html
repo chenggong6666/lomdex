@@ -3,192 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>龙脉DEX</title>
+  <title>龙脉DEX - 多代币交易平台</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    /* 原有样式保持不变，只添加下拉菜单相关样式 */
-    
-    .token-select-container {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .token-select {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: rgba(76, 201, 240, 0.1);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 12px;
-      color: white;
-      cursor: pointer;
-      min-width: 120px;
-      transition: all 0.3s ease;
-    }
-    
-    .token-select:hover {
-      background: rgba(76, 201, 240, 0.2);
-      border-color: var(--web3-accent);
-    }
-    
-    .token-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: var(--web3-card);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 12px;
-      margin-top: 4px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 100;
-      display: none;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    }
-    
-    .token-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid rgba(76, 201, 240, 0.1);
-    }
-    
-    .token-option:last-child {
-      border-bottom: none;
-    }
-    
-    .token-option:hover {
-      background: rgba(76, 201, 240, 0.1);
-    }
-    
-    /* 修复按钮尺寸问题 */
-    .btn {
-      background: var(--web3-card);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 16px;
-      padding: 10px 20px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 120px !important; /* 固定宽度 */
-      height: 44px !important; /* 固定高度 */
-      flex-shrink: 0;
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-    }
-    
-    #langBtn {
-      width: 44px !important;
-      min-width: 44px !important;
-    }
-    
-    .action {
-      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
-      color: #fff;
-      font-weight: 700;
-      padding: 16px;
-      border: none;
-      border-radius: 20px;
-      width: 100%;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 16px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-      position: relative;
-      overflow: hidden;
-      height: 56px !important; /* 固定高度 */
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    
-    .percent-btn {
-      background: rgba(144, 224, 239, 0.1);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 10px;
-      padding: 6px 12px;
-      color: var(--web3-light);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 50px !important; /* 固定宽度 */
-      height: 32px !important; /* 固定高度 */
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    
-    .slip-btn {
-      padding: 6px 10px;
-      background: #334155;
-      border-radius: 12px;
-      font-size: 12px;
-      cursor: pointer;
-      flex: none;
-      text-align: center;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
-      width: 50px !important; /* 固定宽度 */
-    }
-    
-    .tab-btn {
-      flex: 1;
-      padding: 12px 20px;
-      background: transparent;
-      border: none;
-      border-radius: 16px;
-      color: #94a3b8;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 16px;
-      height: 48px !important; /* 固定高度 */
-    }
-    
-    .stake-button {
-      background: linear-gradient(90deg, var(--web3-yellow), #ffb347);
-      color: #0f172a;
-      font-weight: 700;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 16px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
-      height: 48px !important; /* 固定高度 */
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-
-    /* 输入框提示文字样式 */
-    .input-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      min-width: 150px;
-      flex-shrink: 0;
-    }
-    
-    .input-hint {
-      font-size: 12px;
-      color: #64748b;
-      text-align: right;
-      margin-top: 4px;
-    }
-
-    /* 原有样式保持不变 */
+    /* 样式部分与原始代码基本相同，仅对多代币选择器进行了调整 */
     :root {
       --web3-blue: #4361ee;
       --web3-purple: #7209b7;
@@ -204,6 +22,7 @@
     * {
       box-sizing: border-box;
       margin: 0;
+      padding: 0;
     }
     
     body, .app {
@@ -261,6 +80,29 @@
       }
     }
     
+    .btn {
+      background: var(--web3-card);
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      border-radius: 16px;
+      padding: 10px 20px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      width: 120px;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #langBtn {
+      min-width: 40px;
+      width: 40px;
+      flex-shrink: 0;
+    }
+    
     .btn:hover {
       background: rgba(76, 201, 240, 0.2);
       border-color: var(--web3-accent);
@@ -288,6 +130,351 @@
       background: linear-gradient(90deg, transparent, var(--web3-accent), transparent);
     }
     
+    .token-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 12px;
+      transition: background 0.3s;
+    }
+    
+    .token-selector:hover {
+      background: rgba(76, 201, 240, 0.1);
+    }
+    
+    .token-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .token-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .token-symbol {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .token-name {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .token-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 16px 0;
+    }
+    
+    .token-input-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex: 1;
+    }
+    
+    .input {
+      font-size: 28px;
+      background: none;
+      border: none;
+      color: #fff;
+      width: 100%;
+      outline: none;
+      text-align: right;
+      font-weight: 600;
+    }
+    
+    .balance {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    
+    .swap-btn {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
+      border-radius: 50%;
+      margin: -8px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+      transition: all 0.3s ease;
+      border: 2px solid var(--web3-dark);
+    }
+    
+    .swap-btn:hover {
+      transform: rotate(180deg);
+      box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+    }
+    
+    .action {
+      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+      color: #fff;
+      font-weight: 700;
+      padding: 16px;
+      border: none;
+      border-radius: 20px;
+      width: 100%;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .action::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .action:hover::before {
+      left: 100%;
+    }
+    
+    .action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+    }
+    
+    .action:disabled {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .action:disabled::before {
+      display: none;
+    }
+    
+    .percentage-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .percent-btn {
+      background: rgba(144, 224, 239, 0.1);
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: var(--web3-light);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 44px;
+    }
+    
+    .percent-btn:hover {
+      background: var(--web3-yellow);
+      color: #0f172a;
+      border-color: var(--web3-yellow);
+    }
+    
+    .details-panel {
+      background: rgba(76, 201, 240, 0.05);
+      border-radius: 16px;
+      padding: 14px;
+      margin: 12px 0;
+      border: 1px solid rgba(76, 201, 240, 0.2);
+    }
+    
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 14px;
+      color: #e2e8f0;
+    }
+    
+    .detail-item:not(:last-child) {
+      border-bottom: 1px solid rgba(76, 201, 240, 0.2);
+    }
+    
+    .detail-label {
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .detail-value {
+      color: var(--web3-light);
+      font-weight: 600;
+      text-align: right;
+    }
+    
+    .slippage-section {
+      margin-top: 6px;
+      padding-top: 12px;
+    }
+    
+    .slippage-controls {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    
+    .slip-btn {
+      padding: 6px 10px;
+      background: #334155;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      flex: none;
+      text-align: center;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    
+    .slip-btn:hover {
+      border-color: var(--web3-accent);
+    }
+    
+    .slip-btn.active {
+      background: var(--web3-yellow);
+      color: #0f172a;
+      font-weight: 600;
+      border-color: var(--web3-yellow);
+    }
+    
+    .tab-container {
+      margin-bottom: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      background: var(--web3-card);
+      border-radius: 20px;
+      padding: 4px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      color: #94a3b8;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    
+    .tab-btn.active {
+      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+    
+    .modal-card {
+      background: var(--web3-card);
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 420px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .token-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+    
+    .token-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .token-item:hover {
+      background: rgba(76, 201, 240, 0.1);
+    }
+    
+    .token-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+    }
+    
+    .token-item-info {
+      flex: 1;
+    }
+    
+    .token-item-symbol {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .token-item-name {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .token-item-balance {
+      font-weight: 600;
+      color: var(--web3-light);
+    }
+    
     .asset-card {
       background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
       border-radius: 16px;
@@ -296,16 +483,6 @@
       border: 1px solid rgba(76, 201, 240, 0.3);
       position: relative;
       overflow: hidden;
-    }
-    
-    .asset-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--web3-yellow), transparent);
     }
     
     .asset-header {
@@ -362,194 +539,11 @@
       font-size: 13px;
     }
     
-    .token-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      font-weight: bold;
-    }
-    
-    .token-row {
-      display: flex;
-      align-items: center;
-      margin: 8px 0;
-    }
-    
-    .token-info {
-      flex: 1;
-    }
-    
-    .token-name {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--web3-light);
-    }
-    
-    .balance {
-      font-size: 13px;
-      color: #94a3b8;
-    }
-    
-    .input {
-      font-size: 28px;
-      background: none;
-      border: none;
-      color: #fff;
-      width: 100%;
-      outline: none;
-      text-align: right;
-      font-weight: 600;
-    }
-    
-    .swap-btn {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
-      border-radius: 50%;
-      margin: -8px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      cursor: pointer;
-      position: relative;
-      z-index: 2;
-      box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
-      transition: all 0.3s ease;
-      border: 2px solid var(--web3-dark);
-    }
-    
-    .swap-btn:hover {
-      transform: rotate(180deg);
-      box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
-    }
-    
-    .action::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-    
-    .action:hover::before {
-      left: 100%;
-    }
-    
-    .action:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
-    }
-    
-    .action:disabled {
-      background: #475569;
-      color: #94a3b8;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .action:disabled::before {
-      display: none;
-    }
-    
-    .info {
-      font-size: 14px;
-      color: #94a3b8;
-      margin: 6px 0;
-      display: flex;
-      justify-content: space-between;
-    }
-    
-    .details-panel {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 16px;
-      padding: 14px;
-      margin: 12px 0;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      font-size: 14px;
-      color: #e2e8f0;
-    }
-    
-    .detail-item:not(:last-child) {
-      border-bottom: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .detail-label {
-      color: #94a3b8;
-      font-weight: 500;
-    }
-    
-    .detail-value {
-      color: var(--web3-light);
-      font-weight: 600;
-      text-align: right;
-    }
-    
-    .slippage-section {
-      margin-top: 6px;
-      padding-top: 12px;
-    }
-    
-    .slippage-controls {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-    }
-    
-    .slip-btn:hover {
-      border-color: var(--web3-accent);
-    }
-    
-    .slip-btn.active {
-      background: var(--web3-yellow);
-      color: #0f172a;
-      font-weight: 600;
-      border-color: var(--web3-yellow);
-    }
-    
     .footer {
       text-align: center;
       padding: 20px 0;
       color: #64748b;
       font-size: 13px;
-    }
-    
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.95);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      backdrop-filter: blur(5px);
-    }
-    
-    .modal-card {
-      background: var(--web3-card);
-      border-radius: 24px;
-      padding: 24px;
-      width: 90%;
-      max-width: 420px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     
     #loading {
@@ -574,239 +568,21 @@
       color: var(--web3-light);
     }
     
-    .tab-container {
-      margin-bottom: 20px;
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
     }
     
-    .tabs {
-      display: flex;
-      background: var(--web3-card);
-      border-radius: 20px;
-      padding: 4px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     
-    .tab-btn.active {
-      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    .percentage-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-    }
-    
-    .percent-btn:hover {
-      background: var(--web3-yellow);
-      color: #0f172a;
-      border-color: var(--web3-yellow);
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    
-    .stat-item {
-      background: rgba(76, 201, 240, 0.05);
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-      transition: all 0.3s ease;
-    }
-    
-    .stat-item:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-bottom: 8px;
-    }
-    
-    .stat-value {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--web3-light);
-    }
-    
-    .position-item {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    
-    .position-item:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
-    }
-    
-    .position-pair {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    
-    .token-pair {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .token-symbol {
-      background: var(--web3-yellow);
-      color: #0f172a;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
-    .position-value .value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--web3-light);
-    }
-    
-    .position-value .share {
-      font-size: 14px;
-      color: #94a3b8;
-      text-align: right;
-    }
-    
-    .position-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .detail {
-      font-size: 13px;
-      color: #cbd5e1;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .detail span:first-child {
-      color: #94a3b8;
-      display: block;
-      margin-bottom: 6px;
-      font-size: 12px;
-    }
-    
-    .detail span:last-child {
-      font-weight: 600;
-      color: var(--web3-light);
-    }
-    
-    .stake-card {
-      background: linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(114, 9, 183, 0.1));
-      border-radius: 16px;
-      padding: 18px;
-      margin: 16px 0;
-      border: 1px solid rgba(255, 209, 102, 0.3);
-      text-align: center;
-    }
-    
-    .stake-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--web3-yellow);
-      margin-bottom: 10px;
-    }
-    
-    .stake-description {
-      font-size: 14px;
-      color: #94a3b8;
-      margin-bottom: 14px;
-      line-height: 1.5;
-    }
-    
-    .stake-apr {
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--web3-light);
-      margin-bottom: 14px;
-    }
-    
-    .stake-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 209, 102, 0.3);
-    }
-    
-    .risk-warning {
-      background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
-      border: 1px solid rgba(255, 209, 102, 0.3);
-      border-radius: 16px;
-      padding: 18px;
-      margin: 20px 0;
-      text-align: center;
-      font-size: 12px;
-      color: var(--web3-light);
-      line-height: 1.6;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.1);
-    }
-    
-    #securityTips {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--web3-card);
-      border: 2px solid var(--web3-yellow);
-      border-radius: 12px;
-      padding: 16px;
-      max-width: 280px;
-      font-size: 12px;
-      color: var(--web3-light);
-      z-index: 9999;
-      display: none;
-      box-shadow: 0 4px 20px rgba(255, 209, 102, 0.2);
-    }
-    
-    #securityIndicator {
-      position: absolute;
-      top: 52px;
-      right: 18px;
-      background: var(--web3-success);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: bold;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-    }
-    
-    /* 美化提示样式 */
     .beautiful-alert {
       position: fixed;
       top: 0;
@@ -880,29 +656,11 @@
       }
     }
     
-    /* 加载动画样式 */
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-      margin-right: 10px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
     @media (max-width: 400px) {
       .app { max-width: 100%; }
       .token-row { gap: 8px; }
       .input { font-size: 24px; }
       .btn { padding: 8px 16px; }
-      .stats-grid { grid-template-columns: 1fr; }
-      .position-details { grid-template-columns: 1fr; }
       .slip-btn { padding: 6px 12px; font-size: 12px; }
       .detail-item { font-size: 13px; padding: 8px 0; }
       .asset-card { padding: 10px; }
@@ -926,7 +684,7 @@
       </div>
     </div>
 
-    <!-- 兑换页面 - 修改为下拉菜单选择代币 -->
+    <!-- 兑换页面 -->
     <div class="tab-content active" id="swapTab">
       <div class="card">
         <div class="percentage-buttons">
@@ -937,47 +695,35 @@
           <button class="percent-btn" data-percent="1">MAX</button>
         </div>
         
-        <!-- 从代币选择 - 修改为下拉菜单 -->
         <div class="token-row">
-          <div class="token-info">
-            <div class="token-select-container">
-              <div class="token-select" id="fromTokenSelect">
-                <div class="token-icon" id="fromTokenIcon">C</div>
-                <div class="token-name" id="fromTokenName">CFX</div>
-                <span style="font-size:12px">▼</span>
-              </div>
-              <div class="token-dropdown" id="fromTokenDropdown">
-                <!-- 代币选项将通过JavaScript动态生成 -->
-              </div>
+          <div class="token-selector" id="fromTokenSelector">
+            <div class="token-icon" id="fromTokenIcon" style="background: #4361ee;">C</div>
+            <div class="token-info">
+              <div class="token-symbol" id="fromTokenSymbol">CFX</div>
+              <div class="token-name" id="fromTokenName">Conflux</div>
             </div>
-            <div class="balance">余额: <span id="fromBal">0</span></div>
+            <div style="color: var(--web3-light);">▼</div>
           </div>
-          <div class="input-container">
+          <div class="token-input-section">
             <input class="input" id="fromAmount" placeholder="0" type="number">
-            <div class="input-hint">输入数量</div>
+            <div class="balance">余额: <span id="fromBal">0</span></div>
           </div>
         </div>
         
         <div class="swap-btn" id="reverse">⇅</div>
 
-        <!-- 到代币选择 - 修改为下拉菜单 -->
         <div class="token-row">
-          <div class="token-info">
-            <div class="token-select-container">
-              <div class="token-select" id="toTokenSelect">
-                <div class="token-icon" id="toTokenIcon">L</div>
-                <div class="token-name" id="toTokenName">LOM</div>
-                <span style="font-size:12px">▼</span>
-              </div>
-              <div class="token-dropdown" id="toTokenDropdown">
-                <!-- 代币选项将通过JavaScript动态生成 -->
-              </div>
+          <div class="token-selector" id="toTokenSelector">
+            <div class="token-icon" id="toTokenIcon" style="background: #7209b7;">龙</div>
+            <div class="token-info">
+              <div class="token-symbol" id="toTokenSymbol">LOM</div>
+              <div class="token-name" id="toTokenName">龙脉</div>
             </div>
-            <div class="balance">余额: <span id="toBal">0</span></div>
+            <div style="color: var(--web3-light);">▼</div>
           </div>
-          <div class="input-container">
-            <input class="input" id="toAmount" placeholder="0" type="number" style="color:#94a3b8;">
-            <div class="input-hint">获得数量</div>
+          <div class="token-input-section">
+            <div class="input" id="toAmount" style="color:#94a3b8;font-size:28px">0</div>
+            <div class="balance">余额: <span id="toBal">0</span></div>
           </div>
         </div>
 
@@ -985,12 +731,12 @@
         <div class="details-panel">
           <div class="detail-item">
             <span class="detail-label" id="priceLabel">价格</span>
-            <span class="detail-value">1 <span id="fromSymbol">CFX</span> = <span id="price">0</span> <span id="toSymbol">LOM</span></span>
+            <span class="detail-value">1 <span id="priceFromSymbol">CFX</span> = <span id="price">0</span> <span id="priceToSymbol">LOM</span></span>
           </div>
           
           <div class="detail-item">
             <span class="detail-label" id="minReceivedLabel">最低收到</span>
-            <span class="detail-value" id="minReceived">0 <span id="minReceivedSymbol">LOM</span></span>
+            <span class="detail-value" id="minReceived">0</span>
           </div>
           
           <div class="detail-item">
@@ -1031,138 +777,81 @@
         <div style="color:var(--web3-yellow);font-size:14px">✦</div>
       </div>
       <div class="asset-list" id="assetList">
-        <!-- 资产列表将通过JavaScript动态生成 -->
+        <!-- 资产列表会通过JavaScript动态生成 -->
       </div>
     </div>
     
-    <!-- 流动性页面 - 保持原有功能不变 -->
+    <!-- 流动性页面 -->
     <div class="tab-content" id="liquidityTab">
-      <!-- 原有流动性页面内容保持不变 -->
-      <div style="display:flex;gap:12px;margin-bottom:20px">
-        <button class="action" id="addBtn" style="flex:1">添加流动性</button>
-        <button class="action" id="removeBtn" disabled style="flex:1;background:linear-gradient(90deg, #ff4757, #ff6b81)">移除流动性</button>
-      </div>
-      
-      <!-- 质押收益卡片 -->
-      <div class="stake-card">
-        <div class="stake-title">质押LP赚取收益</div>
-        <div class="stake-description">
-          将您的LP代币质押到农场中，赚取额外的奖励代币。年化收益率高达：
-        </div>
-        <div class="stake-apr">APR: 45.8%</div>
-        <a href="https://stake.fatsale.org/?utm_source=tokenpocket#/cfx/0x90117C51DD5e17C4A306fea71B0f260Df057F6e3" target="_blank" class="stake-button">
-          前往质押农场
-        </a>
-      </div>
-      
-      <!-- 流动性统计 -->
       <div class="card">
-        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="liquidityOverviewTitle">流动性概览</h3>
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="liquidityTitle">提供流动性</h3>
         
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-label" id="myShareLabel">我的流动性份额</div>
-            <div class="stat-value" id="myLiquidityShare">0%</div>
+        <div class="token-row">
+          <div class="token-selector" id="liquidityTokenASelector">
+            <div class="token-icon" id="liquidityTokenAIcon" style="background: #4361ee;">C</div>
+            <div class="token-info">
+              <div class="token-symbol" id="liquidityTokenASymbol">CFX</div>
+              <div class="token-name" id="liquidityTokenAName">Conflux</div>
+            </div>
+            <div style="color: var(--web3-light);">▼</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-label" id="totalLiquidityLabel">池子总流动性</div>
-            <div class="stat-value" id="totalLiquidity">$0</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-label" id="volumeLabel">24h交易量</div>
-            <div class="stat-value" id="dailyVolume">$0</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-label" id="aprLabel">APR</div>
-            <div class="stat-value" id="poolAPR">0%</div>
+          <div class="token-input-section">
+            <input class="input" id="liquidityTokenAAmount" placeholder="0" type="number">
+            <div class="balance">余额: <span id="liquidityTokenABalance">0</span></div>
           </div>
         </div>
-      </div>
-
-      <!-- 我的流动性 -->
-      <div class="card">
-        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="myPositionsTitle">我的流动性份额</h3>
         
+        <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
+        
+        <div class="token-row">
+          <div class="token-selector" id="liquidityTokenBSelector">
+            <div class="token-icon" id="liquidityTokenBIcon" style="background: #7209b7;">龙</div>
+            <div class="token-info">
+              <div class="token-symbol" id="liquidityTokenBSymbol">LOM</div>
+              <div class="token-name" id="liquidityTokenBName">龙脉</div>
+            </div>
+            <div style="color: var(--web3-light);">▼</div>
+          </div>
+          <div class="token-input-section">
+            <input class="input" id="liquidityTokenBAmount" placeholder="0" type="number">
+            <div class="balance">余额: <span id="liquidityTokenBBalance">0</span></div>
+          </div>
+        </div>
+        
+        <div class="info" id="ratioLabel">比例: <span id="liquidityRatio">1 CFX = 0 LOM</span></div>
+        
+        <button class="action" id="addLiquidityBtn" disabled>提供流动性</button>
+      </div>
+      
+      <div class="card">
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="myLiquidityTitle">我的流动性</h3>
         <div id="liquidityPositions">
-          <div class="position-item">
-            <div class="position-pair">
-              <div class="token-pair">
-                <span class="token-symbol">CFX</span>
-                <span class="token-symbol">LOM</span>
-              </div>
-              <div class="position-value">
-                <div class="value">$<span id="positionValue">0</span></div>
-                <div class="share"><span id="positionShare">0</span>% 份额</div>
-              </div>
-            </div>
-            <div class="position-details">
-              <div class="detail">
-                <span id="cfxAmountLabel">CFX数量:</span>
-                <span id="positionCfx">0</span>
-              </div>
-              <div class="detail">
-                <span id="lomAmountLabel">LOM数量:</span>
-                <span id="positionLom">0</span>
-              </div>
-              <div class="detail">
-                <span id="feesLabel">未收取费用:</span>
-                <span id="unclaimedFees">$0</span>
-              </div>
-            </div>
-          </div>
+          <!-- 流动性头寸会通过JavaScript动态生成 -->
         </div>
       </div>
     </div>
 
-    <!-- 模态框保持不变 -->
-    <div class="modal" id="addModal">
-      <!-- 添加流动性模态框内容保持不变 -->
-    </div>
-
-    <div class="modal" id="removeModal">
-      <!-- 移除流动性模态框内容保持不变 -->
-    </div>
-
-    <!-- 等待提示 -->
-    <div id="loading" style="display:none">
-      <div id="loadingText">等待区块链确认中</div>
-    </div>
-
-    <!-- 安全提示浮层 -->
-    <div id="securityTips">
-      <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-        <span>🔒</span> 安全提示
-      </div>
-      <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
-      <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
-      <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
-      <button onclick="document.getElementById('securityTips').style.display='none'" style="
-        background: transparent;
-        border: 1px solid var(--web3-yellow);
-        color: var(--web3-yellow);
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 11px;
-        width: 100%;
-      ">知道了</button>
-    </div>
-
-    <!-- 风险提示 -->
-    <div class="risk-warning">
-      <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-        <span>⚠️</span>
-        <span id="riskTitle">风险提示</span>
-      </div>
-      <div id="riskText" style="opacity: 0.9;">
-        本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
-      </div>
-    </div>
-    <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
 
+  <!-- 代币选择模态框 -->
+  <div class="modal" id="tokenModal">
+    <div class="modal-card">
+      <h3 style="margin:0 0 20px;color:var(--web3-light)" id="selectTokenTitle">选择代币</h3>
+      <div class="token-list" id="tokenList">
+        <!-- 代币列表会通过JavaScript动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 等待提示 -->
+  <div id="loading" style="display:none">
+    <div id="loadingText">等待区块链确认中</div>
+  </div>
+
+  <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
+
   <script>
-    // ==================== 代币配置 ====================
+    // 代币配置
     const TOKENS = [
       {
         name: "CFX",
@@ -1206,38 +895,29 @@
       }
     ];
 
-    // ==================== 合约配置 - 保持原有配置 ====================
+    // 路由合约地址
     const ROUTER = "0x62b0873055bf896dd869e172119871ac24aea305";
-    const LOM = "0xb4ca1cb2651a822bf65c614c880a26fd124932a3";
-    const WCFX = "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b";
-    const PAIR = "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85";
+    const FACTORY = "0xE2a6F7c0ce4d5d300F97aA7E125455f5cd3342F5";
 
-    let provider, signer, account, router, pair, lom;
-    let tokenContracts = {};
-    let isCfxToLom = true; // 保持原有逻辑
-    let slippage = 0.5;
-    let isChinese = true;
-    let currentRatio = 0;
-
-    // 当前选择的代币
-    let selectedFromToken = TOKENS[0]; // CFX
-    let selectedToToken = TOKENS[1];   // LOM
-
-    // ==================== 保持原有合约ABI ====================
+    // 合约ABI
     const ROUTER_ABI = [
       "function getAmountsOut(uint amountIn, address[] path) view returns (uint[] memory amounts)",
       "function swapExactETHForTokensSupportingFeeOnTransferTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) payable",
       "function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
       "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
       "function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) payable returns (uint amountToken, uint amountETH, uint liquidity)",
+      "function addLiquidity(address tokenA, address tokenB, uint amountADesired, uint amountBDesired, uint amountAMin, uint amountBMin, address to, uint deadline) returns (uint amountA, uint amountB, uint liquidity)",
       "function removeLiquidityETHSupportingFeeOnTransferTokens(address token, uint liquidity, uint amountTokenMin, uint amountETHMin, address to, uint deadline) returns (uint amountETH)",
+      "function removeLiquidity(address tokenA, address tokenB, uint liquidity, uint amountAMin, uint amountBMin, address to, uint deadline) returns (uint amountA, uint amountB)",
       "function factory() view returns (address)"
     ];
     
     const ERC20_ABI = [
       "function approve(address spender, uint256 amount) returns (bool)",
       "function allowance(address owner, address spender) view returns (uint256)",
-      "function balanceOf(address owner) view returns (uint256)"
+      "function balanceOf(address owner) view returns (uint256)",
+      "function decimals() view returns (uint8)",
+      "function symbol() view returns (string)"
     ];
     
     const PAIR_ABI = [
@@ -1248,256 +928,38 @@
       "function token1() view returns (address)"
     ];
 
-    // ==================== 初始化函数 ====================
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeApp();
-    });
+    const FACTORY_ABI = [
+      "function getPair(address tokenA, address tokenB) view returns (address pair)"
+    ];
 
-    function initializeApp() {
+    // 全局变量
+    let provider, signer, account, router, factory;
+    let currentFromToken = TOKENS[0]; // CFX
+    let currentToToken = TOKENS[1];   // LOM
+    let currentLiquidityTokenA = TOKENS[0]; // CFX
+    let currentLiquidityTokenB = TOKENS[1]; // LOM
+    let slippage = 0.5;
+    let isChinese = true;
+    let tokenContracts = {};
+    let pairContracts = {};
+
+    // 初始化函数
+    function init() {
       setupTabs();
       setupPercentageButtons();
-      setupTokenDropdowns(); // 新增：设置代币下拉菜单
+      setupTokenSelectors();
       setupSlippageControls();
       updateAllTexts();
-      initializeSecurity();
-      initializeSwapButton();
       
-      // 初始化资产列表
-      updateAssetList();
-    }
-
-    // ==================== 新增：代币下拉菜单功能 ====================
-    function setupTokenDropdowns() {
-      // 初始化下拉菜单内容
-      renderTokenDropdown('from');
-      renderTokenDropdown('to');
-      
-      // 绑定点击事件
-      document.getElementById('fromTokenSelect').addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleDropdown('from');
-      });
-      
-      document.getElementById('toTokenSelect').addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleDropdown('to');
-      });
-      
-      // 点击页面其他区域关闭下拉菜单
-      document.addEventListener('click', function() {
-        closeAllDropdowns();
-      });
-    }
-
-    function renderTokenDropdown(type) {
-      const dropdown = document.getElementById(`${type}TokenDropdown`);
-      dropdown.innerHTML = '';
-      
+      // 初始化代币合约对象
       TOKENS.forEach(token => {
-        // 不显示当前已选择的代币
-        if ((type === 'from' && token.address === selectedFromToken.address) ||
-            (type === 'to' && token.address === selectedToToken.address)) {
-          return;
+        if (token.address) {
+          tokenContracts[token.address] = null;
         }
-        
-        const option = document.createElement('div');
-        option.className = 'token-option';
-        option.innerHTML = `
-          <div class="token-icon" style="background: ${token.color}">${token.icon}</div>
-          <div class="token-name">${token.symbol}</div>
-        `;
-        
-        option.addEventListener('click', function(e) {
-          e.stopPropagation();
-          selectToken(type, token);
-        });
-        
-        dropdown.appendChild(option);
       });
     }
 
-    function toggleDropdown(type) {
-      const dropdown = document.getElementById(`${type}TokenDropdown`);
-      const isOpen = dropdown.style.display === 'block';
-      
-      // 先关闭所有下拉菜单
-      closeAllDropdowns();
-      
-      // 如果当前是关闭状态，则打开
-      if (!isOpen) {
-        dropdown.style.display = 'block';
-      }
-    }
-
-    function closeAllDropdowns() {
-      document.getElementById('fromTokenDropdown').style.display = 'none';
-      document.getElementById('toTokenDropdown').style.display = 'none';
-    }
-
-    function selectToken(type, token) {
-      // 检查是否选择了相同的代币
-      if (type === 'from' && token.address === selectedToToken.address) {
-        // 如果选择了相同的代币，自动交换
-        selectedToToken = selectedFromToken;
-        updateTokenDisplay('to');
-      } else if (type === 'to' && token.address === selectedFromToken.address) {
-        // 如果选择了相同的代币，自动交换
-        selectedFromToken = selectedToToken;
-        updateTokenDisplay('from');
-      }
-
-      if (type === 'from') {
-        selectedFromToken = token;
-        updateTokenDisplay('from');
-      } else {
-        selectedToToken = token;
-        updateTokenDisplay('to');
-      }
-      
-      // 选择后自动关闭下拉菜单
-      closeAllDropdowns();
-      updateBalances();
-      updateOutput();
-      updateRouteInfo();
-    }
-
-    function updateTokenDisplay(type) {
-      const token = type === 'from' ? selectedFromToken : selectedToToken;
-      const iconElement = document.getElementById(`${type}TokenIcon`);
-      const nameElement = document.getElementById(`${type}TokenName`);
-      
-      iconElement.textContent = token.icon;
-      iconElement.style.background = token.color;
-      nameElement.textContent = token.symbol;
-      
-      // 更新符号显示
-      if (type === 'from') {
-        document.getElementById('fromSymbol').textContent = token.symbol;
-      } else {
-        document.getElementById('toSymbol').textContent = token.symbol;
-        document.getElementById('minReceivedSymbol').textContent = token.symbol;
-      }
-    }
-
-    // ==================== 新增：资产列表更新 ====================
-    function updateAssetList() {
-      const assetList = document.getElementById('assetList');
-      assetList.innerHTML = '';
-      
-      TOKENS.forEach(token => {
-        const assetItem = document.createElement('div');
-        assetItem.className = 'asset-item';
-        assetItem.innerHTML = `
-          <div class="asset-name">
-            <div class="token-icon" style="background: ${token.color}">${token.icon}</div>
-            <span>${token.symbol}</span>
-          </div>
-          <div class="asset-balance" id="assetBalance-${token.address}">0.000000</div>
-        `;
-        assetList.appendChild(assetItem);
-      });
-    }
-
-    // ==================== 新增：路由信息更新 ====================
-    function updateRouteInfo() {
-      const routeInfo = document.getElementById('routeInfo');
-      routeInfo.textContent = `${selectedFromToken.symbol} → ${selectedToToken.symbol}`;
-    }
-
-    // ==================== 修改：余额更新 - 支持多代币 ====================
-    async function updateBalances() {
-      if (!account) return;
-      
-      try {
-        // 更新所有代币余额
-        for (const token of TOKENS) {
-          let balance;
-          if (token.symbol === "CFX") {
-            balance = await provider.getBalance(account);
-          } else if (tokenContracts[token.address]) {
-            balance = await tokenContracts[token.address].balanceOf(account);
-          }
-          
-          if (balance) {
-            const formattedBalance = token.symbol === "CFX" 
-              ? ethers.utils.formatEther(balance)
-              : ethers.utils.formatUnits(balance, token.decimals);
-            
-            // 更新资产列表中的余额
-            const assetBalanceElement = document.getElementById(`assetBalance-${token.address}`);
-            if (assetBalanceElement) {
-              assetBalanceElement.textContent = parseFloat(formattedBalance).toFixed(6);
-            }
-            
-            // 更新兑换页面中的余额
-            if (token.address === selectedFromToken.address) {
-              document.getElementById("fromBal").textContent = parseFloat(formattedBalance).toFixed(6);
-            }
-            if (token.address === selectedToToken.address) {
-              document.getElementById("toBal").textContent = parseFloat(formattedBalance).toFixed(6);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("更新余额失败:", error);
-      }
-    }
-
-    // ==================== 修改：输出更新 - 支持多代币 ====================
-    async function updateOutput() {
-      const amt = document.getElementById("fromAmount").value;
-      if (!amt || !router) { 
-        document.getElementById("toAmount").value = "0";
-        initializeSwapButton();
-        return; 
-      }
-      
-      try {
-        const amountIn = selectedFromToken.symbol === "CFX" 
-          ? ethers.utils.parseEther(amt)
-          : ethers.utils.parseUnits(amt, selectedFromToken.decimals);
-        
-        // 构建路径 - 保持原有逻辑，所有代币通过CFX/LOM池路由
-        let path = [];
-        if (selectedFromToken.symbol === "CFX") {
-          path = [WCFX, selectedToToken.address];
-        } else if (selectedToToken.symbol === "CFX") {
-          path = [selectedFromToken.address, WCFX];
-        } else {
-          // 代币间兑换通过CFX中转
-          path = [selectedFromToken.address, WCFX, selectedToToken.address];
-        }
-        
-        const amounts = await router.getAmountsOut(amountIn, path);
-        const out = selectedToToken.symbol === "CFX" 
-          ? ethers.utils.formatEther(amounts[1])
-          : ethers.utils.formatUnits(amounts[amounts.length - 1], selectedToToken.decimals);
-        
-        document.getElementById("toAmount").value = parseFloat(out).toFixed(6);
-        
-        // 计算最低收到数量
-        const minOut = amounts[amounts.length - 1].mul(Math.floor((1000 - slippage*10))).div(1000);
-        const minOutFormatted = selectedToToken.symbol === "CFX"
-          ? ethers.utils.formatEther(minOut)
-          : ethers.utils.formatUnits(minOut, selectedToToken.decimals);
-        
-        document.getElementById("minReceived").innerText = parseFloat(minOutFormatted).toFixed(6) + " " + selectedToToken.symbol;
-        
-        // 计算价格
-        const price = parseFloat(out) / parseFloat(amt);
-        document.getElementById("price").textContent = price.toFixed(6);
-        
-        document.getElementById("swapBtn").disabled = false;
-        document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
-      } catch { 
-        document.getElementById("toAmount").value = "0";
-        initializeSwapButton();
-      }
-    }
-
-    // ==================== 保持原有功能不变 ====================
-    // 这里保留您原有代码中的所有功能函数，只修改上面提到的部分
-
+    // 选项卡功能
     function setupTabs() {
       const tabBtns = document.querySelectorAll('.tab-btn');
       const tabContents = document.querySelectorAll('.tab-content');
@@ -1511,10 +973,16 @@
           
           btn.classList.add('active');
           document.getElementById(tabId + 'Tab').classList.add('active');
+          
+          // 切换到流动性页面时刷新流动性数据
+          if (tabId === 'liquidity' && account) {
+            refreshLiquidityData();
+          }
         });
       });
     }
 
+    // 百分比按钮功能
     function setupPercentageButtons() {
       document.querySelectorAll('.percent-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1525,30 +993,25 @@
     }
 
     function handlePercentageClick(percent, button) {
-      let balance;
-      
-      if (selectedFromToken.symbol === "CFX") {
-        balance = parseFloat(document.getElementById("fromBal").innerText);
-      } else {
-        balance = parseFloat(document.getElementById("fromBal").innerText);
-      }
+      const balanceElement = document.getElementById("fromBal");
+      const balance = parseFloat(balanceElement.innerText);
       
       if (balance > 0) {
         let amount;
         
         if (percent === 1) {
-          if (selectedFromToken.symbol === 'CFX') {
+          // 对于CFX，保留少量作为gas费
+          if (currentFromToken.symbol === 'CFX') {
             amount = Math.max(0, balance - 0.1);
           } else {
-            amount = balance * 0.99;
+            amount = balance * 0.99; // 其他代币保留1%
           }
         } else {
           amount = balance * percent;
         }
         
         if (amount > 0) {
-          const decimals = 6;
-          document.getElementById("fromAmount").value = amount.toFixed(decimals);
+          document.getElementById("fromAmount").value = amount.toFixed(6);
           updateOutput();
           
           // 视觉反馈
@@ -1559,33 +1022,147 @@
             button.style.color = 'var(--web3-light)';
           }, 300);
         } else {
-          showBeautifulAlert(isChinese ? "确认全部添加" : "Insufficient balance", 'warning');
+          showBeautifulAlert(isChinese ? "余额不足" : "Insufficient balance", 'warning');
         }
       } else {
-        showBeautifulAlert(isChinese ? "余额不足" : "Balance is zero", 'info');
+        showBeautifulAlert(isChinese ? "余额为0" : "Balance is zero", 'info');
       }
     }
 
-    function setupSlippageControls() {
-      document.querySelectorAll(".slip-btn").forEach(b => b.addEventListener('click', () => {
-        document.querySelectorAll(".slip-btn").forEach(x => x.classList.remove("active"));
-        b.classList.add("active");
-        slippage = parseFloat(b.dataset.slip);
-        updateOutput();
-      }));
-    }
-
-    function initializeSwapButton() {
-      const fromAmount = document.getElementById("fromAmount").value;
-      const swapBtn = document.getElementById("swapBtn");
+    // 代币选择器设置
+    function setupTokenSelectors() {
+      // 兑换页面代币选择器
+      document.getElementById('fromTokenSelector').addEventListener('click', () => {
+        openTokenModal('from');
+      });
       
-      if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
-        swapBtn.disabled = true;
-        swapBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
-      } else {
-        swapBtn.disabled = false;
-        swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
+      document.getElementById('toTokenSelector').addEventListener('click', () => {
+        openTokenModal('to');
+      });
+      
+      // 流动性页面代币选择器
+      document.getElementById('liquidityTokenASelector').addEventListener('click', () => {
+        openTokenModal('liquidityA');
+      });
+      
+      document.getElementById('liquidityTokenBSelector').addEventListener('click', () => {
+        openTokenModal('liquidityB');
+      });
+      
+      // 反向按钮
+      document.getElementById('reverse').addEventListener('click', () => {
+        // 交换代币
+        [currentFromToken, currentToToken] = [currentToToken, currentFromToken];
+        updateTokenSelectors();
+        updateOutput();
+      });
+    }
+
+    // 打开代币选择模态框
+    function openTokenModal(context) {
+      const modal = document.getElementById('tokenModal');
+      const tokenList = document.getElementById('tokenList');
+      const title = document.getElementById('selectTokenTitle');
+      
+      title.innerText = isChinese ? '选择代币' : 'Select Token';
+      tokenList.innerHTML = '';
+      
+      // 生成代币列表
+      TOKENS.forEach(token => {
+        const tokenItem = document.createElement('div');
+        tokenItem.className = 'token-item';
+        tokenItem.innerHTML = `
+          <div class="token-item-icon" style="background: ${token.color}">${token.icon}</div>
+          <div class="token-item-info">
+            <div class="token-item-symbol">${token.symbol}</div>
+            <div class="token-item-name">${token.name}</div>
+          </div>
+          <div class="token-item-balance" id="modalBalance_${token.symbol}">0</div>
+        `;
+        
+        tokenItem.addEventListener('click', () => {
+          selectToken(token, context);
+          modal.style.display = 'none';
+        });
+        
+        tokenList.appendChild(tokenItem);
+        
+        // 更新余额显示
+        if (account && tokenContracts[token.address]) {
+          updateTokenBalanceInModal(token);
+        }
+      });
+      
+      modal.style.display = 'flex';
+    }
+
+    // 选择代币
+    function selectToken(token, context) {
+      switch(context) {
+        case 'from':
+          currentFromToken = token;
+          break;
+        case 'to':
+          currentToToken = token;
+          break;
+        case 'liquidityA':
+          currentLiquidityTokenA = token;
+          break;
+        case 'liquidityB':
+          currentLiquidityTokenB = token;
+          break;
       }
+      
+      updateTokenSelectors();
+      updateOutput();
+      updateLiquidityInputs();
+    }
+
+    // 更新代币选择器显示
+    function updateTokenSelectors() {
+      // 兑换页面
+      document.getElementById('fromTokenIcon').innerText = currentFromToken.icon;
+      document.getElementById('fromTokenIcon').style.background = currentFromToken.color;
+      document.getElementById('fromTokenSymbol').innerText = currentFromToken.symbol;
+      document.getElementById('fromTokenName').innerText = currentFromToken.name;
+      
+      document.getElementById('toTokenIcon').innerText = currentToToken.icon;
+      document.getElementById('toTokenIcon').style.background = currentToToken.color;
+      document.getElementById('toTokenSymbol').innerText = currentToToken.symbol;
+      document.getElementById('toTokenName').innerText = currentToToken.name;
+      
+      // 流动性页面
+      document.getElementById('liquidityTokenAIcon').innerText = currentLiquidityTokenA.icon;
+      document.getElementById('liquidityTokenAIcon').style.background = currentLiquidityTokenA.color;
+      document.getElementById('liquidityTokenASymbol').innerText = currentLiquidityTokenA.symbol;
+      document.getElementById('liquidityTokenAName').innerText = currentLiquidityTokenA.name;
+      
+      document.getElementById('liquidityTokenBIcon').innerText = currentLiquidityTokenB.icon;
+      document.getElementById('liquidityTokenBIcon').style.background = currentLiquidityTokenB.color;
+      document.getElementById('liquidityTokenBSymbol').innerText = currentLiquidityTokenB.symbol;
+      document.getElementById('liquidityTokenBName').innerText = currentLiquidityTokenB.name;
+      
+      // 更新价格显示
+      document.getElementById('priceFromSymbol').innerText = currentFromToken.symbol;
+      document.getElementById('priceToSymbol').innerText = currentToToken.symbol;
+      
+      // 更新路由信息
+      document.getElementById('routeInfo').innerText = `${currentFromToken.symbol} → ${currentToToken.symbol}`;
+      
+      // 更新流动性比例
+      document.getElementById('liquidityRatio').innerText = `1 ${currentLiquidityTokenA.symbol} = 0 ${currentLiquidityTokenB.symbol}`;
+    }
+
+    // 滑点控制
+    function setupSlippageControls() {
+      document.querySelectorAll('.slip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.slip-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          slippage = parseFloat(btn.dataset.slip);
+          updateOutput();
+        });
+      });
     }
 
     // 语言切换
@@ -1593,7 +1170,6 @@
       isChinese = !isChinese;
       document.getElementById("langBtn").innerText = isChinese ? "EN" : "CN";
       updateAllTexts();
-      initializeSwapButton();
     };
 
     function updateAllTexts() {
@@ -1619,40 +1195,20 @@
       document.getElementById("routeLabel").innerText = isChinese ? "路由" : "Route";
       
       // 流动性页面
-      document.getElementById("addBtn").innerText = isChinese ? "添加流动性" : "Add Liquidity";
-      document.getElementById("removeBtn").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
-      document.getElementById("liquidityOverviewTitle").innerText = isChinese ? "流动性概览" : "Liquidity Overview";
-      document.getElementById("myPositionsTitle").innerText = isChinese ? "我的流动性头寸" : "My Liquidity Positions";
-      document.getElementById("myShareLabel").innerText = isChinese ? "我的流动性份额" : "My Share";
-      document.getElementById("totalLiquidityLabel").innerText = isChinese ? "池子总流动性" : "Total Liquidity";
-      document.getElementById("volumeLabel").innerText = isChinese ? "24h交易量" : "24h Volume";
-      document.getElementById("aprLabel").innerText = isChinese ? "APR" : "APR";
-      document.getElementById("cfxAmountLabel").innerText = isChinese ? "CFX数量:" : "CFX Amount:";
-      document.getElementById("lomAmountLabel").innerText = isChinese ? "LOM数量:" : "LOM Amount:";
-      document.getElementById("feesLabel").innerText = isChinese ? "未收取费用:" : "Unclaimed Fees:";
+      document.getElementById("liquidityTitle").innerText = isChinese ? "提供流动性" : "Provide Liquidity";
+      document.getElementById("myLiquidityTitle").innerText = isChinese ? "我的流动性" : "My Liquidity";
+      document.getElementById("addLiquidityBtn").innerText = isChinese ? "提供流动性" : "Provide Liquidity";
+      document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='liquidityRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='liquidityRatio'>1 CFX = 0 LOM</span>";
       
       // 模态框
-      document.getElementById("addTitle").innerText = isChinese ? "添加流动性" : "Add Liquidity";
-      document.getElementById("removeTitle").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
-      document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
-      document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
-      document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
-      document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
+      document.getElementById("selectTokenTitle").innerText = isChinese ? "选择代币" : "Select Token";
       
       // 加载提示
       document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
       document.getElementById("footerText").innerText = isChinese ? "龙脉 DEX · Conflux eSpace" : "龙脉 DEX · Conflux eSpace";
-      
-      // 风险提示
-      document.getElementById("riskTitle").innerText = isChinese ? "风险提示" : "Risk Warning";
-      document.getElementById("riskText").innerText = isChinese ? 
-        "本应用仅作为学习交流，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎请理性对待数字资产交易。" :
-        "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
-      
-      initializeSwapButton();
     }
 
-    // 钱包连接 - 保持原有功能
+    // 钱包连接
     document.getElementById("walletBtn").onclick = async () => {
       if (!window.ethereum) {
         showBeautifulAlert(isChinese ? "请使用 Fluent / TokenPocket / OKX 钱包打开" : "Please use Fluent / TokenPocket / OKX wallet", 'info');
@@ -1665,15 +1221,14 @@
         signer = provider.getSigner();
         account = await signer.getAddress();
         router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
-        pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
-        lom = new ethers.Contract(LOM, ERC20_ABI, signer);
+        factory = new ethers.Contract(FACTORY, FACTORY_ABI, provider);
 
         // 初始化代币合约
-        TOKENS.forEach(token => {
+        for (const token of TOKENS) {
           if (token.address) {
-            tokenContracts[token.address] = new ethers.Contract(token.address, ERC20_ABI, provider);
+            tokenContracts[token.address] = new ethers.Contract(token.address, ERC20_ABI, signer);
           }
-        });
+        }
 
         document.getElementById("walletBtn").innerText = account.slice(0,6)+"..."+account.slice(-4);
         await refreshAll();
@@ -1683,85 +1238,168 @@
       }
     };
 
-    // 刷新数据 - 保持原有功能
+    // 刷新所有数据
     async function refreshAll() {
       if (!account) return;
       
       try {
-        await updateBalances();
-        await updateLiquidityData();
+        await refreshBalances();
+        await refreshTokenBalancesInModal();
         updateOutput();
+        
+        // 如果在流动性页面，刷新流动性数据
+        if (document.getElementById('liquidityTab').classList.contains('active')) {
+          await refreshLiquidityData();
+        }
       } catch (error) {
         console.error("刷新数据失败:", error);
       }
     }
 
-    // 流动性数据更新 - 保持原有功能
-    async function updateLiquidityData() {
-      try {
-        if (!account || !pair) return;
-
-        const lpBal = await pair.balanceOf(account);
-        const totalSupply = await pair.totalSupply();
+    // 刷新余额
+    async function refreshBalances() {
+      // 更新资产列表
+      const assetList = document.getElementById('assetList');
+      assetList.innerHTML = '';
+      
+      for (const token of TOKENS) {
+        let balance;
         
-        // 计算真实份额
-        const share = totalSupply.isZero() ? 0 : (lpBal.mul(10000).div(totalSupply)/100).toFixed(2);
-        document.getElementById("myLiquidityShare").innerText = share + "%";
-        document.getElementById("positionShare").innerText = share;
+        if (token.symbol === 'CFX') {
+          // CFX余额
+          const cfxBalance = await provider.getBalance(account);
+          balance = parseFloat(ethers.utils.formatEther(cfxBalance)).toFixed(6);
+        } else if (tokenContracts[token.address]) {
+          // 其他代币余额
+          const tokenBalance = await tokenContracts[token.address].balanceOf(account);
+          balance = parseFloat(ethers.utils.formatUnits(tokenBalance, token.decimals)).toFixed(6);
+        } else {
+          balance = '0.000000';
+        }
         
-        // 获取池子真实储备
-        const [r0, r1] = await pair.getReserves();
-        const t0 = await pair.token0();
-        const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
-        const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+        // 添加到资产列表
+        const assetItem = document.createElement('div');
+        assetItem.className = 'asset-item';
+        assetItem.innerHTML = `
+          <div class="asset-name">
+            <div class="token-icon" style="background: ${token.color}">${token.icon}</div>
+            <span>${token.symbol}</span>
+          </div>
+          <div class="asset-balance" id="assetBalance_${token.symbol}">${balance}</div>
+        `;
+        assetList.appendChild(assetItem);
         
-        const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-        const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+        // 更新兑换页面的余额显示
+        if (token.symbol === currentFromToken.symbol) {
+          document.getElementById('fromBal').innerText = balance;
+        }
         
-        // 计算用户真实头寸价值
-        const userCfx = cfxReserve * (parseFloat(share) / 100);
-        const userLom = lomReserve * (parseFloat(share) / 100);
-        const positionValue = (userCfx * 0.1) + (userLom * 0.01);
+        if (token.symbol === currentToToken.symbol) {
+          document.getElementById('toBal').innerText = balance;
+        }
         
-        document.getElementById("positionValue").innerText = positionValue.toFixed(2);
-        document.getElementById("positionCfx").innerText = userCfx.toFixed(6);
-        document.getElementById("positionLom").innerText = userLom.toFixed(6);
-
-        // 更新其他真实数据
-        const totalLiquidity = (cfxReserve * 0.1) + (lomReserve * 0.01);
-        document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
-        document.getElementById("dailyVolume").innerText = "$" + (totalLiquidity * 0.1).toFixed(2);
-        document.getElementById("poolAPR").innerText = (totalLiquidity > 0 ? "12.5%" : "0%");
+        // 更新流动性页面的余额显示
+        if (token.symbol === currentLiquidityTokenA.symbol) {
+          document.getElementById('liquidityTokenABalance').innerText = balance;
+        }
         
-        // 更新移除按钮状态
-        document.getElementById("removeBtn").disabled = lpBal.isZero();
-        
-      } catch (error) {
-        console.error("更新流动性数据失败:", error);
+        if (token.symbol === currentLiquidityTokenB.symbol) {
+          document.getElementById('liquidityTokenBBalance').innerText = balance;
+        }
       }
     }
 
-    // 反向按钮 - 修改为支持多代币
-    document.getElementById("reverse").onclick = () => {
-      // 交换选择的代币
-      const temp = selectedFromToken;
-      selectedFromToken = selectedToToken;
-      selectedToToken = temp;
+    // 更新模态框中的代币余额
+    async function refreshTokenBalancesInModal() {
+      for (const token of TOKENS) {
+        const balanceElement = document.getElementById(`modalBalance_${token.symbol}`);
+        if (balanceElement) {
+          let balance;
+          
+          if (token.symbol === 'CFX') {
+            const cfxBalance = await provider.getBalance(account);
+            balance = parseFloat(ethers.utils.formatEther(cfxBalance)).toFixed(6);
+          } else if (tokenContracts[token.address]) {
+            const tokenBalance = await tokenContracts[token.address].balanceOf(account);
+            balance = parseFloat(ethers.utils.formatUnits(tokenBalance, token.decimals)).toFixed(6);
+          } else {
+            balance = '0.000000';
+          }
+          
+          balanceElement.innerText = balance;
+        }
+      }
+    }
+
+    // 更新代币在模态框中的余额
+    async function updateTokenBalanceInModal(token) {
+      const balanceElement = document.getElementById(`modalBalance_${token.symbol}`);
+      if (balanceElement) {
+        let balance;
+        
+        if (token.symbol === 'CFX') {
+          const cfxBalance = await provider.getBalance(account);
+          balance = parseFloat(ethers.utils.formatEther(cfxBalance)).toFixed(6);
+        } else {
+          const tokenBalance = await tokenContracts[token.address].balanceOf(account);
+          balance = parseFloat(ethers.utils.formatUnits(tokenBalance, token.decimals)).toFixed(6);
+        }
+        
+        balanceElement.innerText = balance;
+      }
+    }
+
+    // 更新兑换输出
+    async function updateOutput() {
+      const amt = document.getElementById("fromAmount").value;
+      if (!amt || !router || currentFromToken.symbol === currentToToken.symbol) { 
+        document.getElementById("toAmount").innerText = "0";
+        updateSwapButton();
+        return; 
+      }
       
-      updateTokenDisplay('from');
-      updateTokenDisplay('to');
-      updateBalances();
-      updateOutput();
-      updateRouteInfo();
-    };
+      try {
+        const amountIn = ethers.utils.parseUnits(amt, currentFromToken.decimals);
+        const path = [
+          currentFromToken.address === TOKENS[0].address ? TOKENS[0].address : currentFromToken.address,
+          currentToToken.address === TOKENS[0].address ? TOKENS[0].address : currentToToken.address
+        ];
+        
+        const amounts = await router.getAmountsOut(amountIn, path);
+        const out = ethers.utils.formatUnits(amounts[1], currentToToken.decimals);
+        document.getElementById("toAmount").innerText = parseFloat(out).toFixed(6);
+        
+        // 计算价格
+        const price = parseFloat(out) / parseFloat(amt);
+        document.getElementById("price").innerText = price.toFixed(6);
+        
+        // 计算最低收到数量
+        const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+        document.getElementById("minReceived").innerText = parseFloat(ethers.utils.formatUnits(minOut, currentToToken.decimals)).toFixed(6) + " " + currentToToken.symbol;
+        
+        updateSwapButton();
+      } catch { 
+        document.getElementById("toAmount").innerText = "--";
+        document.getElementById("price").innerText = "0";
+        updateSwapButton();
+      }
+    }
 
-    // 输入监听 - 保持原有功能
-    document.getElementById("fromAmount").addEventListener('input', () => {
-      updateOutput();
-      initializeSwapButton();
-    });
+    // 更新兑换按钮状态
+    function updateSwapButton() {
+      const amt = document.getElementById("fromAmount").value;
+      const swapBtn = document.getElementById("swapBtn");
+      
+      if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0 || currentFromToken.symbol === currentToToken.symbol) {
+        swapBtn.disabled = true;
+        swapBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
+      } else {
+        swapBtn.disabled = false;
+        swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
+      }
+    }
 
-    // 兑换功能 - 修改为支持多代币
+    // 兑换功能
     document.getElementById("swapBtn").onclick = async () => {
       if (!account) {
         showBeautifulAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
@@ -1769,9 +1407,9 @@
       }
       
       const amt = document.getElementById("fromAmount").value;
-      const toAmount = document.getElementById("toAmount").value;
+      const toAmount = document.getElementById("toAmount").innerText;
       
-      if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0) {
+      if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0 || currentFromToken.symbol === currentToToken.symbol) {
         showBeautifulAlert(isChinese ? "请输入有效的兑换数量" : "Please enter a valid amount", 'info');
         return;
       }
@@ -1779,58 +1417,63 @@
       document.getElementById("loading").style.display = "flex";
       document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
       
-      const amountIn = selectedFromToken.symbol === "CFX" 
-        ? ethers.utils.parseEther(amt)
-        : ethers.utils.parseUnits(amt, selectedFromToken.decimals);
-      
-      // 构建路径 - 保持原有逻辑
-      let path = [];
-      if (selectedFromToken.symbol === "CFX") {
-        path = [WCFX, selectedToToken.address];
-      } else if (selectedToToken.symbol === "CFX") {
-        path = [selectedFromToken.address, WCFX];
-      } else {
-        // 代币间兑换通过CFX中转
-        path = [selectedFromToken.address, WCFX, selectedToToken.address];
-      }
+      const amountIn = ethers.utils.parseUnits(amt, currentFromToken.decimals);
+      const path = [
+        currentFromToken.address === TOKENS[0].address ? TOKENS[0].address : currentFromToken.address,
+        currentToToken.address === TOKENS[0].address ? TOKENS[0].address : currentToToken.address
+      ];
       
       try {
         const amounts = await router.getAmountsOut(amountIn, path);
-        const minOut = amounts[amounts.length - 1].mul(Math.floor((1000 - slippage*10))).div(1000);
+        const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
         const deadline = Math.floor(Date.now()/1000) + 1200;
 
         let tx;
-        if (selectedFromToken.symbol === "CFX") {
-          // CFX -> Token
+        
+        if (currentFromToken.symbol === 'CFX') {
+          // CFX -> 代币
           tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(
-            minOut, path, account, deadline, 
-            {value: amountIn, gasLimit:350000}
+            minOut, 
+            path, 
+            account, 
+            deadline, 
+            {value: amountIn, gasLimit: 350000}
           );
-        } else if (selectedToToken.symbol === "CFX") {
-          // Token -> CFX
-          const allowance = await tokenContracts[selectedFromToken.address].allowance(account, ROUTER);
+        } else if (currentToToken.symbol === 'CFX') {
+          // 代币 -> CFX
+          const allowance = await tokenContracts[currentFromToken.address].allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
-            const atx = await tokenContracts[selectedFromToken.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await tokenContracts[currentFromToken.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
+          
           tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-            amountIn, minOut, path, account, deadline, 
-            {gasLimit:350000}
+            amountIn, 
+            minOut, 
+            path, 
+            account, 
+            deadline, 
+            {gasLimit: 350000}
           );
         } else {
-          // Token -> Token
-          const allowance = await tokenContracts[selectedFromToken.address].allowance(account, ROUTER);
+          // 代币 -> 代币
+          const allowance = await tokenContracts[currentFromToken.address].allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
-            const atx = await tokenContracts[selectedFromToken.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await tokenContracts[currentFromToken.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
+          
           tx = await router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-            amountIn, minOut, path, account, deadline,
-            {gasLimit:350000}
+            amountIn, 
+            minOut, 
+            path, 
+            account, 
+            deadline, 
+            {gasLimit: 350000}
           );
         }
         
@@ -1838,24 +1481,306 @@
         document.getElementById("loading").style.display = "none";
         
         const successMessage = isChinese ? 
-          `兑换成功！获得 ${toAmount} ${selectedToToken.symbol}` : 
-          `Swap successful! Received ${toAmount} ${selectedToToken.symbol}`;
+          `兑换成功！获得 ${toAmount} ${currentToToken.symbol}` : 
+          `Swap successful! Received ${toAmount} ${currentToToken.symbol}`;
         
         showBeautifulAlert(successMessage, 'success');
         document.getElementById("fromAmount").value = "";
-        document.getElementById("toAmount").value = "";
         refreshAll();
-        initializeSwapButton();
       } catch (e) { 
         document.getElementById("loading").style.display = "none";
+        console.error("兑换失败:", e);
         showBeautifulAlert(isChinese ? "兑换失败，请重试" : "Swap failed, please try again", 'error'); 
       }
     };
 
-    // 流动性相关函数 - 保持原有功能不变
-    // 包括：calculateOptimalRatio, addLiquidity, updateRemoveEstimate, removeLiquidity 等
+    // 流动性功能
+    function updateLiquidityInputs() {
+      // 当流动性代币A或B改变时更新输入框
+      document.getElementById('liquidityTokenAAmount').value = '';
+      document.getElementById('liquidityTokenBAmount').value = '';
+      updateAddLiquidityButton();
+    }
 
-    // 美化提示功能 - 保持原有功能
+    // 更新添加流动性按钮状态
+    function updateAddLiquidityButton() {
+      const amountA = document.getElementById("liquidityTokenAAmount").value;
+      const amountB = document.getElementById("liquidityTokenBAmount").value;
+      const addBtn = document.getElementById("addLiquidityBtn");
+      
+      if (!amountA || amountA === "0" || amountA === "" || parseFloat(amountA) <= 0 ||
+          !amountB || amountB === "0" || amountB === "" || parseFloat(amountB) <= 0 ||
+          currentLiquidityTokenA.symbol === currentLiquidityTokenB.symbol) {
+        addBtn.disabled = true;
+        addBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
+      } else {
+        addBtn.disabled = false;
+        addBtn.innerText = isChinese ? "提供流动性" : "Provide Liquidity";
+      }
+    }
+
+    // 添加流动性
+    document.getElementById("addLiquidityBtn").onclick = async () => {
+      if (!account) {
+        showBeautifulAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
+        return;
+      }
+      
+      const amountA = document.getElementById("liquidityTokenAAmount").value;
+      const amountB = document.getElementById("liquidityTokenBAmount").value;
+      
+      if (!amountA || amountA === "0" || amountA === "" || parseFloat(amountA) <= 0 ||
+          !amountB || amountB === "0" || amountB === "" || parseFloat(amountB) <= 0 ||
+          currentLiquidityTokenA.symbol === currentLiquidityTokenB.symbol) {
+        showBeautifulAlert(isChinese ? "请输入有效的数量" : "Please enter valid amounts", 'info');
+        return;
+      }
+      
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      try {
+        const amountADesired = ethers.utils.parseUnits(amountA, currentLiquidityTokenA.decimals);
+        const amountBDesired = ethers.utils.parseUnits(amountB, currentLiquidityTokenB.decimals);
+        
+        // 计算最小数量（考虑滑点）
+        const amountAMin = amountADesired.mul(1000 - slippage * 10).div(1000);
+        const amountBMin = amountBDesired.mul(1000 - slippage * 10).div(1000);
+        
+        const deadline = Math.floor(Date.now()/1000) + 1800;
+        let tx;
+
+        if (currentLiquidityTokenA.symbol === 'CFX' || currentLiquidityTokenB.symbol === 'CFX') {
+          // 包含CFX的流动性对
+          const token = currentLiquidityTokenA.symbol === 'CFX' ? currentLiquidityTokenB : currentLiquidityTokenA;
+          const amountTokenDesired = currentLiquidityTokenA.symbol === 'CFX' ? amountBDesired : amountADesired;
+          const amountETHDesired = currentLiquidityTokenA.symbol === 'CFX' ? amountADesired : amountBDesired;
+          const amountTokenMin = currentLiquidityTokenA.symbol === 'CFX' ? amountBMin : amountAMin;
+          const amountETHMin = currentLiquidityTokenA.symbol === 'CFX' ? amountAMin : amountBMin;
+
+          // 检查代币授权
+          const allowance = await tokenContracts[token.address].allowance(account, ROUTER);
+          if (allowance.lt(amountTokenDesired)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
+            const approveTx = await tokenContracts[token.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
+            await approveTx.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "添加流动性..." : "Adding liquidity...");
+          }
+
+          tx = await router.addLiquidityETH(
+            token.address,
+            amountTokenDesired,
+            amountTokenMin,
+            amountETHMin,
+            account,
+            deadline,
+            {
+              value: amountETHDesired,
+              gasLimit: 400000
+            }
+          );
+        } else {
+          // 两个都是代币
+          // 检查代币A授权
+          let allowanceA = await tokenContracts[currentLiquidityTokenA.address].allowance(account, ROUTER);
+          if (allowanceA.lt(amountADesired)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币A..." : "Approving token A...");
+            const approveTxA = await tokenContracts[currentLiquidityTokenA.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
+            await approveTxA.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "添加流动性..." : "Adding liquidity...");
+          }
+
+          // 检查代币B授权
+          let allowanceB = await tokenContracts[currentLiquidityTokenB.address].allowance(account, ROUTER);
+          if (allowanceB.lt(amountBDesired)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币B..." : "Approving token B...");
+            const approveTxB = await tokenContracts[currentLiquidityTokenB.address].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
+            await approveTxB.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "添加流动性..." : "Adding liquidity...");
+          }
+
+          tx = await router.addLiquidity(
+            currentLiquidityTokenA.address,
+            currentLiquidityTokenB.address,
+            amountADesired,
+            amountBDesired,
+            amountAMin,
+            amountBMin,
+            account,
+            deadline,
+            { gasLimit: 400000 }
+          );
+        }
+        
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "添加流动性成功！" : "Add liquidity successful!", 'success');
+        
+        // 清空输入框
+        document.getElementById("liquidityTokenAAmount").value = "";
+        document.getElementById("liquidityTokenBAmount").value = "";
+        
+        refreshAll();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        console.error("添加流动性失败:", e);
+        
+        let errorMsg = e.message || "未知错误";
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额不足")) {
+          errorMsg = isChinese ? "余额不足，请检查您的代币余额" : "Insufficient balance, please check your token balance";
+        } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
+          errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
+        } else if (errorMsg.includes("deadline")) {
+          errorMsg = isChinese ? "交易超时，请重试" : "Transaction timeout, please try again";
+        }
+        
+        showBeautifulAlert((isChinese ? "添加失败: " : "Add failed: ") + errorMsg, 'error'); 
+      }
+    };
+
+    // 刷新流动性数据
+    async function refreshLiquidityData() {
+      if (!account) return;
+      
+      const liquidityPositions = document.getElementById('liquidityPositions');
+      liquidityPositions.innerHTML = '';
+      
+      // 这里简化处理，实际应该获取用户的所有流动性头寸
+      // 这里我们只显示CFX-LOM对的流动性作为示例
+      try {
+        const pairAddress = await factory.getPair(TOKENS[0].address, TOKENS[1].address);
+        if (pairAddress !== '0x0000000000000000000000000000000000000000') {
+          const pairContract = new ethers.Contract(pairAddress, PAIR_ABI, provider);
+          const lpBalance = await pairContract.balanceOf(account);
+          const totalSupply = await pairContract.totalSupply();
+          const [reserve0, reserve1] = await pairContract.getReserves();
+          
+          if (!lpBalance.isZero()) {
+            const share = lpBalance.mul(10000).div(totalSupply).toNumber() / 100;
+            const userCfx = parseFloat(ethers.utils.formatEther(reserve0)) * (share / 100);
+            const userLom = parseFloat(ethers.utils.formatUnits(reserve1, 18)) * (share / 100);
+            
+            const positionItem = document.createElement('div');
+            positionItem.className = 'card';
+            positionItem.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="token-icon" style="background: ${TOKENS[0].color}">${TOKENS[0].icon}</div>
+                  <div class="token-icon" style="background: ${TOKENS[1].color}">${TOKENS[1].icon}</div>
+                  <span style="font-weight: 600;">${TOKENS[0].symbol}-${TOKENS[1].symbol}</span>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 700; font-size: 18px;">${share.toFixed(2)}%</div>
+                  <div style="font-size: 14px; color: #94a3b8;">份额</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                  <div style="font-size: 12px; color: #94a3b8;">${TOKENS[0].symbol} 数量</div>
+                  <div style="font-weight: 600;">${userCfx.toFixed(6)}</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: #94a3b8;">${TOKENS[1].symbol} 数量</div>
+                  <div style="font-weight: 600;">${userLom.toFixed(6)}</div>
+                </div>
+              </div>
+              <button class="action" style="margin-top: 16px; background: linear-gradient(90deg, #ff4757, #ff6b81);" onclick="removeLiquidity('${pairAddress}')">移除流动性</button>
+            `;
+            
+            liquidityPositions.appendChild(positionItem);
+          }
+        }
+      } catch (error) {
+        console.error("获取流动性数据失败:", error);
+      }
+    }
+
+    // 移除流动性
+    async function removeLiquidity(pairAddress) {
+      if (!account) {
+        showBeautifulAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
+        return;
+      }
+      
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      try {
+        const pairContract = new ethers.Contract(pairAddress, PAIR_ABI, provider);
+        const lpBalance = await pairContract.balanceOf(account);
+        
+        if (lpBalance.isZero()) {
+          throw new Error("没有流动性可移除");
+        }
+        
+        const deadline = Math.floor(Date.now()/1000) + 1800;
+
+        // 检查LP代币授权
+        const lpToken = new ethers.Contract(pairAddress, ERC20_ABI, signer);
+        const allowance = await lpToken.allowance(account, ROUTER);
+        
+        if (allowance.lt(lpBalance)) {
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LP代币" : "Approving LP token");
+          const approveTx = await lpToken.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit: 150000});
+          await approveTx.wait();
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+        }
+
+        document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "正在移除流动性" : "Removing liquidity...");
+        
+        // 获取代币地址
+        const token0 = await pairContract.token0();
+        const token1 = await pairContract.token1();
+        
+        let tx;
+        if (token0 === TOKENS[0].address || token1 === TOKENS[0].address) {
+          // 包含CFX的流动性对
+          const token = token0 === TOKENS[0].address ? token1 : token0;
+          tx = await router.removeLiquidityETHSupportingFeeOnTransferTokens(
+            token, 
+            lpBalance, 
+            0, 
+            0, 
+            account, 
+            deadline,
+            {
+              gasLimit: 400000
+            }
+          );
+        } else {
+          // 两个都是代币
+          tx = await router.removeLiquidity(
+            token0,
+            token1,
+            lpBalance,
+            0,
+            0,
+            account,
+            deadline,
+            { gasLimit: 400000 }
+          );
+        }
+        
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "移除流动性成功！" : "Remove liquidity successful!", 'success');
+        refreshAll();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        console.error("移除流动性失败:", e);
+        
+        let errorMsg = e.message || "未知错误";
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额为0")) {
+          errorMsg = isChinese ? "LP代币余额不足" : "Insufficient LP token balance";
+        } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
+          errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
+        }
+        
+        showBeautifulAlert((isChinese ? "移除失败: " : "Remove failed: ") + errorMsg, 'error'); 
+      }
+    }
+
+    // 美化提示函数
     function showBeautifulAlert(message, type = 'info') {
       const alertOverlay = document.createElement('div');
       alertOverlay.className = 'beautiful-alert';
@@ -1916,9 +1841,10 @@
     `;
     document.head.appendChild(style);
 
-    function initializeSecurity() {
-      // 安全功能初始化
-    }
+    // 输入监听
+    document.getElementById("fromAmount").addEventListener('input', updateOutput);
+    document.getElementById("liquidityTokenAAmount").addEventListener('input', updateAddLiquidityButton);
+    document.getElementById("liquidityTokenBAmount").addEventListener('input', updateAddLiquidityButton);
 
     // 模态框关闭事件
     window.onclick = e => { 
@@ -1926,6 +1852,9 @@
         e.target.style.display = "none";
       }
     };
+
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
