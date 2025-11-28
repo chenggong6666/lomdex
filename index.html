@@ -1344,8 +1344,8 @@
   <!-- 高级别安全防护提醒 -->
   <div class="security-alert" id="securityAlert">
     <div class="security-alert-content">
-      <div class="security-alert-icon">🛡️</div>
-      <div class="security-alert-title">高级别安全防护提醒</div>
+      <div class="security-alert-icon">🛑</div>
+      <div class="security-alert-title">安全防护提醒</div>
       <div class="security-alert-message">
         您正在访问去中心化交易平台，请确认您了解以下风险：<br><br>
         • 智能合约可能存在安全漏洞<br>
@@ -1381,13 +1381,8 @@
 
     // 安全警告按钮事件 - 修复退出功能
     document.getElementById('securityExit').onclick = function() {
-      // 尝试关闭窗口，如果不行则重定向到空白页
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = 'about:blank';
-      }
-    };
+  window.close(); // 直接关闭页面，钱包环境会返回钱包界面
+};
 
     document.getElementById('securityContinue').onclick = function() {
       document.getElementById('securityAlert').style.display = 'none';
