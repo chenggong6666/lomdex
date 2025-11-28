@@ -21,7 +21,6 @@
     * {
       box-sizing: border-box;
       margin: 0;
-      padding: 0;
     }
     
     body, .app {
@@ -35,81 +34,100 @@
     }
     
     .app {
-      max-width: 440px;
+      max-width: 500px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 8px;
       position: relative;
       min-height: 100vh;
     }
     
-    /* 头部布局优化 */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      padding: 0 4px;
-    }
-    
-    .logo {
-      font-size: 28px; /* 缩小LOGO */
-      font-weight: 900;
-      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple), var(--web3-yellow));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      padding: 0 8px;
       position: relative;
-      display: inline-block;
-      animation: textGlow 3s ease-in-out infinite alternate;
     }
     
     @keyframes textGlow {
-      0% {
-        background-position: 0% 50%;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-      }
-      100% {
-        background-position: 100% 50%;
-        text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-      }
-    }
-    
-    .header-buttons {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+  0% {
+    text-shadow: 
+      -30px 0 20px rgba(255, 215, 0, 0.8),
+      -60px 0 30px rgba(67, 97, 238, 0.6);
+    background-position: 0% 50%;
+    filter: brightness(0.9);
+  }
+  50% {
+    text-shadow: 
+      0 0 25px rgba(255, 215, 0, 0.9),
+      0 0 40px rgba(114, 9, 183, 0.7);
+    background-position: 50% 50%;
+    filter: brightness(1.2);
+  }
+  100% {
+    text-shadow: 
+      30px 0 20px rgba(255, 215, 0, 0.8),
+      60px 0 30px rgba(255, 209, 102, 0.6);
+    background-position: 100% 50%;
+    filter: brightness(0.9);
+  }
+}
+
+.logo {
+  font-size: 42px;
+  font-weight: 900;
+  background: linear-gradient(90deg, 
+    var(--web3-blue), 
+    var(--web3-purple), 
+    var(--web3-yellow),
+    var(--web3-purple),
+    var(--web3-blue)
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  display: inline-block;
+  animation: textGlow 4s ease-in-out infinite;
+  margin-top: 2px;
+}
     
     .btn {
       background: var(--web3-card);
       border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 12px;
-      padding: 8px 16px;
+      border-radius: 16px;
+      padding: 10px 20px;
       color: #fff;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 14px;
-      white-space: nowrap;
+      min-width: 120px; 
+      width: 120px; 
+      flex-shrink: 0;
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
     }
     
     #langBtn {
       min-width: 40px;
       width: 40px;
+      flex-shrink: 0;
     }
     
     .btn:hover {
       background: rgba(76, 201, 240, 0.2);
       border-color: var(--web3-accent);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
     
-    /* 卡片布局优化 */
     .card {
       background: var(--web3-card);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
+      border-radius: 24px;
+      padding: 18px;
+      margin-bottom: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4);
       border: 1px solid rgba(76, 201, 240, 0.2);
       position: relative;
@@ -126,82 +144,78 @@
       background: linear-gradient(90deg, transparent, var(--web3-accent), transparent);
     }
     
-    /* 选项卡优化 */
-    .tab-container {
-      margin-bottom: 20px;
-    }
-    
-    .tabs {
-      display: flex;
-      background: var(--web3-card);
+    .asset-card {
+      background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
       border-radius: 16px;
-      padding: 4px;
+      padding: 10px;
+      margin-bottom: 12px;
       border: 1px solid rgba(76, 201, 240, 0.3);
+      position: relative;
+      overflow: hidden;
     }
     
-    .tab-btn {
-      flex: 1;
-      padding: 12px 16px;
-      background: transparent;
-      border: none;
-      border-radius: 12px;
-      color: #94a3b8;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 15px;
+    .asset-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--web3-yellow), transparent);
     }
     
-    .tab-btn.active {
-      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    /* 兑换页面布局优化 */
-    .swap-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .token-section {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .token-header {
+    .asset-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
-    .token-selector {
+    .asset-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--web3-light);
       display: flex;
       align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(76, 201, 240, 0.1);
-      transition: all 0.2s;
-      min-width: 100px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
+      gap: 6px;
     }
     
-    .token-selector:hover {
-      background: rgba(76, 201, 240, 0.2);
+    .asset-icon {
+      font-size: 16px;
+      color: var(--web3-yellow);
+    }
+    
+    .asset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .asset-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(76, 201, 240, 0.1);
+    }
+    
+    .asset-item:last-child {
+      border-bottom: none;
+    }
+    
+    .asset-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+    
+    .asset-balance {
+      font-weight: 700;
+      color: var(--web3-light);
+      font-size: 13px;
     }
     
     .token-icon {
@@ -212,8 +226,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: bold;
+      overflow: hidden;
       flex-shrink: 0;
     }
     
@@ -221,59 +236,30 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 50%;
     }
     
-    .token-name {
-      font-weight: 600;
-      color: var(--web3-light);
-      font-size: 16px;
-    }
-    
-    .balance {
-      font-size: 12px;
-      color: #94a3b8;
-    }
-    
-    .token-input-row {
+    .token-row {
       display: flex;
       align-items: center;
+      margin: 8px 0;
       gap: 12px;
     }
     
-    .input-container {
+    .token-info {
       flex: 1;
+      min-width: 0;
+    }
+    
+    .token-input-container {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-    }
-    
-    .percentage-buttons {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    
-    .percent-btn {
-      background: rgba(144, 224, 239, 0.1);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 8px;
-      padding: 4px 8px;
-      color: var(--web3-light);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      min-width: 36px;
-    }
-    
-    .percent-btn:hover {
-      background: var(--web3-yellow);
-      color: #0f172a;
+      min-width: 150px;
+      flex-shrink: 0;
     }
     
     .input {
-      font-size: 24px;
+      font-size: 28px;
       background: none;
       border: none;
       color: #fff;
@@ -281,27 +267,21 @@
       outline: none;
       text-align: right;
       font-weight: 600;
-      padding: 8px 0;
-    }
-    
-    .swap-center {
-      display: flex;
-      justify-content: center;
-      margin: 4px 0;
-      position: relative;
-      z-index: 2;
     }
     
     .swap-btn {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
       border-radius: 50%;
+      margin: -8px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
+      position: relative;
+      z-index: 2;
       box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
       transition: all 0.3s ease;
       border: 2px solid var(--web3-dark);
@@ -312,12 +292,68 @@
       box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
     }
     
-    /* 详细信息面板优化 */
+    .action {
+      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+      color: #fff;
+      font-weight: 700;
+      padding: 16px;
+      border: none;
+      border-radius: 20px;
+      width: 100%;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .action::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .action:hover::before {
+      left: 100%;
+    }
+    
+    .action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+    }
+    
+    .action:disabled {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .action:disabled::before {
+      display: none;
+    }
+    
+    .info {
+      font-size: 14px;
+      color: #94a3b8;
+      margin: 6px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    
     .details-panel {
       background: rgba(76, 201, 240, 0.05);
       border-radius: 16px;
-      padding: 16px;
-      margin: 16px 0;
+      padding: 14px;
+      margin: 12px 0;
       border: 1px solid rgba(76, 201, 240, 0.2);
     }
     
@@ -325,7 +361,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
+      padding: 10px 0;
       font-size: 14px;
       color: #e2e8f0;
     }
@@ -346,7 +382,7 @@
     }
     
     .slippage-section {
-      margin-top: 8px;
+      margin-top: 6px;
       padding-top: 12px;
     }
     
@@ -359,9 +395,11 @@
     .slip-btn {
       padding: 6px 10px;
       background: #334155;
-      border-radius: 10px;
-      font-size: 11px;
+      border-radius: 12px;
+      font-size: 12px;
       cursor: pointer;
+      flex: none;
+      text-align: center;
       transition: all 0.2s ease;
       border: 1px solid transparent;
     }
@@ -374,113 +412,33 @@
       background: var(--web3-yellow);
       color: #0f172a;
       font-weight: 600;
+      border-color: var(--web3-yellow);
     }
     
-    /* 操作按钮 */
-    .action {
-      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
-      color: #fff;
-      font-weight: 700;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      width: 100%;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 16px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      color: #64748b;
+      font-size: 13px;
     }
     
-    .action:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
-    }
-    
-    .action:disabled {
-      background: #475569;
-      color: #94a3b8;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    /* 资产卡片优化 */
-    .asset-card {
-      background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-    }
-    
-    .asset-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    
-    .asset-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: var(--web3-light);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .asset-icon {
-      font-size: 16px;
-      color: var(--web3-yellow);
-    }
-    
-    .asset-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .asset-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-    }
-    
-    .asset-name {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      color: #e2e8f0;
-      font-size: 14px;
-    }
-    
-    .asset-balance {
-      font-weight: 700;
-      color: var(--web3-light);
-      font-size: 14px;
-    }
-    
-    /* 模态框和加载 */
-    .modal, .token-selector-modal {
+    .modal {
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.95);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 100;
       backdrop-filter: blur(5px);
     }
     
-    .modal-card, .token-selector-content {
+    .modal-card {
       background: var(--web3-card);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 24px;
       width: 90%;
-      max-width: 400px;
+      max-width: 420px;
       border: 1px solid rgba(76, 201, 240, 0.3);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
@@ -492,31 +450,268 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      z-index: 200;
       backdrop-filter: blur(5px);
     }
     
-    /* 风险提示 */
+    #loading div {
+      background: var(--web3-card);
+      padding: 30px 40px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 18px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      color: var(--web3-light);
+    }
+    
+    .tab-container {
+      margin-bottom: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      background: var(--web3-card);
+      border-radius: 20px;
+      padding: 4px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      color: #94a3b8;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    
+    .tab-btn.active {
+      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .percentage-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .percent-btn {
+      background: rgba(144, 224, 239, 0.1);
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: var(--web3-light);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 44px;
+    }
+    
+    .percent-btn:hover {
+      background: var(--web3-yellow);
+      color: #0f172a;
+      border-color: var(--web3-yellow);
+    }
+    
+    .input-hint {
+      font-size: 12px;
+      color: #64748b;
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 6px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-item {
+      background: rgba(76, 201, 240, 0.05);
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(76, 201, 240, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--web3-light);
+    }
+    
+    .position-item {
+      background: rgba(76, 201, 240, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(76, 201, 240, 0.2);
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .position-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+    }
+    
+    .position-pair {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .token-pair {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .token-symbol {
+      background: var(--web3-yellow);
+      color: #0f172a;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .position-value .value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--web3-light);
+    }
+    
+    .position-value .share {
+      font-size: 14px;
+      color: #94a3b8;
+      text-align: right;
+    }
+    
+    .position-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(76, 201, 240, 0.2);
+    }
+    
+    .detail {
+      font-size: 13px;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .detail span:first-child {
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    
+    .detail span:last-child {
+      font-weight: 600;
+      color: var(--web3-light);
+    }
+    
+    .stake-card {
+      background: linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(114, 9, 183, 0.1));
+      border-radius: 16px;
+      padding: 18px;
+      margin: 16px 0;
+      border: 1px solid rgba(255, 209, 102, 0.3);
+      text-align: center;
+    }
+    
+    .stake-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--web3-yellow);
+      margin-bottom: 10px;
+    }
+    
+    .stake-description {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    
+    .stake-apr {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--web3-light);
+      margin-bottom: 14px;
+    }
+    
+    .stake-button {
+      background: linear-gradient(90deg, var(--web3-yellow), #ffb347);
+      color: #0f172a;
+      font-weight: 700;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .stake-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 209, 102, 0.3);
+    }
+    
     .risk-warning {
       background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
       border: 1px solid rgba(255, 209, 102, 0.3);
       border-radius: 16px;
-      padding: 16px;
+      padding: 18px;
       margin: 20px 0;
       text-align: center;
       font-size: 12px;
       color: var(--web3-light);
-      line-height: 1.5;
+      line-height: 1.6;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.1);
     }
     
-    .footer {
-      text-align: center;
-      padding: 20px 0;
-      color: #64748b;
-      font-size: 12px;
-    }
-    
-    /* 安全提示 */
     #securityTips {
       position: fixed;
       bottom: 20px;
@@ -525,7 +720,7 @@
       border: 2px solid var(--web3-yellow);
       border-radius: 12px;
       padding: 16px;
-      max-width: 260px;
+      max-width: 280px;
       font-size: 12px;
       color: var(--web3-light);
       z-index: 9999;
@@ -535,44 +730,246 @@
     
     #securityIndicator {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 52px;
+      right: 18px;
       background: var(--web3-success);
       color: white;
-      padding: 4px 8px;
-      border-radius: 10px;
-      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
       font-weight: bold;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     }
     
-    /* 移动端适配 */
-    @media (max-width: 400px) {
-      .app { 
-        max-width: 100%; 
-        padding: 12px;
+    /* 美化提示样式 */
+    .beautiful-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .beautiful-alert-content {
+      background: var(--web3-card);
+      padding: 24px;
+      border-radius: 20px;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .beautiful-alert-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .beautiful-alert-message {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+    
+    .beautiful-alert-button {
+      background: var(--web3-blue);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .beautiful-alert-button:hover {
+      background: var(--web3-purple);
+      transform: translateY(-2px);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
       }
-      .logo { font-size: 24px; }
-      .btn { padding: 6px 12px; font-size: 13px; }
-      .card { padding: 16px; }
-      .token-section { padding: 12px; }
-      .input { font-size: 20px; }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    /* 加载动画样式 */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 代币选择器样式 */
+    .token-selector {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(76, 201, 240, 0.1);
+      transition: all 0.2s;
+      min-width: 120px;
+      max-width: 150px;
+      height: 40px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      position: relative;
+    }
+    
+    .token-selector:hover {
+      background: rgba(76, 201, 240, 0.2);
+      border-color: var(--web3-accent);
+    }
+    
+    .token-selector-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .token-selector-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+    
+    .token-selector-name {
+      font-weight: 600;
+      color: var(--web3-light);
+      font-size: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60px;
+    }
+    
+    .token-selector-arrow {
+      color: #94a3b8;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    
+    .token-selector-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+    
+    .token-selector-content {
+      background: var(--web3-card);
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .token-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+    
+    .token-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .token-item:hover {
+      background: rgba(76, 201, 240, 0.1);
+    }
+    
+    .token-item-info {
+      margin-left: 12px;
+      flex: 1;
+    }
+    
+    .token-item-name {
+      font-weight: 600;
+      color: var(--web3-light);
+    }
+    
+    .token-item-symbol {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .token-item-balance {
+      font-size: 14px;
+      color: var(--web3-light);
+    }
+    
+    @media (max-width: 400px) {
+      .app { max-width: 100%; }
+      .token-row { gap: 8px; }
+      .input { font-size: 24px; }
+      .btn { padding: 8px 16px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .position-details { grid-template-columns: 1fr; }
+      .slip-btn { padding: 6px 12px; font-size: 12px; }
+      .detail-item { font-size: 13px; padding: 8px 0; }
+      .asset-card { padding: 10px; }
+      .asset-item { padding: 4px 0; }
+      .token-selector { min-width: 100px; max-width: 130px; }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- 头部 -->
     <div class="header">
       <div class="logo">龙脉DEX</div>
-      <div class="header-buttons">
-        <button class="btn" id="langBtn">EN</button>
-        <button class="btn" id="walletBtn">连接钱包</button>
-      </div>
+      <button class="btn" id="langBtn">EN</button>
+      <button class="btn" id="walletBtn">连接钱包</button>
     </div>
-
-    <!-- 安全指示器 -->
-    <div id="securityIndicator">🔒 安全</div>
 
     <!-- 选项卡 -->
     <div class="tab-container">
@@ -585,326 +982,1342 @@
     <!-- 兑换页面 -->
     <div class="tab-content active" id="swapTab">
       <div class="card">
-        <div class="swap-container">
-          <!-- 从代币 -->
-          <div class="token-section">
-            <div class="token-header">
-              <div class="token-selector" id="fromTokenSelector">
-                <div class="token-icon" id="fromTokenIcon">
-                  <span id="fromTokenInitial">C</span>
+        <div class="percentage-buttons">
+          <button class="percent-btn" data-percent="0.1">10%</button>
+          <button class="percent-btn" data-percent="0.25">25%</button>
+          <button class="percent-btn" data-percent="0.5">50%</button>
+          <button class="percent-btn" data-percent="0.75">75%</button>
+          <button class="percent-btn" data-percent="1">MAX</button>
+        </div>
+        
+        <!-- 从代币输入 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-selector" id="fromTokenSelector">
+              <div class="token-selector-content">
+                <div class="token-selector-info">
+                  <div class="token-icon" id="fromTokenIcon">
+                    <img id="fromTokenImg" src="" alt="" style="display:none">
+                    <span id="fromTokenInitial">C</span>
+                  </div>
+                  <div class="token-selector-name" id="fromTokenName">CFX</div>
                 </div>
-                <div class="token-name" id="fromTokenName">CFX</div>
-                <span style="color:#94a3b8;font-size:12px">▼</span>
-              </div>
-              <div class="balance">余额: <span id="fromBal">0</span></div>
-            </div>
-            <div class="token-input-row">
-              <div class="input-container">
-                <div class="percentage-buttons">
-                  <button class="percent-btn" data-percent="0.25">25%</button>
-                  <button class="percent-btn" data-percent="0.5">50%</button>
-                  <button class="percent-btn" data-percent="0.75">75%</button>
-                  <button class="percent-btn" data-percent="1">MAX</button>
-                </div>
-                <input class="input" id="fromAmount" placeholder="0" type="number">
+                <span class="token-selector-arrow">▼</span>
               </div>
             </div>
+            <div class="balance">余额: <span id="fromBal">0</span></div>
           </div>
-
-          <!-- 交换按钮 -->
-          <div class="swap-center">
-            <div class="swap-btn" id="reverse">⇅</div>
-          </div>
-
-          <!-- 到代币 -->
-          <div class="token-section">
-            <div class="token-header">
-              <div class="token-selector" id="toTokenSelector">
-                <div class="token-icon" id="toTokenIcon">
-                  <span id="toTokenInitial">L</span>
-                </div>
-                <div class="token-name" id="toTokenName">LOM</div>
-                <span style="color:#94a3b8;font-size:12px">▼</span>
-              </div>
-              <div class="balance">余额: <span id="toBal">0</span></div>
-            </div>
-            <div class="token-input-row">
-              <div class="input-container">
-                <div class="input" id="toAmount" style="color:#94a3b8;">0</div>
-              </div>
-            </div>
+          <div class="token-input-container">
+            <button class="percent-btn" id="fromMaxBtn" style="margin:0">MAX</button>
+            <input class="input" id="fromAmount" placeholder="0" type="number">
           </div>
         </div>
+        
+        <div class="input-hint">输入数量</div>
 
-        <!-- 交易详情 -->
+        <div class="swap-btn" id="reverse">⇅</div>
+
+        <!-- 到代币输入 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-selector" id="toTokenSelector">
+              <div class="token-selector-content">
+                <div class="token-selector-info">
+                  <div class="token-icon" id="toTokenIcon">
+                    <img id="toTokenImg" src="" alt="" style="display:none">
+                    <span id="toTokenInitial">L</span>
+                  </div>
+                  <div class="token-selector-name" id="toTokenName">LOM</div>
+                </div>
+                <span class="token-selector-arrow">▼</span>
+              </div>
+            </div>
+            <div class="balance">余额: <span id="toBal">0</span></div>
+          </div>
+          <div class="token-input-container">
+            <div class="input" id="toAmount" style="color:#94a3b8;font-size:28px;text-align:right;width:100%;padding:8px 0;">0</div>
+          </div>
+        </div>
+        <div class="input-hint">获得数量</div>
+
+        <!-- 详细信息面板 -->
         <div class="details-panel">
           <div class="detail-item">
-            <span class="detail-label">价格</span>
-            <span class="detail-value">1 CFX = <span id="price">0</span> LOM</span>
+            <span class="detail-label" id="priceLabel">价格</span>
+            <span class="detail-value">1 <span id="fromSymbol">CFX</span> = <span id="price">0</span> <span id="toSymbol">LOM</span></span>
           </div>
+          
           <div class="detail-item">
-            <span class="detail-label">最低收到</span>
-            <span class="detail-value" id="minReceived">0 LOM</span>
+            <span class="detail-label" id="minReceivedLabel">最低收到</span>
+            <span class="detail-value" id="minReceived">0 <span id="minReceivedSymbol">LOM</span></span>
           </div>
+          
           <div class="detail-item">
-            <span class="detail-label">价格影响</span>
+            <span class="detail-label" id="priceImpactLabel">价格影响</span>
             <span class="detail-value" id="priceImpact">< 0.01%</span>
           </div>
           
+          <div class="detail-item">
+            <span class="detail-label" id="routeLabel">路由</span>
+            <span class="detail-value" id="routeInfo">CFX → LOM</span>
+          </div>
+          
+          <!-- 滑点容差部分 -->
           <div class="slippage-section">
-            <div class="detail-item" style="border-bottom:none;padding-bottom:0">
-              <span class="detail-label">滑点容差</span>
+            <div class="detail-item" style="border-bottom: none; padding: 0;">
+              <span class="detail-label" id="slippageLabel">滑点容差</span>
               <div class="slippage-controls">
                 <div class="slip-btn active" data-slip="0.5">0.5%</div>
                 <div class="slip-btn" data-slip="1">1%</div>
-                <div class="slip-btn" data-slip="2">2%</div>
+                <div class="slip-btn" data-slip="5">5%</div>
+                <div class="slip-btn" data-slip="10">10%</div>
               </div>
             </div>
           </div>
         </div>
-
+        
         <button class="action" id="swapBtn" disabled>请输入数量</button>
       </div>
+    </div>
 
-      <!-- 资产卡片 -->
-      <div class="asset-card">
-        <div class="asset-header">
-          <div class="asset-title">
-            <span class="asset-icon">💰</span>
-            <span>我的资产</span>
+    <!-- 我的资产 -->
+    <div class="asset-card">
+      <div class="asset-header">
+        <div class="asset-title">
+          <span class="asset-icon">💰</span>
+          <span id="assetTitle">我的资产</span>
+        </div>
+        <div style="color:var(--web3-yellow);font-size:14px">✦</div>
+      </div>
+      <div class="asset-list" id="assetList">
+        <!-- 资产列表将通过JavaScript动态生成 -->
+      </div>
+    </div>
+    
+    <!-- 流动性页面 -->
+    <div class="tab-content" id="liquidityTab">
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <button class="action" id="addBtn" style="flex:1">添加流动性</button>
+        <button class="action" id="removeBtn" disabled style="flex:1;background:linear-gradient(90deg, #ff4757, #ff6b81)">移除流动性</button>
+      </div>
+      
+      <!-- 质押收益卡片 -->
+      <div class="stake-card">
+        <div class="stake-title">质押LP赚取收益</div>
+        <div class="stake-description">
+          将您的LP代币质押到农场中，赚取额外的奖励代币。年化收益率高达：
+        </div>
+        <div class="stake-apr">APR: 45.8%</div>
+        <a href="https://stake.fatsale.org/?utm_source=tokenpocket#/cfx/0x90117C51DD5e17C4A306fea71B0f260Df057F6e3" target="_blank" class="stake-button">
+          前往质押农场
+        </a>
+      </div>
+      
+      <!-- 流动性统计 -->
+      <div class="card">
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="liquidityOverviewTitle">流动性概览</h3>
+        
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label" id="myShareLabel">我的流动性份额</div>
+            <div class="stat-value" id="myLiquidityShare">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label" id="totalLiquidityLabel">池子总流动性</div>
+            <div class="stat-value" id="totalLiquidity">$0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label" id="volumeLabel">24h交易量</div>
+            <div class="stat-value" id="dailyVolume">$0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label" id="aprLabel">APR</div>
+            <div class="stat-value" id="poolAPR">0%</div>
           </div>
         </div>
-        <div class="asset-list">
-          <div class="asset-item">
-            <div class="asset-name">
-              <div class="token-icon">C</div>
-              <span>CFX</span>
+      </div>
+
+      <!-- 我的流动性 -->
+      <div class="card">
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="myPositionsTitle">我的流动性份额</h3>
+        
+        <div id="liquidityPositions">
+          <div class="position-item">
+            <div class="position-pair">
+              <div class="token-pair">
+                <span class="token-symbol" id="positionBaseSymbol">CFX</span>
+                <span class="token-symbol" id="positionQuoteSymbol">LOM</span>
+              </div>
+              <div class="position-value">
+                <div class="value">$<span id="positionValue">0</span></div>
+                <div class="share"><span id="positionShare">0</span>% 份额</div>
+              </div>
             </div>
-            <div class="asset-balance" id="cfxBal">0.000000</div>
-          </div>
-          <div class="asset-item">
-            <div class="asset-name">
-              <div class="token-icon">L</div>
-              <span>LOM</span>
+            <div class="position-details">
+              <div class="detail">
+                <span id="baseAmountLabel">CFX数量:</span>
+                <span id="positionBase">0</span>
+              </div>
+              <div class="detail">
+                <span id="quoteAmountLabel">LOM数量:</span>
+                <span id="positionQuote">0</span>
+              </div>
+              <div class="detail">
+                <span id="feesLabel">未收取费用:</span>
+                <span id="unclaimedFees">$0</span>
+              </div>
             </div>
-            <div class="asset-balance" id="lomBal">0.000000</div>
-          </div>
-          <div class="asset-item">
-            <div class="asset-name">
-              <div class="token-icon">LP</div>
-              <span>LP Token</span>
-            </div>
-            <div class="asset-balance" id="lpBal">0.000000</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 流动性页面 -->
-    <div class="tab-content" id="liquidityTab">
-      <div class="card">
-        <div style="display:flex;gap:12px;margin-bottom:20px">
-          <button class="action" id="addBtn" style="flex:1">添加流动性</button>
-          <button class="action" id="removeBtn" disabled style="flex:1;background:linear-gradient(90deg, #ff4757, #ff6b81)">移除流动性</button>
-        </div>
-        
-        <div class="stake-card" style="background:linear-gradient(135deg, rgba(255,209,102,0.1), rgba(114,9,183,0.1)); padding:16px; border-radius:12px; text-align:center; border:1px solid rgba(255,209,102,0.3); margin:16px 0">
-          <div style="font-size:16px;font-weight:bold;color:var(--web3-yellow);margin-bottom:8px">质押LP赚取收益</div>
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:12px">将LP代币质押到农场中赚取奖励</div>
-          <div style="font-size:20px;font-weight:bold;color:var(--web3-light);margin-bottom:12px">APR: 45.8%</div>
-          <button style="background:linear-gradient(90deg, var(--web3-yellow), #ffb347);color:#0f172a;font-weight:700;padding:10px 20px;border:none;border-radius:12px;cursor:pointer">前往质押</button>
+    <!-- 代币选择器模态框 -->
+    <div class="token-selector-modal" id="tokenSelectorModal">
+      <div class="token-selector-content">
+        <h3 style="margin:0 0 20px;color:var(--web3-light)">选择代币</h3>
+        <input type="text" id="tokenSearch" placeholder="搜索代币名称或地址" style="
+          width: 100%;
+          padding: 12px;
+          border-radius: 12px;
+          background: rgba(76, 201, 240, 0.1);
+          border: 1px solid rgba(76, 201, 240, 0.3);
+          color: white;
+          font-size: 16px;
+          margin-bottom: 16px;
+        ">
+        <div class="token-list" id="tokenList">
+          <!-- 代币列表将通过JavaScript动态生成 -->
         </div>
       </div>
+    </div>
+
+    <!-- 添加流动性模态框 -->
+    <div class="modal" id="addModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="addTitle">添加流动性</h3>
+        
+        <!-- 基础代币输入部分 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-selector" id="addBaseTokenSelector">
+              <div class="token-selector-content">
+                <div class="token-selector-info">
+                  <div class="token-icon" id="addBaseTokenIcon">
+                    <img id="addBaseTokenImg" src="" alt="" style="display:none">
+                    <span id="addBaseTokenInitial">C</span>
+                  </div>
+                  <div class="token-selector-name" id="addBaseTokenName">CFX</div>
+                </div>
+                <span class="token-selector-arrow">▼</span>
+              </div>
+            </div>
+            <div class="balance">余额: <span id="addBaseBal">0</span></div>
+          </div>
+          <div class="token-input-container">
+            <button class="percent-btn" id="baseMaxBtn" style="margin:0">MAX</button>
+            <input class="input" id="addBase" placeholder="0" type="number" style="text-align:right;width:100%">
+          </div>
+        </div>
+        
+        <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
+        
+        <!-- 报价代币输入部分 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-selector" id="addQuoteTokenSelector">
+              <div class="token-selector-content">
+                <div class="token-selector-info">
+                  <div class="token-icon" id="addQuoteTokenIcon">
+                    <img id="addQuoteTokenImg" src="" alt="" style="display:none">
+                    <span id="addQuoteTokenInitial">L</span>
+                  </div>
+                  <div class="token-selector-name" id="addQuoteTokenName">LOM</div>
+                </div>
+                <span class="token-selector-arrow">▼</span>
+              </div>
+            </div>
+            <div class="balance">余额: <span id="addQuoteBal">0</span></div>
+          </div>
+          <div class="token-input-container">
+            <button class="percent-btn" id="quoteMaxBtn" style="margin:0">MAX</button>
+            <input class="input" id="addQuote" placeholder="0" type="number" style="text-align:right;width:100%">
+          </div>
+        </div>
+        
+        <div class="info" id="ratioLabel">比例: <span id="addRatio">1 CFX = 0 LOM</span></div>
+        <div class="info" style="color: var(--web3-yellow); font-size: 12px; text-align: center;">
+          提示：请确保两种代币的比例接近当前市场价格
+        </div>
+        <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+          预估Gas费: 计算中...
+        </div>
+        <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
+      </div>
+    </div>
+
+    <!-- 移除流动性模态框 -->
+    <div class="modal" id="removeModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
+        <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
+        <div style="text-align:center;font-size:18px">
+          <span id="removePercent">100%</span>
+          <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
+        </div>
+        <div class="info" id="removeGasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+          预估Gas费: 计算中...
+        </div>
+        <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
+      </div>
+    </div>
+
+    <!-- 等待提示 -->
+    <div id="loading" style="display:none">
+      <div id="loadingText">等待区块链确认中</div>
+    </div>
+
+    <!-- 安全提示浮层 -->
+    <div id="securityTips">
+      <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <span>🔒</span> 安全提示
+      </div>
+      <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
+      <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
+      <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
+      <button onclick="document.getElementById('securityTips').style.display='none'" style="
+        background: transparent;
+        border: 1px solid var(--web3-yellow);
+        color: var(--web3-yellow);
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        width: 100%;
+      ">知道了</button>
     </div>
 
     <!-- 风险提示 -->
     <div class="risk-warning">
-      <div style="font-weight:bold;margin-bottom:6px;font-size:13px">
-        <span>⚠️</span> 风险提示
+      <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <span>⚠️</span>
+        <span id="riskTitle">风险提示</span>
       </div>
-      <div>
-        本应用仅作为技术演示，不构成投资建议。加密货币市场波动巨大，投资需谨慎。
+      <div id="riskText" style="opacity: 0.9;">
+        本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
       </div>
     </div>
-
-    <div class="footer">龙脉 DEX · Conflux eSpace</div>
-  </div>
-
-  <!-- 安全提示浮层 -->
-  <div id="securityTips">
-    <div style="font-weight:bold;color:var(--web3-yellow);margin-bottom:8px">🔒 安全提示</div>
-    <div style="margin-bottom:6px">• 请确认访问官方域名</div>
-    <div style="margin-bottom:6px">• 首次使用请小额测试</div>
-    <div style="margin-bottom:8px">• 仔细核对交易详情</div>
-    <button onclick="document.getElementById('securityTips').style.display='none'" style="background:transparent;border:1px solid var(--web3-yellow);color:var(--web3-yellow);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;width:100%">知道了</button>
-  </div>
-
-  <!-- 等待提示 -->
-  <div id="loading" style="display:none">
-    <div style="background:var(--web3-card);padding:24px 32px;border-radius:16px;text-align:center;font-size:16px;border:1px solid rgba(76,201,240,0.3);color:var(--web3-light)">
-      <div class="loading-spinner" style="display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite;margin-right:10px"></div>
-      等待区块链确认中
-    </div>
+    
+    <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
 
   <script>
-    // 安全关闭页面函数
-    function closePageSafely() {
-      try {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.close();
-        }
-      } catch (error) {
-        document.body.innerHTML = `
-          <div style="background:var(--web3-dark);color:var(--web3-light);height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;text-align:center;padding:20px">
-            <div style="font-size:48px;margin-bottom:16px">🔒</div>
-            <h1 style="color:var(--web3-yellow);margin-bottom:12px">页面已关闭</h1>
-            <p style="margin-bottom:20px;line-height:1.5">请手动关闭浏览器标签页</p>
-          </div>
-        `;
+    // ==================== 安全防护模块 ====================
+    const SECURITY_CONFIG = {
+      ALLOWED_DOMAINS: ['lomswap.vercel.app', 'localhost'],
+      CONTRACTS: {
+        ROUTER: "0x62b0873055bf896dd869e172119871ac24aea305",
+        LOM: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
+        PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85"
       }
+    };
+
+    // 安全验证函数
+    function validateSecurity() {
+      const currentDomain = window.location.hostname;
+      const isAllowedDomain = SECURITY_CONFIG.ALLOWED_DOMAINS.some(domain => 
+        currentDomain.includes(domain)
+      );
+      
+      if (!isAllowedDomain) {
+        showSecurityWarning(currentDomain);
+        return false;
+      }
+      
+      return true;
     }
 
-    // 初始化函数
-    function initializeApp() {
-      setupTabs();
-      setupPercentageButtons();
-      setupTokenSelectors();
-      setupSlippageControls();
-      updateAllTexts();
-    }
-
-    // 设置选项卡
-    function setupTabs() {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const tabId = btn.dataset.tab;
-          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          btn.classList.add('active');
-          document.getElementById(tabId + 'Tab').classList.add('active');
-        });
+    // 显示安全警告
+    function showSecurityWarning(currentDomain) {
+      const warningOverlay = document.createElement('div');
+      warningOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        backdrop-filter: blur(5px);
+      `;
+      
+      warningOverlay.innerHTML = `
+        <div style="
+          background: var(--web3-card);
+          padding: 30px;
+          border-radius: 20px;
+          max-width: 400px;
+          text-align: center;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+          border: 2px solid var(--web3-warning);
+        ">
+          <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+          <h3 style="color: var(--web3-warning); margin-bottom: 15px;">安全警告</h3>
+          <p style="color: var(--web3-light); margin-bottom: 20px; line-height: 1.5;">
+            您正在访问非官方域名：<strong>${currentDomain}</strong><br>
+            请确认您访问的是官方网址，以防资产损失。
+          </p>
+          <div style="background: rgba(255, 107, 107, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <p style="font-size: 14px; color: var(--web3-light); margin: 0;">
+              <strong>官方域名：</strong><br>
+              ${SECURITY_CONFIG.ALLOWED_DOMAINS.join('<br>')}
+            </p>
+          </div>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button id="continueAnyway" style="
+              background: var(--web3-warning);
+              color: #0f172a;
+              border: none;
+              padding: 12px 24px;
+              border-radius: 12px;
+              font-weight: bold;
+              cursor: pointer;
+              font-size: 14px;
+            ">仍然继续</button>
+            <button id="closePage" style="
+              background: transparent;
+              color: var(--web3-light);
+              border: 1px solid var(--web3-light);
+              padding: 12px 24px;
+              border-radius: 12px;
+              font-weight: bold;
+              cursor: pointer;
+              font-size: 14px;
+            ">关闭页面</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(warningOverlay);
+      
+      // 绑定事件
+      document.getElementById('continueAnyway').addEventListener('click', () => {
+        document.body.removeChild(warningOverlay);
+        localStorage.setItem('securityWarningAcknowledged', 'true');
+        initializeApp();
+      });
+      
+      document.getElementById('closePage').addEventListener('click', () => {
+        window.location.href = 'about:blank';
+        setTimeout(() => {
+          window.close();
+        }, 100);
       });
     }
 
-    // 设置百分比按钮
+    function createSecurityIndicator() {
+      const indicator = document.createElement('div');
+      indicator.id = 'securityIndicator';
+      indicator.textContent = '🔒 安全验证通过';
+      
+      const app = document.querySelector('.app');
+      if (app) {
+        app.appendChild(indicator);
+      }
+    }
+
+    function initializeSecurity() {
+      const warningAcknowledged = localStorage.getItem('securityWarningAcknowledged');
+      
+      if (!validateSecurity() && !warningAcknowledged) {
+        return false;
+      }
+      
+      createSecurityIndicator();
+      
+      setTimeout(() => {
+        document.getElementById('securityTips').style.display = 'block';
+      }, 3000);
+      
+      return true;
+    }
+
+    // ==================== 代币配置模块 ====================
+    const TOKENS = {
+      "CFX": {
+        symbol: "CFX",
+        name: "Conflux",
+        address: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
+        decimals: 18,
+        logo: "https://cryptologos.cc/logos/conflux-cfx-logo.svg",
+        isNative: true
+      },
+      "LOM": {
+        symbol: "LOM",
+        name: "龙脉代币",
+        address: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
+        decimals: 18,
+        logo: "",
+        isNative: false
+      },
+      "USDT": {
+        symbol: "USDT",
+        name: "Tether USD",
+        address: "0xfe97e85d13abd9c1c33384e796f10b73905637ce",
+        decimals: 6,
+        logo: "https://cryptologos.cc/logos/tether-usdt-logo.svg",
+        isNative: false
+      }
+    };
+
+    // 默认代币对配置
+    const DEFAULT_PAIRS = {
+      "CFX-LOM": {
+        pairAddress: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85",
+        baseToken: "CFX",
+        quoteToken: "LOM"
+      }
+    };
+
+    // ==================== 应用核心逻辑 ====================
+    const ROUTER = "0x62b0873055bf896dd869e172119871ac24aea305";
+    const ROUTER_ABI = [
+      "function getAmountsOut(uint amountIn, address[] path) view returns (uint[] memory amounts)",
+      "function swapExactETHForTokensSupportingFeeOnTransferTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) payable",
+      "function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
+      "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
+      "function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) payable returns (uint amountToken, uint amountETH, uint liquidity)",
+      "function addLiquidity(address tokenA, address tokenB, uint amountADesired, uint amountBDesired, uint amountAMin, uint amountBMin, address to, uint deadline) returns (uint amountA, uint amountB, uint liquidity)",
+      "function removeLiquidityETHSupportingFeeOnTransferTokens(address token, uint liquidity, uint amountTokenMin, uint amountETHMin, address to, uint deadline) returns (uint amountETH)",
+      "function removeLiquidity(address tokenA, address tokenB, uint liquidity, uint amountAMin, uint amountBMin, address to, uint deadline) returns (uint amountA, uint amountB)",
+      "function factory() view returns (address)"
+    ];
+    
+    const ERC20_ABI = [
+      "function approve(address spender, uint256 amount) returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)",
+      "function balanceOf(address owner) view returns (uint256)",
+      "function decimals() view returns (uint8)",
+      "function symbol() view returns (string)",
+      "function name() view returns (string)"
+    ];
+    
+    const PAIR_ABI = [
+      "function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+      "function totalSupply() view returns (uint256)",
+      "function balanceOf(address owner) view returns (uint256)",
+      "function token0() view returns (address)",
+      "function token1() view returns (address)"
+    ];
+
+    let provider, signer, account, router;
+    let currentPair = DEFAULT_PAIRS["CFX-LOM"];
+    let baseToken = TOKENS[currentPair.baseToken];
+    let quoteToken = TOKENS[currentPair.quoteToken];
+    let pair;
+    let fromToken = TOKENS["CFX"];
+    let toToken = TOKENS["LOM"];
+    let slippage = 0.5;
+    let isChinese = true;
+    let currentRatio = 0;
+    let tokenContracts = {};
+
+    // ==================== 初始化函数 ====================
+    function initializeApp() {
+      initializeSwapButton();
+      setupTabs();
+      setupPercentageButtons();
+      setupTokenSelectors();
+      updateAllTexts();
+      
+      // 初始化代币选择器显示
+      updateTokenSelectorDisplay();
+      
+      // 初始化资产列表
+      updateAssetList();
+    }
+
+    function initializeSwapButton() {
+      const fromAmount = document.getElementById("fromAmount").value;
+      const swapBtn = document.getElementById("swapBtn");
+      
+      if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
+        swapBtn.disabled = true;
+        swapBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
+      } else {
+        swapBtn.disabled = false;
+        swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
+      }
+    }
+
+    // ==================== 代币选择器功能 ====================
+    let currentSelectorType = "";
+    
+    function setupTokenSelectors() {
+      // 兑换页面代币选择器
+      document.getElementById("fromTokenSelector").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openTokenSelector("from");
+      });
+      
+      document.getElementById("toTokenSelector").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openTokenSelector("to");
+      });
+      
+      // 添加流动性页面代币选择器
+      document.getElementById("addBaseTokenSelector").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openTokenSelector("addBase");
+      });
+      
+      document.getElementById("addQuoteTokenSelector").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openTokenSelector("addQuote");
+      });
+      
+      // 代币搜索
+      document.getElementById("tokenSearch").addEventListener("input", (e) => {
+        filterTokenList(e.target.value);
+      });
+      
+      // 关闭模态框
+      document.getElementById("tokenSelectorModal").addEventListener("click", (e) => {
+        if (e.target.id === "tokenSelectorModal") {
+          closeTokenSelector();
+        }
+      });
+      
+      // 修复交换按钮
+      document.getElementById("reverse").addEventListener("click", (e) => {
+        e.stopPropagation();
+        swapTokens();
+      });
+    }
+
+    function openTokenSelector(type) {
+      currentSelectorType = type;
+      document.getElementById("tokenSelectorModal").style.display = "flex";
+      populateTokenList();
+    }
+    
+    function closeTokenSelector() {
+      document.getElementById("tokenSelectorModal").style.display = "none";
+      document.getElementById("tokenSearch").value = "";
+    }
+    
+    function populateTokenList() {
+      const tokenList = document.getElementById("tokenList");
+      tokenList.innerHTML = "";
+      
+      for (const symbol in TOKENS) {
+        const token = TOKENS[symbol];
+        const balance = token.balance || "0";
+        
+        const tokenItem = document.createElement("div");
+        tokenItem.className = "token-item";
+        tokenItem.innerHTML = `
+          <div class="token-icon">
+            ${token.logo ? `<img src="${token.logo}" alt="${token.symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
+            <span style="${token.logo ? 'display:none' : ''}">${token.symbol.charAt(0)}</span>
+          </div>
+          <div class="token-item-info">
+            <div class="token-item-name">${token.name}</div>
+            <div class="token-item-symbol">${token.symbol}</div>
+          </div>
+          <div class="token-item-balance">${balance}</div>
+        `;
+        
+        tokenItem.addEventListener("click", () => {
+          selectToken(symbol);
+        });
+        
+        tokenList.appendChild(tokenItem);
+      }
+    }
+    
+    function filterTokenList(query) {
+      const tokenItems = document.querySelectorAll(".token-item");
+      const lowerQuery = query.toLowerCase();
+      
+      tokenItems.forEach(item => {
+        const symbol = item.querySelector(".token-item-symbol").textContent.toLowerCase();
+        const name = item.querySelector(".token-item-name").textContent.toLowerCase();
+        
+        if (symbol.includes(lowerQuery) || name.includes(lowerQuery)) {
+          item.style.display = "flex";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+    
+    function selectToken(symbol) {
+      const token = TOKENS[symbol];
+      
+      // 防止选择相同的代币
+      if (currentSelectorType === "from" && toToken.symbol === symbol) {
+        showBeautifulAlert(isChinese ? "不能选择相同的代币" : "Cannot select the same token", 'warning');
+        return;
+      }
+      
+      if (currentSelectorType === "to" && fromToken.symbol === symbol) {
+        showBeautifulAlert(isChinese ? "不能选择相同的代币" : "Cannot select the same token", 'warning');
+        return;
+      }
+      
+      switch(currentSelectorType) {
+        case "from":
+          fromToken = token;
+          break;
+        case "to":
+          toToken = token;
+          break;
+        case "addBase":
+          baseToken = token;
+          updateTokenSelector("addBaseTokenSelector", "addBaseTokenIcon", "addBaseTokenImg", "addBaseTokenInitial", "addBaseTokenName", token);
+          break;
+        case "addQuote":
+          quoteToken = token;
+          updateTokenSelector("addQuoteTokenSelector", "addQuoteTokenIcon", "addQuoteTokenImg", "addQuoteTokenInitial", "addQuoteTokenName", token);
+          break;
+      }
+      
+      updateTokenSelectorDisplay();
+      document.getElementById("routeInfo").innerText = `${fromToken.symbol} → ${toToken.symbol}`;
+      document.getElementById("fromSymbol").innerText = fromToken.symbol;
+      document.getElementById("toSymbol").innerText = toToken.symbol;
+      document.getElementById("minReceivedSymbol").innerText = toToken.symbol;
+      
+      closeTokenSelector();
+      updateBalances();
+      updateOutput();
+    }
+
+    function updateTokenSelectorDisplay() {
+      updateTokenSelector("fromTokenSelector", "fromTokenIcon", "fromTokenImg", "fromTokenInitial", "fromTokenName", fromToken);
+      updateTokenSelector("toTokenSelector", "toTokenIcon", "toTokenImg", "toTokenInitial", "toTokenName", toToken);
+    }
+
+    function updateTokenSelector(selectorId, iconId, imgId, initialId, nameId, token) {
+      const icon = document.getElementById(iconId);
+      const img = document.getElementById(imgId);
+      const initial = document.getElementById(initialId);
+      const name = document.getElementById(nameId);
+      
+      name.textContent = token.symbol;
+      
+      if (token.logo) {
+        img.src = token.logo;
+        img.alt = token.symbol;
+        img.style.display = "block";
+        initial.style.display = "none";
+      } else {
+        img.style.display = "none";
+        initial.style.display = "block";
+        initial.textContent = token.symbol.charAt(0);
+      }
+    }
+
+    // ==================== 交换功能 ====================
+    function swapTokens() {
+      [fromToken, toToken] = [toToken, fromToken];
+      
+      updateTokenSelectorDisplay();
+      updateBalances();
+      updateOutput();
+      
+      document.getElementById("routeInfo").innerText = `${fromToken.symbol} → ${toToken.symbol}`;
+      document.getElementById("fromSymbol").innerText = fromToken.symbol;
+      document.getElementById("toSymbol").innerText = toToken.symbol;
+      document.getElementById("minReceivedSymbol").innerText = toToken.symbol;
+      
+      const swapBtn = document.getElementById("reverse");
+      swapBtn.style.transform = "rotate(180deg)";
+      setTimeout(() => {
+        swapBtn.style.transform = "rotate(0deg)";
+      }, 300);
+    }
+
+    // ==================== 百分比按钮功能 ====================
     function setupPercentageButtons() {
       document.querySelectorAll('.percent-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
           e.stopPropagation();
           const percent = parseFloat(this.dataset.percent);
-          const balance = parseFloat(document.getElementById("fromBal").innerText);
           
-          if (balance > 0) {
-            const amount = percent === 1 ? Math.max(0, balance - 0.1) : balance * percent;
-            if (amount > 0) {
-              document.getElementById("fromAmount").value = amount.toFixed(6);
-              updateOutput();
-              this.style.background = 'var(--web3-yellow)';
-              this.style.color = '#000';
-              setTimeout(() => {
-                this.style.background = 'rgba(144, 224, 239, 0.1)';
-                this.style.color = 'var(--web3-light)';
-              }, 300);
-            }
+          if (this.id === 'fromMaxBtn') {
+            handleMaxButton();
+          } else {
+            handlePercentageClick(percent, this);
           }
         });
       });
     }
 
-    // 设置代币选择器
-    function setupTokenSelectors() {
-      document.getElementById("fromTokenSelector").addEventListener("click", (e) => {
-        e.stopPropagation();
-        // 代币选择器逻辑
-      });
+    function handlePercentageClick(percent, button) {
+      let balance = parseFloat(document.getElementById("fromBal").innerText);
       
-      document.getElementById("toTokenSelector").addEventListener("click", (e) => {
-        e.stopPropagation();
-        // 代币选择器逻辑
-      });
-
-      document.getElementById("reverse").addEventListener("click", (e) => {
-        e.stopPropagation();
-        // 交换代币逻辑
-        const swapBtn = document.getElementById("reverse");
-        swapBtn.style.transform = "rotate(180deg)";
-        setTimeout(() => {
-          swapBtn.style.transform = "rotate(0deg)";
-        }, 300);
-      });
+      if (balance > 0) {
+        let amount;
+        
+        if (percent === 1) {
+          if (fromToken.symbol === 'CFX') {
+            amount = Math.max(0, balance - 0.1);
+          } else {
+            amount = balance * 0.99;
+          }
+        } else {
+          amount = balance * percent;
+        }
+        
+        if (amount > 0) {
+          document.getElementById("fromAmount").value = amount.toFixed(6);
+          updateOutput();
+          
+          button.style.background = 'var(--web3-yellow)';
+          button.style.color = '#000';
+          setTimeout(() => {
+            button.style.background = 'rgba(144, 224, 239, 0.1)';
+            button.style.color = 'var(--web3-light)';
+          }, 300);
+        } else {
+          showBeautifulAlert(isChinese ? "确认全部添加" : "Insufficient balance", 'warning');
+        }
+      } else {
+        showBeautifulAlert(isChinese ? "余额不足" : "Balance is zero", 'info');
+      }
     }
 
-    // 设置滑点控制
-    function setupSlippageControls() {
-      document.querySelectorAll('.slip-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('.slip-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
+    function handleMaxButton() {
+      let balance = parseFloat(document.getElementById("fromBal").innerText);
+      
+      if (balance > 0) {
+        let amount;
+        
+        if (fromToken.symbol === 'CFX') {
+          amount = Math.max(0, balance - 0.1);
+        } else {
+          amount = balance * 0.99;
+        }
+        
+        if (amount > 0) {
+          document.getElementById("fromAmount").value = amount.toFixed(6);
+          updateOutput();
+        } else {
+          showBeautifulAlert(isChinese ? "余额不足" : "Insufficient balance", 'warning');
+        }
+      } else {
+        showBeautifulAlert(isChinese ? "余额不足" : "Balance is zero", 'info');
+      }
+    }
+
+    // ==================== 语言和文本功能 ====================
+    document.getElementById("langBtn").onclick = () => {
+      isChinese = !isChinese;
+      document.getElementById("langBtn").innerText = isChinese ? "EN" : "CN";
+      updateAllTexts();
+      initializeSwapButton();
+    };
+
+    function updateAllTexts() {
+      const walletBtn = document.getElementById("walletBtn");
+      if (!account) {
+        walletBtn.innerText = isChinese ? "连接钱包" : "Connect Wallet";
+      }
+      
+      document.querySelector('[data-tab="swap"]').innerText = isChinese ? "兑换" : "Swap";
+      document.querySelector('[data-tab="liquidity"]').innerText = isChinese ? "流动性" : "Liquidity";
+      document.getElementById("assetTitle").innerText = isChinese ? "我的资产" : "My Assets";
+      document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
+      document.getElementById("priceLabel").innerText = isChinese ? "价格" : "Price";
+      document.getElementById("slippageLabel").innerText = isChinese ? "滑点容差" : "Slippage Tolerance";
+      document.getElementById("minReceivedLabel").innerText = isChinese ? "最低收到" : "Minimum Received";
+      document.getElementById("priceImpactLabel").innerText = isChinese ? "价格影响" : "Price Impact";
+      document.getElementById("routeLabel").innerText = isChinese ? "路由" : "Route";
+      document.getElementById("addBtn").innerText = isChinese ? "添加流动性" : "Add Liquidity";
+      document.getElementById("removeBtn").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
+      document.getElementById("liquidityOverviewTitle").innerText = isChinese ? "流动性概览" : "Liquidity Overview";
+      document.getElementById("myPositionsTitle").innerText = isChinese ? "我的流动性头寸" : "My Liquidity Positions";
+      document.getElementById("myShareLabel").innerText = isChinese ? "我的流动性份额" : "My Share";
+      document.getElementById("totalLiquidityLabel").innerText = isChinese ? "池子总流动性" : "Total Liquidity";
+      document.getElementById("volumeLabel").innerText = isChinese ? "24h交易量" : "24h Volume";
+      document.getElementById("aprLabel").innerText = isChinese ? "APR" : "APR";
+      document.getElementById("baseAmountLabel").innerText = isChinese ? `${baseToken.symbol}数量:` : `${baseToken.symbol} Amount:`;
+      document.getElementById("quoteAmountLabel").innerText = isChinese ? `${quoteToken.symbol}数量:` : `${quoteToken.symbol} Amount:`;
+      document.getElementById("feesLabel").innerText = isChinese ? "未收取费用:" : "Unclaimed Fees:";
+      document.getElementById("addTitle").innerText = isChinese ? "添加流动性" : "Add Liquidity";
+      document.getElementById("removeTitle").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
+      document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
+      document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
+      document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
+      document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
+      document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
+      document.getElementById("footerText").innerText = isChinese ? "龙脉 DEX · Conflux eSpace" : "龙脉 DEX · Conflux eSpace";
+      document.getElementById("riskTitle").innerText = isChinese ? "风险提示" : "Risk Warning";
+      document.getElementById("riskText").innerText = isChinese ? 
+        "本应用仅作为学习交流，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎请理性对待数字资产交易。" :
+        "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
+      
+      initializeSwapButton();
+    }
+
+    // ==================== 钱包连接功能 ====================
+    document.getElementById("walletBtn").onclick = async () => {
+      if (!window.ethereum) {
+        showBeautifulAlert(isChinese ? "请使用 Fluent / TokenPocket / OKX 钱包打开" : "Please use Fluent / TokenPocket / OKX wallet", 'info');
+        return;
+      }
+      
+      try {
+        await ethereum.request({method: "eth_requestAccounts"});
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        account = await signer.getAddress();
+        router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
+        
+        await initializeTokenContracts();
+        initializePairContract();
+
+        document.getElementById("walletBtn").innerText = account.slice(0,6)+"..."+account.slice(-4);
+        await refreshAll();
+        setInterval(refreshAll, 12000);
+      } catch(e) { 
+        showBeautifulAlert((isChinese ? "连接失败: " : "Connection failed: ") + e.message, 'error');
+      }
+    };
+
+    // ==================== 数据刷新功能 ====================
+    async function initializeTokenContracts() {
+      for (const symbol in TOKENS) {
+        if (TOKENS[symbol].isNative) continue;
+        
+        try {
+          tokenContracts[symbol] = new ethers.Contract(
+            TOKENS[symbol].address, 
+            ERC20_ABI, 
+            provider
+          );
+        } catch (error) {
+          console.error(`初始化代币合约 ${symbol} 失败:`, error);
+        }
+      }
+    }
+
+    function initializePairContract() {
+      if (currentPair.pairAddress) {
+        pair = new ethers.Contract(currentPair.pairAddress, PAIR_ABI, provider);
+      }
+    }
+
+    async function refreshAll() {
+      if (!account) return;
+      
+      try {
+        for (const symbol in TOKENS) {
+          await updateTokenBalance(symbol);
+        }
+        
+        updateAssetList();
+        updateBalances();
+        await updatePoolData();
+        updateOutput();
+      } catch (error) {
+        console.error("刷新数据失败:", error);
+      }
+    }
+
+    async function updateTokenBalance(symbol) {
+      try {
+        const token = TOKENS[symbol];
+        let balance;
+        
+        if (token.isNative) {
+          balance = await provider.getBalance(account);
+        } else {
+          if (!tokenContracts[symbol]) return;
+          balance = await tokenContracts[symbol].balanceOf(account);
+        }
+        
+        const formattedBalance = parseFloat(
+          ethers.utils.formatUnits(balance, token.decimals)
+        ).toFixed(6);
+        
+        token.balance = formattedBalance;
+        
+        const balanceElement = document.getElementById(`${symbol.toLowerCase()}Bal`);
+        if (balanceElement) {
+          balanceElement.innerText = formattedBalance;
+        }
+      } catch (error) {
+        console.error(`更新 ${symbol} 余额失败:`, error);
+      }
+    }
+
+    function updateAssetList() {
+      const assetList = document.getElementById("assetList");
+      assetList.innerHTML = "";
+      
+      for (const symbol in TOKENS) {
+        const token = TOKENS[symbol];
+        const balance = token.balance || "0.000000";
+        
+        const assetItem = document.createElement("div");
+        assetItem.className = "asset-item";
+        assetItem.innerHTML = `
+          <div class="asset-name">
+            <div class="token-icon">
+              ${token.logo ? `<img src="${token.logo}" alt="${token.symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
+              <span style="${token.logo ? 'display:none' : ''}">${token.symbol.charAt(0)}</span>
+            </div>
+            <span>${token.symbol}</span>
+          </div>
+          <div class="asset-balance" id="${symbol.toLowerCase()}Bal">${balance}</div>
+        `;
+        
+        assetList.appendChild(assetItem);
+      }
+      
+      const lpItem = document.createElement("div");
+      lpItem.className = "asset-item";
+      lpItem.innerHTML = `
+        <div class="asset-name">
+          <div class="token-icon">LP</div>
+          <span>LP Token</span>
+        </div>
+        <div class="asset-balance" id="lpBal">0.000000</div>
+      `;
+      assetList.appendChild(lpItem);
+    }
+
+    function updateBalances() {
+      document.getElementById("fromBal").innerText = fromToken.balance || "0";
+      document.getElementById("toBal").innerText = toToken.balance || "0";
+      document.getElementById("addBaseBal").innerText = baseToken.balance || "0";
+      document.getElementById("addQuoteBal").innerText = quoteToken.balance || "0";
+    }
+
+    // ==================== 兑换计算功能 ====================
+    document.getElementById("fromAmount").oninput = updateOutput;
+    
+    let outputUpdateTimeout;
+    function updateOutput() {
+      clearTimeout(outputUpdateTimeout);
+      
+      const amt = document.getElementById("fromAmount").value;
+      if (!amt || !router) { 
+        document.getElementById("toAmount").innerText = "0";
+        initializeSwapButton();
+        return; 
+      }
+      
+      if (amt === "0" || amt === "") {
+        document.getElementById("toAmount").innerText = "0";
+        initializeSwapButton();
+        return;
+      }
+      
+      outputUpdateTimeout = setTimeout(async () => {
+        try {
+          const amountIn = ethers.utils.parseUnits(amt, fromToken.decimals);
+          const path = [fromToken.address, toToken.address];
+          const amounts = await router.getAmountsOut(amountIn, path);
+          const out = ethers.utils.formatUnits(amounts[1], toToken.decimals);
+          document.getElementById("toAmount").innerText = parseFloat(out).toFixed(6);
+          
+          const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+          document.getElementById("minReceived").innerText = 
+            parseFloat(ethers.utils.formatUnits(minOut, toToken.decimals)).toFixed(6) + " " + toToken.symbol;
+          
+          const price = parseFloat(out) / parseFloat(amt);
+          document.getElementById("price").innerText = price.toFixed(6);
+          
+          document.getElementById("swapBtn").disabled = false;
+          document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
+        } catch { 
+          document.getElementById("toAmount").innerText = "--";
+          initializeSwapButton();
+        }
+      }, 300);
+    }
+
+    // ==================== 兑换交易功能 ====================
+    document.getElementById("swapBtn").onclick = async () => {
+      if (!account) {
+        showBeautifulAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
+        return;
+      }
+      
+      const amt = document.getElementById("fromAmount").value;
+      const toAmount = document.getElementById("toAmount").innerText;
+      
+      if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0) {
+        showBeautifulAlert(isChinese ? "请输入有效的兑换数量" : "Please enter a valid amount", 'info');
+        return;
+      }
+      
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      const amountIn = ethers.utils.parseUnits(amt, fromToken.decimals);
+      const path = [fromToken.address, toToken.address];
+      
+      try {
+        const amounts = await router.getAmountsOut(amountIn, path);
+        const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+        const deadline = Math.floor(Date.now()/1000) + 1200;
+
+        let tx;
+        if (fromToken.isNative) {
+          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(
+            minOut, path, account, deadline, 
+            {value: amountIn, gasLimit: 350000}
+          );
+        } else if (toToken.isNative) {
+          const allowance = await tokenContracts[fromToken.symbol].allowance(account, ROUTER);
+          if (allowance.lt(amountIn)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
+            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            await atx.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+          }
+          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+            amountIn, minOut, path, account, deadline, 
+            {gasLimit:350000}
+          );
+        } else {
+          const allowance = await tokenContracts[fromToken.symbol].allowance(account, ROUTER);
+          if (allowance.lt(amountIn)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
+            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            await atx.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+          }
+          tx = await router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn, minOut, path, account, deadline, 
+            {gasLimit:350000}
+          );
+        }
+        
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        
+        const successMessage = isChinese ? 
+          `兑换成功！获得 ${toAmount} ${toToken.symbol}` : 
+          `Swap successful! Received ${toAmount} ${toToken.symbol}`;
+        
+        showBeautifulAlert(successMessage, 'success');
+        document.getElementById("fromAmount").value = "";
+        refreshAll();
+        initializeSwapButton();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "兑换失败，请重试" : "Swap failed, please try again", 'error'); 
+      }
+    };
+
+    // ==================== 流动性功能 ====================
+    document.getElementById("addBtn").onclick = () => {
+      document.getElementById("addModal").style.display = "flex";
+      calculateOptimalRatio();
+      document.getElementById("addBase").value = "";
+      document.getElementById("addQuote").value = "";
+      document.getElementById("confirmAdd").disabled = true;
+      document.getElementById("confirmAdd").innerText = isChinese ? "请输入数量" : "Enter Amount";
+    };
+
+    async function calculateOptimalRatio() {
+      try {
+        if (!pair) {
+          document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = 0 ${quoteToken.symbol}`;
+          currentRatio = 0;
+          return 0;
+        }
+        
+        const [r0, r1] = await pair.getReserves();
+        const t0 = await pair.token0();
+        
+        const reserveBase = t0.toLowerCase() === baseToken.address.toLowerCase() ? r0 : r1;
+        const reserveQuote = t0.toLowerCase() === baseToken.address.toLowerCase() ? r1 : r0;
+        
+        const baseReserve = parseFloat(ethers.utils.formatUnits(reserveBase, baseToken.decimals));
+        const quoteReserve = parseFloat(ethers.utils.formatUnits(reserveQuote, quoteToken.decimals));
+        
+        currentRatio = quoteReserve / baseReserve;
+        document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = ${currentRatio.toFixed(6)} ${quoteToken.symbol}`;
+        return currentRatio;
+      } catch (error) {
+        console.error("比例计算失败:", error);
+        document.getElementById("addRatio").innerText = `1 ${baseToken.symbol} = 0 ${quoteToken.symbol}`;
+        currentRatio = 0;
+        return 0;
+      }
+    }
+
+    // ==================== 滑点设置 ====================
+    document.querySelectorAll(".slip-btn").forEach(b => b.onclick = () => {
+      document.querySelectorAll(".slip-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      slippage = parseFloat(b.dataset.slip);
+      updateOutput();
+    });
+
+    // ==================== 选项卡功能 ====================
+    function setupTabs() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabId = btn.dataset.tab;
+          
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(tabId + 'Tab').classList.add('active');
+          
+          if (tabId === 'liquidity') {
+            updatePoolData();
+          }
         });
       });
     }
 
-    // 更新输出
-    function updateOutput() {
-      const amt = document.getElementById("fromAmount").value;
-      const swapBtn = document.getElementById("swapBtn");
-      
-      if (!amt || amt === "0" || amt === "") {
-        document.getElementById("toAmount").innerText = "0";
-        swapBtn.disabled = true;
-        swapBtn.innerText = "请输入数量";
-      } else {
-        document.getElementById("toAmount").innerText = (parseFloat(amt) * 0.8).toFixed(6);
-        swapBtn.disabled = false;
-        swapBtn.innerText = "立即交换";
+    // ==================== 流动池数据更新 ====================
+    async function updatePoolData() {
+      try {
+        if (!pair) return;
+        
+        const [reserves, totalSupply] = await Promise.all([
+          pair.getReserves(),
+          pair.totalSupply()
+        ]);
+        
+        const token0 = await pair.token0();
+        const token1 = await pair.token1();
+        
+        const isToken0Base = token0.toLowerCase() === baseToken.address.toLowerCase();
+        const reserveBase = isToken0Base ? reserves.reserve0 : reserves.reserve1;
+        const reserveQuote = isToken0Base ? reserves.reserve1 : reserves.reserve0;
+        
+        const baseReserve = parseFloat(ethers.utils.formatUnits(reserveBase, baseToken.decimals));
+        const quoteReserve = parseFloat(ethers.utils.formatUnits(reserveQuote, quoteToken.decimals));
+        
+        document.getElementById("totalLiquidity").innerText = 
+          `$${(baseReserve * 0.1 + quoteReserve * 0.1).toFixed(2)}`;
+        
+        if (account) {
+          const lpBalance = await pair.balanceOf(account);
+          const lpBalanceFormatted = parseFloat(ethers.utils.formatUnits(lpBalance, 18));
+          document.getElementById("lpBal").innerText = lpBalanceFormatted.toFixed(6);
+          
+          const totalSupplyFormatted = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
+          const share = totalSupplyFormatted > 0 ? (lpBalanceFormatted / totalSupplyFormatted) * 100 : 0;
+          document.getElementById("myLiquidityShare").innerText = `${share.toFixed(4)}%`;
+          
+          if (lpBalanceFormatted > 0) {
+            const baseAmount = (baseReserve * lpBalanceFormatted / totalSupplyFormatted).toFixed(6);
+            const quoteAmount = (quoteReserve * lpBalanceFormatted / totalSupplyFormatted).toFixed(6);
+            
+            document.getElementById("positionBase").innerText = baseAmount;
+            document.getElementById("positionQuote").innerText = quoteAmount;
+            document.getElementById("positionValue").innerText = 
+              ((baseAmount * 0.1 + quoteAmount * 0.1).toFixed(2));
+            document.getElementById("positionShare").innerText = share.toFixed(4);
+            
+            document.getElementById("removeBtn").disabled = false;
+          } else {
+            document.getElementById("positionBase").innerText = "0";
+            document.getElementById("positionQuote").innerText = "0";
+            document.getElementById("positionValue").innerText = "0";
+            document.getElementById("positionShare").innerText = "0";
+            document.getElementById("removeBtn").disabled = true;
+          }
+        }
+      } catch (error) {
+        console.error("更新池数据失败:", error);
       }
     }
 
-    // 更新文本
-    function updateAllTexts() {
-      const isChinese = true;
-      document.querySelector('[data-tab="swap"]').innerText = isChinese ? "兑换" : "Swap";
-      document.querySelector('[data-tab="liquidity"]').innerText = isChinese ? "流动性" : "Liquidity";
-      document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
+    // ==================== 美化提示模块 ====================
+    function showBeautifulAlert(message, type = 'info') {
+      const alertOverlay = document.createElement('div');
+      alertOverlay.className = 'beautiful-alert';
+      
+      let icon = '💡';
+      let buttonColor = 'var(--web3-blue)';
+      
+      switch(type) {
+        case 'success':
+          icon = '✅';
+          buttonColor = 'var(--web3-success)';
+          break;
+        case 'warning':
+          icon = '⚠️';
+          buttonColor = 'var(--web3-yellow)';
+          break;
+        case 'error':
+          icon = '❌';
+          buttonColor = 'var(--web3-warning)';
+          break;
+      }
+      
+      alertOverlay.innerHTML = `
+        <div class="beautiful-alert-content">
+          <div class="beautiful-alert-icon">${icon}</div>
+          <div class="beautiful-alert-message">${message}</div>
+          <button class="beautiful-alert-button" style="background: ${buttonColor}">确定</button>
+        </div>
+      `;
+      
+      document.body.appendChild(alertOverlay);
+      
+      const closeButton = alertOverlay.querySelector('.beautiful-alert-button');
+      const closeAlert = () => {
+        alertOverlay.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          if (alertOverlay.parentNode) {
+            alertOverlay.parentNode.removeChild(alertOverlay);
+          }
+        }, 300);
+      };
+      
+      closeButton.addEventListener('click', closeAlert);
+      alertOverlay.addEventListener('click', (e) => {
+        if (e.target === alertOverlay) closeAlert();
+      });
+      
+      setTimeout(closeAlert, 3000);
     }
 
-    // 钱包连接
-    document.getElementById("walletBtn").onclick = async () => {
-      document.getElementById("walletBtn").innerText = "0x1234...5678";
-      document.getElementById("fromBal").innerText = "1.234567";
-      document.getElementById("toBal").innerText = "100.123456";
-      document.getElementById("cfxBal").innerText = "1.234567";
-      document.getElementById("lomBal").innerText = "100.123456";
-      document.getElementById("lpBal").innerText = "0.500000";
-    };
+    // 添加淡出动画
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
 
-    // 输入监听
-    document.getElementById("fromAmount").addEventListener('input', updateOutput);
-
-    // 语言切换
-    document.getElementById("langBtn").onclick = () => {
-      const isChinese = document.getElementById("langBtn").innerText === "EN";
-      document.getElementById("langBtn").innerText = isChinese ? "CN" : "EN";
-      updateAllTexts();
-    };
-
-    // 页面初始化
+    // ==================== 页面初始化 ====================
     document.addEventListener('DOMContentLoaded', function() {
-      initializeApp();
-      
-      // 显示安全提示
-      setTimeout(() => {
-        document.getElementById('securityTips').style.display = 'block';
-      }, 2000);
+      if (initializeSecurity()) {
+        initializeApp();
+      }
     });
 
-    // 加载动画
-    const style = document.createElement('style');
-    style.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
-    document.head.appendChild(style);
+    // 模态框关闭事件
+    window.onclick = e => { 
+      if(e.target.classList.contains("modal")) {
+        e.target.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
