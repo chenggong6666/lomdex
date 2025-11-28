@@ -219,7 +219,7 @@
     .swap-section {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 8px !important;
     }
     
     .token-input-container {
@@ -337,7 +337,7 @@
       display: flex;
       justify-content: center;
       position: relative;
-      margin: 4px 0;
+      margin: 4px 0 !important;
     }
     
     .swap-btn {
@@ -1469,33 +1469,11 @@
       });
       
       // 设置默认代币选择
-      updateTokenSelectors();
+      updateTokenDisplay();
     }
 
-    // 更新代币选择器显示
-    function updateTokenSelectors() {
-      const fromSelector = document.getElementById("fromTokenSelector");
-      const toSelector = document.getElementById("toTokenSelector");
-      
-      fromSelector.innerHTML = `
-        <div class="token-icon" style="background: ${fromToken.color}">${fromToken.icon}</div>
-        <span>${fromToken.symbol}</span>
-        <div class="token-dropdown" id="fromTokenDropdown"></div>
-      `;
-      
-      toSelector.innerHTML = `
-        <div class="token-icon" style="background: ${toToken.color}">${toToken.icon}</div>
-        <span>${toToken.symbol}</span>
-        <div class="token-dropdown" id="toTokenDropdown"></div>
-      `;
-      
-      // 重新初始化下拉菜单事件
-      initializeTokenDropdowns();
-      setupDropdownEvents();
-    }
 
     // 设置下拉菜单事件
-// 替换现有的 setupDropdownEvents 函数
 function setupDropdownEvents() {
   const fromSelector = document.getElementById("fromTokenSelector");
   const toSelector = document.getElementById("toTokenSelector");
@@ -2015,80 +1993,60 @@ function updateTokenDisplay() {
     };
 
     // 刷新数据
-    async function refreshAll() {
-      if (!account) return;
-      
-      try {
-        // 更新CFX余额
-        const cfx = ethers.utils.formatEther(await provider.getBalance(account));
-        document.getElementById("cfxBal").innerText = parseFloat(cfx).toFixed(6);
-
-        // 更新其他代币余额
-for (const token of Object.values(TOKENS)) {
-  if (token.symbol !== 'CFX' && tokenContracts[token.symbol]) {
-    try {
-      const balance = await tokenContracts[token.symbol].balanceOf(account);
-      const formattedBalance = parseFloat(ethers.utils.formatUnits(balance, token.decimals)).toFixed(6);
-      
-      // 更新资产列表中的余额
-      const assetElement = document.getElementById(`${token.symbol.toLowerCase()}Bal`);
-      if (assetElement) {
-        assetElement.innerText = formattedBalance;
-      }
-    } catch (error) {
-      console.error(`获取 ${token.symbol} 余额失败:`, error);
-    }
+async function refreshAll() {
+  if (!account) return;
+  
+  try {
+    // ... 其他余额更新代码 ...
+    
+    // 优化流动性数据更新
+    await updateLiquidityData();
+    
+    updateBalances();
+    updateOutput();
+  } catch (error) {
+    console.error("刷新数据失败:", error);
   }
 }
 
-        // 更新LP代币余额
-        const lpBal = await pair.balanceOf(account);
-        const lpAmt = ethers.utils.formatUnits(lpBal, 18);
-        document.getElementById("lpBal").innerText = parseFloat(lpAmt).toFixed(6);
-        document.getElementById("removeBtn").disabled = lpBal.isZero();
-
-        // 获取池子储备和计算总流动性
-        const [r0, r1] = await pair.getReserves();
-        const t0 = await pair.token0();
-        const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
-        const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
-        
-        const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-        const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
-        
-        // 计算池子总流动性
-        const totalLiquidity = (cfxReserve * 0.1) + (lomReserve * 0.01);
-        document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
-
-        // 更新流动性页面数据
-        const total = await pair.totalSupply();
-        const share = total.isZero() ? 0 : (lpBal.mul(10000).div(total)/100).toFixed(2);
-        document.getElementById("myLiquidityShare").innerText = share + "%";
-        document.getElementById("positionShare").innerText = share;
-        
-        // 计算用户头寸价值
-        const userCfx = cfxReserve * (parseFloat(share) / 100);
-        const userLom = lomReserve * (parseFloat(share) / 100);
-        const positionValue = (userCfx * 0.1) + (userLom * 0.01);
-        
-        document.getElementById("positionValue").innerText = positionValue.toFixed(2);
-        document.getElementById("positionCfx").innerText = userCfx.toFixed(6);
-        document.getElementById("positionLom").innerText = userLom.toFixed(6);
-
-        // 估算其他数据
-        document.getElementById("dailyVolume").innerText = "$" + (totalLiquidity * 0.1).toFixed(2);
-        document.getElementById("poolAPR").innerText = (totalLiquidity > 0 ? "12.5%" : "0%");
-
-        // 更新添加流动性模态框的余额
-        document.getElementById("addCfxBal").innerText = parseFloat(cfx).toFixed(6);
-        document.getElementById("addLomBal").innerText = parseFloat(ethers.utils.formatUnits(await tokenContracts.LOM.balanceOf(account), 18)).toFixed(6);
-
-        updateBalances();
-        updateOutput();
-      } catch (error) {
-        console.error("刷新数据失败:", error);
-      }
+// 新增：专门的流动性数据更新函数
+async function updateLiquidityData() {
+  try {
+    const lpBal = await pair.balanceOf(account);
+    const total = await pair.totalSupply();
+    
+    if (total.isZero()) {
+      document.getElementById("myLiquidityShare").innerText = "0%";
+      document.getElementById("positionShare").innerText = "0";
+      document.getElementById("positionValue").innerText = "0";
+      return;
     }
+    
+    const share = (lpBal.mul(10000).div(total) / 100).toFixed(2);
+    document.getElementById("myLiquidityShare").innerText = share + "%";
+    document.getElementById("positionShare").innerText = share;
+    
+    // 立即更新UI，不等待其他计算
+    const [r0, r1] = await pair.getReserves();
+    const t0 = await pair.token0();
+    const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+    const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+    
+    const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+    const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+    
+    const userCfx = cfxReserve * (parseFloat(share) / 100);
+    const userLom = lomReserve * (parseFloat(share) / 100);
+    const positionValue = (userCfx * 0.1) + (userLom * 0.01);
+    
+    document.getElementById("positionValue").innerText = positionValue.toFixed(2);
+    document.getElementById("positionCfx").innerText = userCfx.toFixed(6);
+    document.getElementById("positionLom").innerText = userLom.toFixed(6);
+    
+  } catch (error) {
+    console.error("更新流动性数据失败:", error);
+  }
+}
 
     function updateBalances() {
       // 更新兑换页面的余额显示
@@ -2113,23 +2071,27 @@ for (const token of Object.values(TOKENS)) {
       }
     }
 
-    // 反向按钮
     document.getElementById("reverse").onclick = () => {
-      // 交换代币选择
-      const temp = fromToken;
-      fromToken = toToken;
-      toToken = temp;
-      
-      updateTokenSelectors();
-      updateBalances();
-      updateOutput();
-      updateRouteInfo();
-      
-      // 清空输入框
-      document.getElementById("fromAmount").value = "";
-      document.getElementById("toAmount").innerText = "0";
-      initializeSwapButton();
-    };
+  // 直接交换，不重新创建DOM
+  [fromToken, toToken] = [toToken, fromToken];
+  
+  updateTokenDisplay();
+  updateBalances();
+  
+  // 保留输入值但交换位置
+  const fromAmount = document.getElementById("fromAmount").value;
+  const toAmount = document.getElementById("toAmount").innerText;
+  
+  if (fromAmount && fromAmount !== "0") {
+    document.getElementById("fromAmount").value = toAmount;
+    updateOutput();
+  } else {
+    document.getElementById("toAmount").innerText = "0";
+  }
+  
+  updateRouteInfo();
+  initializeSwapButton();
+};
 
     // 滑点设置
     document.querySelectorAll(".slip-btn").forEach(b => b.onclick = () => {
@@ -2282,16 +2244,20 @@ for (const token of Object.values(TOKENS)) {
         }
         
         await tx.wait();
-        document.getElementById("loading").style.display = "none";
-        
-        const successMessage = isChinese ? 
-          `兑换成功！获得 ${toAmount} ${toToken.symbol}` : 
-          `Swap successful! Received ${toAmount} ${toToken.symbol}`;
-        
-        showBeautifulAlert(successMessage, 'success');
-        document.getElementById("fromAmount").value = "";
-        refreshAll();
-        initializeSwapButton();
+onTransactionSuccess(isChinese ? 
+  `兑换成功！获得 ${toAmount} ${toToken.symbol}` : 
+  `Swap successful! Received ${toAmount} ${toToken.symbol}`
+);
+
+// 新增：交易成功处理函数
+function onTransactionSuccess(message) {
+  document.getElementById("loading").style.display = "none";
+  showBeautifulAlert(message, 'success');
+  document.getElementById("fromAmount").value = "";
+  // 立即刷新所有数据
+  refreshAll();
+  initializeSwapButton();
+}
       } catch (e) { 
         document.getElementById("loading").style.display = "none";
         console.error("兑换失败:", e);
@@ -2399,16 +2365,34 @@ for (const token of Object.values(TOKENS)) {
     };
 
     // 页面初始化
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeSwapButton();
-      setupTabs();
-      setupPercentageButtons();
-      initializeTokenDropdowns();
-      setupDropdownEvents();
-      updateAllTexts();
-      initializeSecurity();
-      updateRouteInfo();
-    });
+function initializeApp() {
+  initializeSwapButton();
+  setupTabs();
+  setupPercentageButtons();
+  initializeTokenDropdowns();
+  setupDropdownEvents();
+  updateAllTexts();
+  initializeSecurity();
+  updateRouteInfo();
+  
+  // 预加载必要的合约数据
+  preloadContractData();
+}
+
+// 新增：预加载合约数据
+async function preloadContractData() {
+  if (window.ethereum) {
+    try {
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
+    } catch (error) {
+      console.log("预加载数据失败:", error);
+    }
+  }
+}
+
+// 更新DOMContentLoaded事件监听器
+document.addEventListener('DOMContentLoaded', initializeApp);
 
     // 模态框关闭事件
     window.onclick = e => { 
