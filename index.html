@@ -1971,7 +1971,6 @@ function setupDropdownEvents() {
           deadline,
           {
             value: amountCfx,
-            gasLimit: 400000
           }
         );
         
@@ -2223,7 +2222,7 @@ for (const token of Object.values(TOKENS)) {
             path, 
             account, 
             deadline, 
-            {value: amountIn, gasLimit:350000}
+            {value: amountIn}
           );
         } 
         // 其他代币 -> CFX
@@ -2232,7 +2231,7 @@ for (const token of Object.values(TOKENS)) {
           const allowance = await tokenContracts[fromToken.symbol].allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? `授权${fromToken.symbol}代币...` : `Approving ${fromToken.symbol} token...`);
-            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256,);
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
@@ -2243,7 +2242,6 @@ for (const token of Object.values(TOKENS)) {
             path, 
             account, 
             deadline, 
-            {gasLimit:350000}
           );
         }
         // 其他代币 -> 其他代币
@@ -2252,7 +2250,7 @@ for (const token of Object.values(TOKENS)) {
           const allowance = await tokenContracts[fromToken.symbol].allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? `授权${fromToken.symbol}代币...` : `Approving ${fromToken.symbol} token...`);
-            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await tokenContracts[fromToken.symbol].approve(ROUTER, ethers.constants.MaxUint256, );
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
@@ -2263,7 +2261,7 @@ for (const token of Object.values(TOKENS)) {
             path, 
             account, 
             deadline, 
-            {gasLimit:350000}
+           
           );
         }
         
@@ -2360,7 +2358,7 @@ for (const token of Object.values(TOKENS)) {
           account, 
           deadline,
           {
-            gasLimit: 400000
+
           }
         );
         
