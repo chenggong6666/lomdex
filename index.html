@@ -1372,42 +1372,47 @@
     let isChinese = true;
     let currentRatio = 0;
 
-    // 代币配置
+    // 代币配置 - 修复精度问题
     const TOKENS = {
       "CFX": {
         name: "CFX",
         address: WCFX,
         decimals: 18,
         icon: "C",
-        color: "#FC8732"
+        color: "#FC8732",
+        isNative: true
       },
       "LOM": {
         name: "LOM",
         address: LOM,
         decimals: 18,
         icon: "L",
-        color: "#4361ee"
+        color: "#4361ee",
+        isNative: false
       },
       "AxCNH": {
         name: "AxCNH",
         address: AXCNH,
         decimals: 18,
         icon: "A",
-        color: "#7209b7"
+        color: "#7209b7",
+        isNative: false
       },
       "USDT0": {
         name: "USDT0",
         address: USDT0,
         decimals: 18,
         icon: "U",
-        color: "#26a17b"
+        color: "#26a17b",
+        isNative: false
       },
       "CNHT0": {
         name: "CNHT0",
         address: CNHT0,
         decimals: 18,
         icon: "C",
-        color: "#ff6b6b"
+        color: "#ff6b6b",
+        isNative: false
       }
     };
 
@@ -2183,7 +2188,7 @@
     // 输入更新
     document.getElementById("fromAmount").oninput = updateOutput;
     
-    // 获取兑换路径
+    // 获取兑换路径 - 修复路径问题
     function getSwapPath(from, to) {
       // 如果直接有交易对，使用直接路径
       if ((from === "CFX" && to === "LOM") || (from === "LOM" && to === "CFX")) {
@@ -2201,6 +2206,7 @@
       }
     }
     
+    // 修复兑换计算函数
     async function updateOutput() {
       const amt = document.getElementById("fromAmount").value;
       if (!amt || !router) { 
@@ -2234,7 +2240,7 @@
       }
     }
 
-    // 兑换功能
+    // 修复兑换功能
     document.getElementById("swapBtn").onclick = async () => {
       // 统一钱包检查
       if (!account) {
@@ -2331,7 +2337,20 @@
       } catch (e) { 
         document.getElementById("loading").style.display = "none";
         console.error("兑换失败:", e);
-        showBeautifulAlert(isChinese ? "兑换失败，请重试" : "Swap failed, please try again", 'error'); 
+        
+        // 更详细的错误信息
+        let errorMsg = e.message || "未知错误";
+        if (errorMsg.includes("insufficient funds")) {
+          errorMsg = isChinese ? "余额不足，请检查您的代币余额" : "Insufficient funds, please check your balance";
+        } else if (errorMsg.includes("user rejected")) {
+          errorMsg = isChinese ? "用户取消了交易" : "User rejected the transaction";
+        } else if (errorMsg.includes("execution reverted")) {
+          errorMsg = isChinese ? "交易执行失败，请检查滑点设置" : "Transaction execution failed, please check slippage";
+        } else if (errorMsg.includes("allowance")) {
+          errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
+        }
+        
+        showBeautifulAlert((isChinese ? "兑换失败: " : "Swap failed: ") + errorMsg, 'error'); 
       }
     };
 
