@@ -219,7 +219,7 @@
     .swap-section {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
     
     .token-input-container {
@@ -228,6 +228,7 @@
       padding: 16px;
       border: 1px solid rgba(76, 201, 240, 0.2);
       position: relative;
+      margin: 2px 0;
     }
     
     .token-input-header {
@@ -336,7 +337,7 @@
       display: flex;
       justify-content: center;
       position: relative;
-      margin: 8px 0;
+      margin: 4px 0;
     }
     
     .swap-btn {
@@ -1494,65 +1495,80 @@
     }
 
     // 设置下拉菜单事件
+// 替换现有的 setupDropdownEvents 函数
 function setupDropdownEvents() {
   const fromSelector = document.getElementById("fromTokenSelector");
   const toSelector = document.getElementById("toTokenSelector");
-  const fromDropdown = document.getElementById("fromTokenDropdown");
-  const toDropdown = document.getElementById("toTokenDropdown");
+  
+  // 移除旧的事件监听器
   fromSelector.replaceWith(fromSelector.cloneNode(true));
   toSelector.replaceWith(toSelector.cloneNode(true));
   
   // 重新获取元素
   const newFromSelector = document.getElementById("fromTokenSelector");
   const newToSelector = document.getElementById("toTokenSelector");
-  const newFromDropdown = document.getElementById("fromTokenDropdown");
-  const newToDropdown = document.getElementById("toTokenDropdown");
   
+  // 简化事件绑定
   newFromSelector.addEventListener('click', (e) => {
     e.stopPropagation();
-    newFromDropdown.style.display = newFromDropdown.style.display === 'block' ? 'none' : 'block';
-    newToDropdown.style.display = 'none';
+    const dropdown = document.getElementById("fromTokenDropdown");
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    document.getElementById("toTokenDropdown").style.display = 'none';
   });
   
   newToSelector.addEventListener('click', (e) => {
     e.stopPropagation();
-    newToDropdown.style.display = newToDropdown.style.display === 'block' ? 'none' : 'block';
-    newFromDropdown.style.display = 'none';
+    const dropdown = document.getElementById("toTokenDropdown");
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    document.getElementById("fromTokenDropdown").style.display = 'none';
   });
   
-  // 点击其他地方关闭下拉菜单
+  // 点击外部关闭
   document.addEventListener('click', () => {
-    newFromDropdown.style.display = 'none';
-    newToDropdown.style.display = 'none';
+    document.getElementById("fromTokenDropdown").style.display = 'none';
+    document.getElementById("toTokenDropdown").style.display = 'none';
   });
-  }
+}
 
     // 选择代币
-    function selectToken(token, type) {
+function selectToken(token, type) {
+  if (type === 'from' && token.symbol === toToken.symbol) {
+    toToken = fromToken;
+  } else if (type === 'to' && token.symbol === fromToken.symbol) {
+    fromToken = toToken;
+  }
+  
   if (type === 'from') {
-    // 如果选择了与"到"代币相同的代币，自动交换
-    if (token.symbol === toToken.symbol) {
-      toToken = fromToken;
-    }
     fromToken = token;
   } else {
-    // 如果选择了与"从"代币相同的代币，自动交换
-    if (token.symbol === fromToken.symbol) {
-      fromToken = toToken;
-    }
     toToken = token;
   }
   
-  updateTokenSelectors(); // 只更新显示，不重新创建
+  // 只更新显示，不重新创建DOM
+  updateTokenDisplay();
   updateBalances();
   updateOutput();
   updateRouteInfo();
   
   // 关闭下拉菜单
-  const fromDropdown = document.getElementById("fromTokenDropdown");
-  const toDropdown = document.getElementById("toTokenDropdown");
-  if (fromDropdown) fromDropdown.style.display = 'none';
-  if (toDropdown) toDropdown.style.display = 'none';
+  document.getElementById("fromTokenDropdown").style.display = 'none';
+  document.getElementById("toTokenDropdown").style.display = 'none';
+}
+
+// 新增：只更新显示的函数
+function updateTokenDisplay() {
+  const fromSelector = document.getElementById("fromTokenSelector");
+  const toSelector = document.getElementById("toTokenSelector");
+  
+  fromSelector.innerHTML = `
+    <div class="token-icon" style="background: ${fromToken.color}">${fromToken.icon}</div>
+    <span>${fromToken.symbol}</span>
+  `;
+  
+  toSelector.innerHTML = `
+    <div class="token-icon" style="background: ${toToken.color}">${toToken.icon}</div>
+    <span>${toToken.symbol}</span>
+  `;
 }
 
     // 更新路由信息
