@@ -1284,7 +1284,7 @@
       </div>
       <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
       <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
-      <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
+      <div style="margin-bottom: 8px;">• 请仔细核对交易详情</div>
       <button onclick="document.getElementById('securityTips').style.display='none'" style="
         background: transparent;
         border: 1px solid var(--web3-yellow);
@@ -1337,87 +1337,33 @@
       return true;
     }
 
-    // 显示安全警告
-    function showSecurityWarning(currentDomain) {
-      const warningOverlay = document.createElement('div');
-      warningOverlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(15, 23, 42, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        backdrop-filter: blur(5px);
-      `;
-      
-      warningOverlay.innerHTML = `
-        <div style="
-          background: var(--web3-card);
-          padding: 30px;
-          border-radius: 20px;
-          max-width: 400px;
-          text-align: center;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-          border: 2px solid var(--web3-warning);
-        ">
-          <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
-          <h3 style="color: var(--web3-warning); margin-bottom: 15px;">安全警告</h3>
-          <p style="color: var(--web3-light); margin-bottom: 20px; line-height: 1.5;">
-            您正在访问非官方域名：<strong>${currentDomain}</strong><br>
-            请确认您访问的是官方网址，以防资产损失。
-          </p>
-          <div style="background: rgba(255, 107, 107, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-            <p style="font-size: 14px; color: var(--web3-light); margin: 0;">
-              <strong>官方域名：</strong><br>
-              ${SECURITY_CONFIG.ALLOWED_DOMAINS.join('<br>')}
-            </p>
-          </div>
-          <div style="display: flex; gap: 12px; justify-content: center;">
-            <button id="continueAnyway" style="
-              background: var(--web3-warning);
-              color: #0f172a;
-              border: none;
-              padding: 12px 24px;
-              border-radius: 12px;
-              font-weight: bold;
-              cursor: pointer;
-              font-size: 14px;
-            ">仍然继续</button>
-            <button id="closePage" style="
-              background: transparent;
-              color: var(--web3-light);
-              border: 1px solid var(--web3-light);
-              padding: 12px 24px;
-              border-radius: 12px;
-              font-weight: bold;
-              cursor: pointer;
-              font-size: 14px;
-            ">关闭页面</button>
-          </div>
-        </div>
-      `;
-      
-      document.body.appendChild(warningOverlay);
-      
-      // 绑定事件
-      document.getElementById('continueAnyway').addEventListener('click', () => {
-        document.body.removeChild(warningOverlay);
-        localStorage.setItem('securityWarningAcknowledged', 'true');
-        initializeApp();
-      });
-      
-      document.getElementById('closePage').addEventListener('click', () => {
-        window.location.href = 'about:blank';
-        setTimeout(() => {
-          window.close();
-        }, 100);
-      });
-    }
+document.getElementById('closePage').addEventListener('click', () => {
+  // 清空页面内容并显示关闭提示
+  document.body.innerHTML = `
+    <div style="
+      background: var(--web3-dark);
+      color: var(--web3-light);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      text-align: center;
+      padding: 20px;
+    ">
+      <div style="font-size: 64px; margin-bottom: 20px;">🔒</div>
+      <h1 style="color: var(--web3-yellow); margin-bottom: 16px;">页面已关闭</h1>
+      <p style="margin-bottom: 24px; line-height: 1.6;">
+        出于安全考虑，此页面已被关闭。<br>
+        请手动关闭浏览器标签页。
+      </p>
+      <p style="color: #94a3b8; font-size: 14px;">
+        安全提示：请确保访问官方域名以保护您的资产安全
+      </p>
+    </div>
+  `;
+});
 
     function createSecurityIndicator() {
       const indicator = document.createElement('div');
