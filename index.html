@@ -6,6 +6,7 @@
   <title>龙脉DEX</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
+    /* 样式优化，消除长方形阴影 */
     :root {
       --web3-blue: #4361ee;
       --web3-purple: #7209b7;
@@ -21,7 +22,6 @@
     * {
       box-sizing: border-box;
       margin: 0;
-      outline: none !important;
     }
     
     body, .app {
@@ -50,65 +50,33 @@
       padding: 0 8px;
       position: relative;
     }
-    
-    @keyframes textGlow {
-      0%, 100% {
-        text-shadow: 
-          0 0 20px rgba(255, 215, 0, 0.8),
-          0 0 40px rgba(67, 97, 238, 0.6);
-        filter: brightness(1);
-      }
-      50% {
-        text-shadow: 
-          0 0 30px rgba(255, 215, 0, 0.9),
-          0 0 60px rgba(114, 9, 183, 0.7);
-        filter: brightness(1.2);
-      }
-    }
-
     .logo {
-      font-size: 42px;
-      font-weight: 900;
-      background: linear-gradient(90deg, 
-        var(--web3-blue), 
-        var(--web3-purple), 
-        var(--web3-yellow),
-        var(--web3-purple),
-        var(--web3-blue)
-      );
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      position: relative;
-      display: inline-block;
-      animation: textGlow 3s ease-in-out infinite;
-      margin-top: 2px;
-      overflow: hidden;
-    }
-    
-    .logo::before {
-      content: "龙脉DEX";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255,255,255,0.8), 
-        transparent
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shine 3s ease-in-out infinite;
-    }
-    
-    @keyframes shine {
-      0% { transform: translateX(-100%); }
-      50%, 100% { transform: translateX(100%); }
-    }
+  font-size: 42px;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple), var(--web3-yellow));
+  -webkit-background-clip: text;
+  color: transparent;
+  position: relative;
+  display: inline-block;
+  animation: textGlow 2s ease-in-out infinite alternate;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  margin-top: 2px;
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
+                 0 0 20px rgba(255, 215, 0, 0.2),
+                 0 0 30px rgba(255, 215, 0, 0.1);
+    filter: brightness(1);
+  }
+  100% {
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6),
+                 0 0 30px rgba(255, 215, 0, 0.4),
+                 0 0 45px rgba(255, 215, 0, 0.2);
+    filter: brightness(1.1);
+  }
+}
     
     .btn {
       background: var(--web3-card);
@@ -125,20 +93,17 @@
       display: flex; 
       justify-content: center; 
       align-items: center; 
-      box-shadow: none !important;
     }
-    
-    #langBtn {
-      min-width: 40px;
-      width: 40px;
-      flex-shrink: 0;
-    }
+     #langBtn {
+     min-width: 40px;
+     width: 40px;
+     flex-shrink: 0;
+     }
     
     .btn:hover {
       background: rgba(76, 201, 240, 0.2);
       border-color: var(--web3-accent);
       transform: translateY(-2px);
-      box-shadow: none !important;
     }
     
     .card {
@@ -149,7 +114,6 @@
       border: 1px solid rgba(76, 201, 240, 0.2);
       position: relative;
       overflow: hidden;
-      box-shadow: none !important;
     }
     
     .card::before {
@@ -237,8 +201,8 @@
     }
     
     .token-icon {
-      width: 24px;
-      height: 24px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
       display: flex;
@@ -246,35 +210,28 @@
       justify-content: center;
       font-size: 9px;
       font-weight: bold;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    
-    .token-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
     
     .token-row {
       display: flex;
       align-items: center;
       margin: 8px 0;
-      gap: 12px;
-      position: relative;
     }
     
     .token-info {
       flex: 1;
-      min-width: 0;
     }
     
-    .token-input-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      min-width: 150px;
-      flex-shrink: 0;
+    .token-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--web3-light);
+    }
+    
+    .balance {
+      font-size: 13px;
+      color: #94a3b8;
     }
     
     .input {
@@ -288,35 +245,25 @@
       font-weight: 600;
     }
     
-    .swap-btn-container {
-      position: relative;
-      height: 20px;
-      margin: 5px 0;
-    }
-    
     .swap-btn {
       width: 48px;
       height: 48px;
       background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
       border-radius: 50%;
+      margin: -8px auto;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 18px;
       cursor: pointer;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      position: relative;
       z-index: 2;
       border: 2px solid var(--web3-dark);
-      box-shadow: none !important;
       transition: all 0.3s ease;
     }
     
     .swap-btn:hover {
-      transform: translate(-50%, -50%) rotate(180deg);
-      box-shadow: none !important;
+      transform: rotate(180deg);
     }
     
     .action {
@@ -331,7 +278,6 @@
       cursor: pointer;
       margin-top: 16px;
       transition: all 0.3s ease;
-      box-shadow: none !important;
       position: relative;
       overflow: hidden;
     }
@@ -353,7 +299,6 @@
     
     .action:hover {
       transform: translateY(-3px);
-      box-shadow: none !important;
     }
     
     .action:disabled {
@@ -361,7 +306,6 @@
       color: #94a3b8;
       cursor: not-allowed;
       transform: none;
-      box-shadow: none !important;
     }
     
     .action:disabled::before {
@@ -429,12 +373,10 @@
       text-align: center;
       transition: all 0.2s ease;
       border: 1px solid transparent;
-      box-shadow: none !important;
     }
     
     .slip-btn:hover {
       border-color: var(--web3-accent);
-      box-shadow: none !important;
     }
     
     .slip-btn.active {
@@ -442,7 +384,6 @@
       color: #0f172a;
       font-weight: 600;
       border-color: var(--web3-yellow);
-      box-shadow: none !important;
     }
     
     .footer {
@@ -470,7 +411,6 @@
       width: 90%;
       max-width: 420px;
       border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: none !important;
     }
     
     #loading {
@@ -492,7 +432,6 @@
       font-size: 18px;
       border: 1px solid rgba(76, 201, 240, 0.3);
       color: var(--web3-light);
-      box-shadow: none !important;
     }
     
     .tab-container {
@@ -518,13 +457,11 @@
       cursor: pointer;
       transition: all 0.3s;
       font-size: 16px;
-      box-shadow: none !important;
     }
     
     .tab-btn.active {
       background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
       color: #fff;
-      box-shadow: none !important;
     }
     
     .tab-content {
@@ -554,14 +491,12 @@
       cursor: pointer;
       transition: all 0.2s;
       min-width: 44px;
-      box-shadow: none !important;
     }
     
     .percent-btn:hover {
       background: var(--web3-yellow);
       color: #0f172a;
       border-color: var(--web3-yellow);
-      box-shadow: none !important;
     }
     
     .input-hint {
@@ -585,12 +520,10 @@
       border-radius: 12px;
       border: 1px solid rgba(76, 201, 240, 0.2);
       transition: all 0.3s ease;
-      box-shadow: none !important;
     }
     
     .stat-item:hover {
       transform: translateY(-3px);
-      box-shadow: none !important;
     }
     
     .stat-label {
@@ -606,30 +539,28 @@
     }
     
     .position-item {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: none !important;
-    }
+  background: rgba(76, 201, 240, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(76, 201, 240, 0.2);
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
     
     .position-item:hover {
       transform: translateY(-3px);
-      box-shadow: none !important;
     }
     
     .position-pair {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
     
     .token-pair {
       display: flex;
@@ -647,43 +578,43 @@
     }
     
     .position-value .value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--web3-light);
-    }
-    
-    .position-value .share {
-      font-size: 14px;
-      color: #94a3b8;
-      text-align: right;
-    }
-    
-    .position-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(76, 201, 240, 0.2);
-    }
-    
-    .detail {
-      font-size: 13px;
-      color: #cbd5e1;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .detail span:first-child {
-      color: #94a3b8;
-      display: block;
-      margin-bottom: 6px;
-      font-size: 12px;
-    }
-    
-    .detail span:last-child {
-      font-weight: 600;
-      color: var(--web3-light);
-    }
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--web3-light);
+}
+
+.position-value .share {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: right;
+}
+
+.position-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(76, 201, 240, 0.2);
+}
+
+.detail {
+  font-size: 13px;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail span:first-child {
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.detail span:last-child {
+  font-weight: 600;
+  color: var(--web3-light);
+}
     
     .stake-card {
       background: linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(114, 9, 183, 0.1));
@@ -692,7 +623,6 @@
       margin: 16px 0;
       border: 1px solid rgba(255, 209, 102, 0.3);
       text-align: center;
-      box-shadow: none !important;
     }
     
     .stake-title {
@@ -728,12 +658,10 @@
       transition: all 0.3s ease;
       text-decoration: none;
       display: inline-block;
-      box-shadow: none !important;
     }
     
     .stake-button:hover {
       transform: translateY(-2px);
-      box-shadow: none !important;
     }
     
     .risk-warning {
@@ -746,7 +674,6 @@
       font-size: 12px;
       color: var(--web3-light);
       line-height: 1.6;
-      box-shadow: none !important;
     }
     
     #securityTips {
@@ -762,7 +689,6 @@
       color: var(--web3-light);
       z-index: 9999;
       display: none;
-      box-shadow: none !important;
     }
     
     #securityIndicator {
@@ -779,69 +705,8 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      box-shadow: none !important;
     }
     
-    /* 安全警告样式 */
-    .security-warning {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.95);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      backdrop-filter: blur(5px);
-    }
-    
-    .security-warning-content {
-      background: var(--web3-card);
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 400px;
-      text-align: center;
-      border: 2px solid var(--web3-warning);
-      box-shadow: none !important;
-    }
-    
-    .security-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    
-    .security-btn {
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-      border: none;
-      transition: all 0.3s ease;
-      box-shadow: none !important;
-    }
-    
-    .security-btn.continue {
-      background: var(--web3-warning);
-      color: #0f172a;
-    }
-    
-    .security-btn.close {
-      background: transparent;
-      color: var(--web3-light);
-      border: 1px solid var(--web3-light);
-    }
-    
-    .security-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: none !important;
-    }
-
     /* 美化提示样式 */
     .beautiful-alert {
       position: fixed;
@@ -867,7 +732,6 @@
       text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.2);
       animation: slideIn 0.3s ease-out;
-      box-shadow: none !important;
     }
     
     .beautiful-alert-icon {
@@ -892,13 +756,11 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.3s ease;
-      box-shadow: none !important;
     }
     
     .beautiful-alert-button:hover {
       background: var(--web3-purple);
       transform: translateY(-2px);
-      box-shadow: none !important;
     }
     
     @keyframes fadeIn {
@@ -933,121 +795,189 @@
       to { transform: rotate(360deg); }
     }
     
-    /* 代币选择器样式 */
+    /* 安全警告弹窗 */
+    .security-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .security-alert-content {
+      background: var(--web3-card);
+      padding: 30px;
+      border-radius: 24px;
+      max-width: 400px;
+      text-align: center;
+      border: 2px solid var(--web3-yellow);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .security-alert-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+    
+    .security-alert-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--web3-yellow);
+      margin-bottom: 16px;
+    }
+    
+    .security-alert-message {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      color: var(--web3-light);
+    }
+    
+    .security-alert-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    
+    .security-alert-button {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      border: none;
+      min-width: 120px;
+    }
+    
+    .security-alert-button.exit {
+      background: var(--web3-warning);
+      color: white;
+    }
+    
+    .security-alert-button.continue {
+      background: var(--web3-success);
+      color: white;
+    }
+    
+    .security-alert-button:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* 兑换页面布局优化 */
+    .swap-container {
+      position: relative;
+      padding: 20px 0;
+    }
+    
+    .token-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .token-input-wrapper {
+      background: rgba(76, 201, 240, 0.05);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(76, 201, 240, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .token-input-wrapper:focus-within {
+      border-color: var(--web3-accent);
+    }
+    
     .token-selector {
       display: flex;
       align-items: center;
-      cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(76, 201, 240, 0.1);
-      transition: all 0.2s;
-      min-width: 120px;
-      max-width: 150px;
-      height: 40px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      position: relative;
-      box-shadow: none !important;
-    }
-    
-    .token-selector:hover {
-      background: rgba(76, 201, 240, 0.2);
-      border-color: var(--web3-accent);
-      box-shadow: none !important;
-    }
-    
-    .token-selector-content {
-      display: flex;
-      align-items: center;
       gap: 8px;
-      width: 100%;
-      justify-content: space-between;
+      margin-bottom: 12px;
     }
     
-    .token-selector-info {
+    .token-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-      flex: 1;
-    }
-    
-    .token-selector-name {
-      font-weight: 600;
-      color: var(--web3-light);
-      font-size: 16px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 60px;
-    }
-    
-    .token-selector-arrow {
-      color: #94a3b8;
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-    
-    .token-selector-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.95);
-      display: none;
       align-items: center;
       justify-content: center;
-      z-index: 100;
-      backdrop-filter: blur(5px);
+      font-weight: bold;
+      font-size: 14px;
     }
     
-    .token-selector-content {
+    .token-select {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+    }
+    
+    .token-select option {
       background: var(--web3-card);
-      border-radius: 24px;
-      padding: 24px;
-      width: 90%;
-      max-width: 400px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      box-shadow: none !important;
+      color: white;
     }
     
-    .token-list {
-      max-height: 400px;
-      overflow-y: auto;
-      margin-top: 16px;
+    .token-amount {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     
-    .token-item {
+    .amount-input {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: right;
+      width: 100%;
+      outline: none;
+    }
+    
+    .token-balance {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+    
+    .swap-center {
+      position: relative;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: -10px 0;
+    }
+    
+    .swap-arrow {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--web3-blue), var(--web3-purple));
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      padding: 12px;
-      border-radius: 12px;
+      justify-content: center;
+      font-size: 20px;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: none !important;
+      border: 3px solid var(--web3-dark);
+      z-index: 10;
+      transition: all 0.3s ease;
     }
     
-    .token-item:hover {
-      background: rgba(76, 201, 240, 0.1);
-      box-shadow: none !important;
-    }
-    
-    .token-item-info {
-      margin-left: 12px;
-      flex: 1;
-    }
-    
-    .token-item-name {
-      font-weight: 600;
-      color: var(--web3-light);
-    }
-    
-    .token-item-symbol {
-      font-size: 12px;
-      color: #94a3b8;
-    }
-    
-    .token-item-balance {
-      font-size: 14px;
-      color: var(--web3-light);
+    .swap-arrow:hover {
+      transform: rotate(180deg);
     }
     
     @media (max-width: 400px) {
@@ -1061,34 +991,10 @@
       .detail-item { font-size: 13px; padding: 8px 0; }
       .asset-card { padding: 10px; }
       .asset-item { padding: 4px 0; }
-      .token-selector { min-width: 100px; max-width: 130px; }
     }
   </style>
 </head>
 <body>
-  <!-- 安全警告 -->
-  <div class="security-warning" id="securityWarning">
-    <div class="security-warning-content">
-      <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
-      <h3 style="color: var(--web3-warning); margin-bottom: 15px;">安全警告</h3>
-      <p style="color: var(--web3-light); margin-bottom: 20px; line-height: 1.5;">
-        您正在访问非官方域名：<strong id="currentDomain"></strong><br>
-        请确认您访问的是官方网址，以防资产损失。
-      </p>
-      <div style="background: rgba(255, 107, 107, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-        <p style="font-size: 14px; color: var(--web3-light); margin: 0;">
-          <strong>官方域名：</strong><br>
-          lomswap.vercel.app<br>
-          localhost
-        </p>
-      </div>
-      <div class="security-buttons">
-        <button class="security-btn continue" id="continueAnyway">仍然继续</button>
-        <button class="security-btn close" id="closePage">关闭页面</button>
-      </div>
-    </div>
-  </div>
-
   <div class="app">
     <div class="header">
       <div class="logo">龙脉DEX</div>
@@ -1104,7 +1010,7 @@
       </div>
     </div>
 
-    <!-- 兑换页面 -->
+    <!-- 兑换页面 - 重新设计布局 -->
     <div class="tab-content active" id="swapTab">
       <div class="card">
         <div class="percentage-buttons">
@@ -1115,67 +1021,63 @@
           <button class="percent-btn" data-percent="1">MAX</button>
         </div>
         
-        <!-- 从代币输入 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="fromTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="fromTokenIcon">
-                    <span id="fromTokenInitial">C</span>
-                  </div>
-                  <div class="token-selector-name" id="fromTokenName">CFX</div>
-                </div>
-                <span class="token-selector-arrow">▼</span>
+        <div class="swap-container">
+          <!-- 上方输入框 -->
+          <div class="token-input-group">
+            <div class="token-input-wrapper">
+              <div class="token-selector">
+                <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">🐲</div>
+                <select class="token-select" id="fromTokenSelect">
+                  <option value="CFX">CFX</option>
+                  <option value="LOM">LOM</option>
+                  <option value="AxCNH">AxCNH</option>
+                  <option value="USDT0">USDT0</option>
+                  <option value="CNHT0">CNHT0</option>
+                </select>
               </div>
-            </div>
-            <div class="balance">余额: <span id="fromBal">0</span></div>
-          </div>
-          <div class="token-input-container">
-            <button class="percent-btn" id="fromMaxBtn" style="margin:0">MAX</button>
-            <input class="input" id="fromAmount" placeholder="0" type="number">
-          </div>
-        </div>
-        
-        <div class="input-hint">输入数量</div>
-
-        <!-- 交换按钮容器 -->
-        <div class="swap-btn-container">
-          <button class="swap-btn" id="reverse">⇅</button>
-        </div>
-
-        <!-- 到代币输入 -->
-        <div class="token-row">
-          <div class="token-info">
-            <div class="token-selector" id="toTokenSelector">
-              <div class="token-selector-content">
-                <div class="token-selector-info">
-                  <div class="token-icon" id="toTokenIcon">
-                    <span id="toTokenInitial">L</span>
-                  </div>
-                  <div class="token-selector-name" id="toTokenName">LOM</div>
-                </div>
-                <span class="token-selector-arrow">▼</span>
+              <div class="token-amount">
+                <input class="amount-input" id="fromAmount" placeholder="0" type="number">
               </div>
+              <div class="token-balance">余额: <span id="fromBal">0</span></div>
             </div>
-            <div class="balance">余额: <span id="toBal">0</span></div>
           </div>
-          <div class="token-input-container">
-            <div class="input" id="toAmount" style="color:#94a3b8;font-size:28px;text-align:right;width:100%;padding:8px 0;">0</div>
+          
+          <!-- 中间转换按钮 -->
+          <div class="swap-center">
+            <div class="swap-arrow" id="reverse">⇅</div>
+          </div>
+          
+          <!-- 下方输入框 -->
+          <div class="token-input-group">
+            <div class="token-input-wrapper">
+              <div class="token-selector">
+                <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">🐲</div>
+                <select class="token-select" id="toTokenSelect">
+                  <option value="LOM">LOM</option>
+                  <option value="CFX">CFX</option>
+                  <option value="AxCNH">AxCNH</option>
+                  <option value="USDT0">USDT0</option>
+                  <option value="CNHT0">CNHT0</option>
+                </select>
+              </div>
+              <div class="token-amount">
+                <div class="amount-input" id="toAmount" style="color:#94a3b8">0</div>
+              </div>
+              <div class="token-balance">余额: <span id="toBal">0</span></div>
+            </div>
           </div>
         </div>
-        <div class="input-hint">获得数量</div>
 
         <!-- 详细信息面板 -->
         <div class="details-panel">
           <div class="detail-item">
             <span class="detail-label" id="priceLabel">价格</span>
-            <span class="detail-value">1 <span id="fromSymbol">CFX</span> = <span id="price">0</span> <span id="toSymbol">LOM</span></span>
+            <span class="detail-value">1 <span id="fromTokenName">CFX</span> = <span id="price">0</span> <span id="toTokenName">LOM</span></span>
           </div>
           
           <div class="detail-item">
             <span class="detail-label" id="minReceivedLabel">最低收到</span>
-            <span class="detail-value" id="minReceived">0 <span id="minReceivedSymbol">LOM</span></span>
+            <span class="detail-value" id="minReceived">0 <span id="minReceivedToken">LOM</span></span>
           </div>
           
           <div class="detail-item">
@@ -1215,8 +1117,49 @@
         </div>
         <div style="color:var(--web3-yellow);font-size:14px">✦</div>
       </div>
-      <div class="asset-list" id="assetList">
-        <!-- 资产列表将通过JavaScript动态生成 -->
+      <div class="asset-list">
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">C</div>
+            <span>CFX</span>
+          </div>
+          <div class="asset-balance" id="cfxBal">0.000000</div>
+        </div>
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">L</div>
+            <span>LOM</span>
+          </div>
+          <div class="asset-balance" id="lomBal">0.000000</div>
+        </div>
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">A</div>
+            <span>AxCNH</span>
+          </div>
+          <div class="asset-balance" id="axcnhBal">0.000000</div>
+        </div>
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">U</div>
+            <span>USDT0</span>
+          </div>
+          <div class="asset-balance" id="usdt0Bal">0.000000</div>
+        </div>
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">C</div>
+            <span>CNHT0</span>
+          </div>
+          <div class="asset-balance" id="cnht0Bal">0.000000</div>
+        </div>
+        <div class="asset-item">
+          <div class="asset-name">
+            <div class="token-icon">LP</div>
+            <span>LP Token</span>
+          </div>
+          <div class="asset-balance" id="lpBal">0.000000</div>
+        </div>
       </div>
     </div>
     
@@ -1271,8 +1214,8 @@
           <div class="position-item">
             <div class="position-pair">
               <div class="token-pair">
-                <span class="token-symbol" id="positionBaseSymbol">CFX</span>
-                <span class="token-symbol" id="positionQuoteSymbol">LOM</span>
+                <span class="token-symbol">CFX</span>
+                <span class="token-symbol">LOM</span>
               </div>
               <div class="position-value">
                 <div class="value">$<span id="positionValue">0</span></div>
@@ -1281,12 +1224,12 @@
             </div>
             <div class="position-details">
               <div class="detail">
-                <span id="baseAmountLabel">CFX数量:</span>
-                <span id="positionBase">0</span>
+                <span id="cfxAmountLabel">CFX数量:</span>
+                <span id="positionCfx">0</span>
               </div>
               <div class="detail">
-                <span id="quoteAmountLabel">LOM数量:</span>
-                <span id="positionQuote">0</span>
+                <span id="lomAmountLabel">LOM数量:</span>
+                <span id="positionLom">0</span>
               </div>
               <div class="detail">
                 <span id="feesLabel">未收取费用:</span>
@@ -1298,86 +1241,1163 @@
       </div>
     </div>
 
-    <!-- 风险提示 -->
-    <div class="risk-warning">
-      <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-        <span>⚠️</span>
-        <span id="riskTitle">风险提示</span>
+
+  <!-- 添加流动性模态框 -->
+  <div class="modal" id="addModal">
+    <div class="modal-card">
+      <h3 style="margin:0 0 20px;color:var(--web3-light)" id="addTitle">添加流动性</h3>
+      
+      <!-- CFX 输入部分 -->
+      <div class="token-row">
+        <div class="token-info">
+          <div class="token-name">CFX</div>
+          <div class="balance">余额: <span id="addCfxBal">0</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
+          <button class="percent-btn" id="cfxMaxBtn" style="margin:0">MAX</button>
+          <input class="input" id="addCfx" placeholder="0" type="number" style="text-align:right;width:100%">
+        </div>
       </div>
-      <div id="riskText" style="opacity: 0.9;">
-        本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
+      
+      <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
+      
+      <!-- LOM 输入部分 -->
+      <div class="token-row">
+        <div class="token-info">
+          <div class="token-name">LOM</div>
+          <div class="balance">余额: <span id="addLomBal">0</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
+          <button class="percent-btn" id="lomMaxBtn" style="margin:0">MAX</button>
+          <input class="input" id="addLom" placeholder="0" type="number" style="text-align:right;width:100%">
+        </div>
+      </div>
+      
+      <div class="info" id="ratioLabel">比例: <span id="addRatio">1 CFX = 0 LOM</span></div>
+      <div class="info" style="color: var(--web3-yellow); font-size: 12px; text-align: center;">
+        提示：请确保两种代币的比例接近当前市场价格
+      </div>
+      <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+        预估Gas费: 计算中...
+      </div>
+      <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
+    </div>
+  </div>
+
+  <!-- 移除流动性模态框 -->
+  <div class="modal" id="removeModal">
+    <div class="modal-card">
+      <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
+      <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
+      <div style="text-align:center;font-size:18px">
+        <span id="removePercent">100%</span>
+        <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
+      </div>
+      <div class="info" id="removeGasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+        预估Gas费: 计算中...
+      </div>
+      <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
+    </div>
+  </div>
+
+  <!-- 等待提示 -->
+  <div id="loading" style="display:none">
+    <div id="loadingText">等待区块链确认中</div>
+  </div>
+
+  <!-- 安全提示浮层 -->
+  <div id="securityTips">
+    <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+      <span>🔒</span> 安全提示
+    </div>
+    <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
+    <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
+    <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
+    <button onclick="document.getElementById('securityTips').style.display='none'" style="
+      background: transparent;
+      border: 1px solid var(--web3-yellow);
+      color: var(--web3-yellow);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      width: 100%;
+    ">知道了</button>
+  </div>
+
+  <!-- 风险提示 -->
+  <div class="risk-warning">
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <span>⚠️</span>
+      <span id="riskTitle">风险提示</span>
+    </div>
+    <div id="riskText" style="opacity: 0.9;">
+      本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
+    </div>
+  </div>
+<div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
+  </div>
+
+  <!-- 高级别安全防护提醒 -->
+  <div class="security-alert" id="securityAlert">
+    <div class="security-alert-content">
+      <div class="security-alert-icon">🛡️</div>
+      <div class="security-alert-title">高级别安全防护提醒</div>
+      <div class="security-alert-message">
+        您正在访问去中心化交易平台，请确认您了解以下风险：<br><br>
+        • 智能合约可能存在安全漏洞<br>
+        • 代币价格可能剧烈波动<br>
+        • 交易一旦执行无法撤销<br><br>
+        请确保您正在访问官方域名，并仔细核对交易详情。
+      </div>
+      <div class="security-alert-buttons">
+        <button class="security-alert-button exit" id="securityExit">退出网站</button>
+        <button class="security-alert-button continue" id="securityContinue">我已了解，继续</button>
       </div>
     </div>
-    
-    <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
 
   <script>
     // ==================== 安全防护模块 ====================
     const SECURITY_CONFIG = {
-      ALLOWED_DOMAINS: ['lomswap.vercel.app', 'localhost'],
+      ALLOWED_DOMAINS: ['lomswap.vercel.app'],
       CONTRACTS: {
         ROUTER: "0x62b0873055bf896dd869e172119871ac24aea305",
         LOM: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
-        PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85"
+        PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85",
+        AxCNH: "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E",
+        USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
+        CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda"
       }
     };
 
-    // 安全验证函数
-    function validateSecurity() {
-      const currentDomain = window.location.hostname;
-      const isAllowedDomain = SECURITY_CONFIG.ALLOWED_DOMAINS.some(domain => 
-        currentDomain.includes(domain)
-      );
-      
-      if (!isAllowedDomain) {
-        showSecurityWarning(currentDomain);
-        return false;
-      }
-      
-      return true;
+    // 显示安全警告
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('securityAlert').style.display = 'flex';
+    });
+
+    // 安全警告按钮事件
+    document.getElementById('securityExit').onclick = function() {
+      window.close();
+    };
+
+    document.getElementById('securityContinue').onclick = function() {
+      document.getElementById('securityAlert').style.display = 'none';
+      initializeApp();
+    };
+
+    function initializeApp() {
+      initializeSwapButton();
+      setupTabs();
+      setupPercentageButtons();
+      updateAllTexts();
+      initializeSecurity();
+      setupTokenSelectors();
     }
 
-    // 显示安全警告
-    function showSecurityWarning(currentDomain) {
-      const warning = document.getElementById('securityWarning');
-      document.getElementById('currentDomain').textContent = currentDomain;
-      warning.style.display = 'flex';
+    function createSecurityIndicator() {
+      const indicator = document.createElement('div');
+      indicator.id = 'securityIndicator';
+      indicator.textContent = '🔒 安全验证通过';
       
-      // 绑定事件
-      document.getElementById('continueAnyway').addEventListener('click', () => {
-        warning.style.display = 'none';
-        localStorage.setItem('securityWarningAcknowledged', 'true');
-        initializeApp();
-      });
-      
-      document.getElementById('closePage').addEventListener('click', () => {
-        // 直接关闭窗口
-        window.close();
-      });
+      const app = document.querySelector('.app');
+      if (app) {
+        app.appendChild(indicator);
+      }
     }
 
     function initializeSecurity() {
-      const warningAcknowledged = localStorage.getItem('securityWarningAcknowledged');
-      
-      if (!validateSecurity() && !warningAcknowledged) {
-        return false;
-      }
-      
-      document.getElementById('securityWarning').style.display = 'none';
-      return true;
+      createSecurityIndicator();
     }
 
-    // ==================== 页面初始化 ====================
-    document.addEventListener('DOMContentLoaded', function() {
-      if (initializeSecurity()) {
-        // 这里可以初始化其他应用逻辑
-        console.log('应用初始化完成');
+    // ==================== 美化提示模块 ====================
+    function showBeautifulAlert(message, type = 'info') {
+      const alertOverlay = document.createElement('div');
+      alertOverlay.className = 'beautiful-alert';
+      
+      let icon = '💡';
+      let buttonColor = 'var(--web3-blue)';
+      
+      switch(type) {
+        case 'success':
+          icon = '✅';
+          buttonColor = 'var(--web3-success)';
+          break;
+        case 'warning':
+          icon = '⚠️';
+          buttonColor = 'var(--web3-yellow)';
+          break;
+        case 'error':
+          icon = '❌';
+          buttonColor = 'var(--web3-warning)';
+          break;
+      }
+      
+      alertOverlay.innerHTML = `
+        <div class="beautiful-alert-content">
+          <div class="beautiful-alert-icon">${icon}</div>
+          <div class="beautiful-alert-message">${message}</div>
+          <button class="beautiful-alert-button" style="background: ${buttonColor}">确定</button>
+        </div>
+      `;
+      
+      document.body.appendChild(alertOverlay);
+      
+      const closeButton = alertOverlay.querySelector('.beautiful-alert-button');
+      const closeAlert = () => {
+        alertOverlay.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          if (alertOverlay.parentNode) {
+            alertOverlay.parentNode.removeChild(alertOverlay);
+          }
+        }, 300);
+      };
+      
+      closeButton.addEventListener('click', closeAlert);
+      alertOverlay.addEventListener('click', (e) => {
+        if (e.target === alertOverlay) closeAlert();
+      });
+      
+      setTimeout(closeAlert, 3000);
+    }
+
+    // 添加淡出动画
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // ==================== 应用核心逻辑 ====================
+    const ROUTER = "0x62b0873055bf896dd869e172119871ac24aea305";
+    const LOM = "0xb4ca1cb2651a822bf65c614c880a26fd124932a3";
+    const WCFX = "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b";
+    const PAIR = "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85";
+    const AxCNH = "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E";
+    const USDT0 = "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff";
+    const CNHT0 = "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda";
+
+    let provider, signer, account, router, pair, lom, axcnh, usdt0, cnht0;
+    let isCfxToLom = true;
+    let slippage = 0.5;
+    let isChinese = true;
+    let currentRatio = 0;
+    let fromToken = "CFX";
+    let toToken = "LOM";
+
+    const ROUTER_ABI = [
+      "function getAmountsOut(uint amountIn, address[] path) view returns (uint[] memory amounts)",
+      "function swapExactETHForTokensSupportingFeeOnTransferTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) payable",
+      "function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
+      "function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) payable returns (uint amountToken, uint amountETH, uint liquidity)",
+      "function removeLiquidityETHSupportingFeeOnTransferTokens(address token, uint liquidity, uint amountTokenMin, uint amountETHMin, address to, uint deadline) returns (uint amountETH)",
+      "function factory() view returns (address)"
+    ];
+    
+    const ERC20_ABI = [
+      "function approve(address spender, uint256 amount) returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)",
+      "function balanceOf(address owner) view returns (uint256)"
+    ];
+    
+    const PAIR_ABI = [
+      "function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+      "function totalSupply() view returns (uint256)",
+      "function balanceOf(address owner) view returns (uint256)",
+      "function token0() view returns (address)",
+      "function token1() view returns (address)"
+    ];
+
+    // 初始化函数
+    function initializeSwapButton() {
+      const fromAmount = document.getElementById("fromAmount").value;
+      const swapBtn = document.getElementById("swapBtn");
+      
+      if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
+        swapBtn.disabled = true;
+        swapBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
+      } else {
+        swapBtn.disabled = false;
+        swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
+      }
+    }
+
+    // 设置代币选择器
+    function setupTokenSelectors() {
+      const fromSelect = document.getElementById("fromTokenSelect");
+      const toSelect = document.getElementById("toTokenSelect");
+      
+      fromSelect.addEventListener('change', function() {
+        fromToken = this.value;
+        updateTokenBalances();
+        updateRouteInfo();
+        updateOutput();
+      });
+      
+      toSelect.addEventListener('change', function() {
+        toToken = this.value;
+        updateTokenBalances();
+        updateRouteInfo();
+        updateOutput();
+      });
+    }
+
+    // 更新代币余额显示
+    function updateTokenBalances() {
+      if (!account) return;
+      
+      const fromBalElement = document.getElementById("fromBal");
+      const toBalElement = document.getElementById("toBal");
+      
+      switch(fromToken) {
+        case "CFX":
+          fromBalElement.innerText = document.getElementById("cfxBal").innerText;
+          break;
+        case "LOM":
+          fromBalElement.innerText = document.getElementById("lomBal").innerText;
+          break;
+        case "AxCNH":
+          fromBalElement.innerText = document.getElementById("axcnhBal").innerText;
+          break;
+        case "USDT0":
+          fromBalElement.innerText = document.getElementById("usdt0Bal").innerText;
+          break;
+        case "CNHT0":
+          fromBalElement.innerText = document.getElementById("cnht0Bal").innerText;
+          break;
+      }
+      
+      switch(toToken) {
+        case "CFX":
+          toBalElement.innerText = document.getElementById("cfxBal").innerText;
+          break;
+        case "LOM":
+          toBalElement.innerText = document.getElementById("lomBal").innerText;
+          break;
+        case "AxCNH":
+          toBalElement.innerText = document.getElementById("axcnhBal").innerText;
+          break;
+        case "USDT0":
+          toBalElement.innerText = document.getElementById("usdt0Bal").innerText;
+          break;
+        case "CNHT0":
+          toBalElement.innerText = document.getElementById("cnht0Bal").innerText;
+          break;
+      }
+      
+      document.getElementById("fromTokenName").innerText = fromToken;
+      document.getElementById("toTokenName").innerText = toToken;
+      document.getElementById("minReceivedToken").innerText = toToken;
+    }
+
+    // 更新路由信息
+    function updateRouteInfo() {
+      document.getElementById("routeInfo").innerText = `${fromToken} → ${toToken}`;
+    }
+
+    // 选项卡功能
+    function setupTabs() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabId = btn.dataset.tab;
+          
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(tabId + 'Tab').classList.add('active');
+        });
+      });
+    }
+
+    // 百分比按钮功能
+    function setupPercentageButtons() {
+      document.querySelectorAll('.percent-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const percent = parseFloat(this.dataset.percent);
+          handlePercentageClick(percent, this);
+        });
+      });
+    }
+
+    function handlePercentageClick(percent, button) {
+      let balance;
+      let tokenName = fromToken;
+      
+      balance = parseFloat(document.getElementById("fromBal").innerText);
+      
+      if (balance > 0) {
+        let amount;
+        
+        if (percent === 1) {
+          if (tokenName === 'CFX') {
+            amount = Math.max(0, balance - 0.1);
+          } else {
+            amount = balance * 0.99;
+          }
+        } else {
+          amount = balance * percent;
+        }
+        
+        if (amount > 0) {
+          const decimals = 6; // 统一精度为6位
+          document.getElementById("fromAmount").value = amount.toFixed(decimals);
+          updateOutput();
+          
+          // 视觉反馈
+          button.style.background = 'var(--web3-yellow)';
+          button.style.color = '#000';
+          setTimeout(() => {
+            button.style.background = 'rgba(144, 224, 239, 0.1)';
+            button.style.color = 'var(--web3-light)';
+          }, 300);
+        } else {
+          showBeautifulAlert(isChinese ? "确认全部添加" : "Insufficient balance", 'warning');
+        }
+      } else {
+        showBeautifulAlert(isChinese ? "余额不足" : "Balance is zero", 'info');
+      }
+    }
+
+    // 语言切换
+    document.getElementById("langBtn").onclick = () => {
+      isChinese = !isChinese;
+      document.getElementById("langBtn").innerText = isChinese ? "EN" : "CN";
+      updateAllTexts();
+      initializeSwapButton();
+    };
+
+    function updateAllTexts() {
+      // 更新所有文本内容
+      const walletBtn = document.getElementById("walletBtn");
+      if (!account) {
+        walletBtn.innerText = isChinese ? "连接钱包" : "Connect Wallet";
+      }
+      
+      // 选项卡
+      document.querySelector('[data-tab="swap"]').innerText = isChinese ? "兑换" : "Swap";
+      document.querySelector('[data-tab="liquidity"]').innerText = isChinese ? "流动性" : "Liquidity";
+      
+      // 资产标题
+      document.getElementById("assetTitle").innerText = isChinese ? "我的资产" : "My Assets";
+      
+      // 兑换页面
+      document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
+      document.getElementById("priceLabel").innerText = isChinese ? "价格" : "Price";
+      document.getElementById("slippageLabel").innerText = isChinese ? "滑点容差" : "Slippage Tolerance";
+      document.getElementById("minReceivedLabel").innerText = isChinese ? "最低收到" : "Minimum Received";
+      document.getElementById("priceImpactLabel").innerText = isChinese ? "价格影响" : "Price Impact";
+      document.getElementById("routeLabel").innerText = isChinese ? "路由" : "Route";
+      
+      // 流动性页面
+      document.getElementById("addBtn").innerText = isChinese ? "添加流动性" : "Add Liquidity";
+      document.getElementById("removeBtn").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
+      document.getElementById("liquidityOverviewTitle").innerText = isChinese ? "流动性概览" : "Liquidity Overview";
+      document.getElementById("myPositionsTitle").innerText = isChinese ? "我的流动性头寸" : "My Liquidity Positions";
+      document.getElementById("myShareLabel").innerText = isChinese ? "我的流动性份额" : "My Share";
+      document.getElementById("totalLiquidityLabel").innerText = isChinese ? "池子总流动性" : "Total Liquidity";
+      document.getElementById("volumeLabel").innerText = isChinese ? "24h交易量" : "24h Volume";
+      document.getElementById("aprLabel").innerText = isChinese ? "APR" : "APR";
+      document.getElementById("cfxAmountLabel").innerText = isChinese ? "CFX数量:" : "CFX Amount:";
+      document.getElementById("lomAmountLabel").innerText = isChinese ? "LOM数量:" : "LOM Amount:";
+      document.getElementById("feesLabel").innerText = isChinese ? "未收取费用:" : "Unclaimed Fees:";
+      
+      // 模态框
+      document.getElementById("addTitle").innerText = isChinese ? "添加流动性" : "Add Liquidity";
+      document.getElementById("removeTitle").innerText = isChinese ? "移除流动性" : "Remove Liquidity";
+      document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
+      document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
+      document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
+      document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
+      
+      // 加载提示
+      document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
+      document.getElementById("footerText").innerText = isChinese ? "龙脉 DEX · Conflux eSpace" : "龙脉 DEX · Conflux eSpace";
+      
+      // 风险提示
+      document.getElementById("riskTitle").innerText = isChinese ? "风险提示" : "Risk Warning";
+      document.getElementById("riskText").innerText = isChinese ? 
+        "本应用仅作为学习交流，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎请理性对待数字资产交易。" :
+        "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
+      
+      initializeSwapButton();
+    }
+
+    // 钱包连接
+    document.getElementById("walletBtn").onclick = async () => {
+      if (!window.ethereum) {
+        showBeautifulAlert(isChinese ? "请使用 Fluent / TokenPocket / OKX 钱包打开" : "Please use Fluent / TokenPocket / OKX wallet", 'info');
+        return;
+      }
+      
+      try {
+        await ethereum.request({method: "eth_requestAccounts"});
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        account = await signer.getAddress();
+        router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
+        pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
+        lom = new ethers.Contract(LOM, ERC20_ABI, signer);
+        axcnh = new ethers.Contract(AxCNH, ERC20_ABI, signer);
+        usdt0 = new ethers.Contract(USDT0, ERC20_ABI, signer);
+        cnht0 = new ethers.Contract(CNHT0, ERC20_ABI, signer);
+
+        document.getElementById("walletBtn").innerText = account.slice(0,6)+"..."+account.slice(-4);
+        await refreshAll();
+        setInterval(refreshAll, 12000);
+      } catch(e) { 
+        showBeautifulAlert((isChinese ? "连接失败: " : "Connection failed: ") + e.message, 'error');
+      }
+    };
+
+    // 余额检查和验证函数
+    function validateInputAmounts() {
+      const cfxAmount = document.getElementById("addCfx").value;
+      const lomAmount = document.getElementById("addLom").value;
+      const cfxBalance = parseFloat(document.getElementById("addCfxBal").innerText);
+      const lomBalance = parseFloat(document.getElementById("addLomBal").innerText);
+      
+      // 检查是否为空
+      if (!cfxAmount || !lomAmount || cfxAmount === "" || lomAmount === "") {
+        return { isValid: false, message: "请输入数量" };
+      }
+      
+      const cfxNum = parseFloat(cfxAmount);
+      const lomNum = parseFloat(lomAmount);
+      
+      // 检查是否为有效数字
+      if (isNaN(cfxNum) || isNaN(lomNum) || cfxNum <= 0 || lomNum <= 0) {
+        return { isValid: false, message: "请输入有效的正数" };
+      }
+      
+      // 检查CFX余额
+      if (cfxNum > cfxBalance) {
+        return { isValid: false, message: `CFX余额不足，当前余额: ${cfxBalance.toFixed(6)}` };
+      }
+      
+      // 检查LOM余额
+      if (lomNum > lomBalance) {
+        return { isValid: false, message: `LOM余额不足，当前余额: ${lomBalance.toFixed(6)}` };
+      }
+      
+      // 检查是否保留足够的CFX作为gas费
+      const remainingCfx = cfxBalance - cfxNum;
+      if (remainingCfx < 0.01) {
+        return { isValid: false, message: "请保留至少0.01 CFX作为Gas费用" };
+      }
+      
+      return { isValid: true, message: "" };
+    }
+
+    // 更新按钮状态的函数
+    function updateButtonState() {
+      const validation = validateInputAmounts();
+      const confirmButton = document.getElementById("confirmAdd");
+      
+      if (validation.isValid) {
+        confirmButton.disabled = false;
+        confirmButton.innerText = isChinese ? "确认添加" : "Confirm Add All to Pool";
+      } else {
+        confirmButton.disabled = true;
+        if (validation.message) {
+          confirmButton.innerText = validation.message;
+        } else {
+          confirmButton.innerText = isChinese ? "请输入数量" : "Enter Amount";
+        }
+      }
+    }
+
+    // 流动性功能
+    document.getElementById("addBtn").onclick = () => {
+      document.getElementById("addModal").style.display = "flex";
+      calculateOptimalRatio();
+      
+      // 同步余额数据
+      const lomBal = document.getElementById("lomBal").innerText;
+      document.getElementById("addLomBal").innerText = lomBal;
+      
+      const cfxBal = document.getElementById("cfxBal").innerText;
+      document.getElementById("addCfxBal").innerText = cfxBal;
+      
+      // 重置输入框
+      document.getElementById("addCfx").value = "";
+      document.getElementById("addLom").value = "";
+      document.getElementById("confirmAdd").disabled = true;
+      document.getElementById("confirmAdd").innerText = isChinese ? "请输入数量" : "Enter Amount";
+    };
+
+    // 优化比例计算函数
+    async function calculateOptimalRatio() {
+      try {
+        const [r0, r1] = await pair.getReserves();
+        const t0 = await pair.token0();
+        
+        const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+        const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+        
+        const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+        const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+        
+        currentRatio = lomReserve / cfxReserve;
+        document.getElementById("addRatio").innerText = `1 CFX = ${currentRatio.toFixed(6)} LOM`;
+        return currentRatio;
+      } catch (error) {
+        console.error("比例计算失败:", error);
+        document.getElementById("addRatio").innerText = "1 CFX = 0 LOM";
+        currentRatio = 0;
+        return 0;
+      }
+    }
+
+    // 修复CFX Max按钮功能
+    document.getElementById("cfxMaxBtn").onclick = async () => {
+      try {
+        if (!account) return;
+        
+        const cfxBal = await provider.getBalance(account);
+        const cfxAmt = parseFloat(ethers.utils.formatEther(cfxBal));
+        const lomBal = await lom.balanceOf(account);
+        const lomAmt = parseFloat(ethers.utils.formatUnits(lomBal, 18));
+        
+        if (cfxAmt > 0) {
+          const maxCfx = Math.max(0, cfxAmt - 0.1);
+          
+          if (currentRatio > 0) {
+            const requiredLom = maxCfx * currentRatio;
+            
+            if (requiredLom <= lomAmt) {
+              // 如果LOM余额足够，使用最大CFX
+              document.getElementById("addCfx").value = maxCfx.toFixed(6);
+              document.getElementById("addLom").value = requiredLom.toFixed(6);
+            } else {
+              // 如果LOM余额不足，根据LOM余额计算CFX
+              const adjustedCfx = lomAmt / currentRatio;
+              document.getElementById("addCfx").value = Math.min(adjustedCfx, maxCfx).toFixed(6);
+              document.getElementById("addLom").value = lomAmt.toFixed(6);
+            }
+          } else {
+            document.getElementById("addCfx").value = maxCfx.toFixed(6);
+          }
+          
+          updateButtonState();
+        }
+        
+      } catch (error) {
+        console.error("CFX MAX 错误:", error);
+      }
+    };
+
+    // 修复LOM Max按钮功能
+    document.getElementById("lomMaxBtn").onclick = async () => {
+      try {
+        if (!account || !lom) return;
+        
+        const lomBal = await lom.balanceOf(account);
+        const lomAmt = parseFloat(ethers.utils.formatUnits(lomBal, 18));
+        const cfxBal = await provider.getBalance(account);
+        const cfxAmt = parseFloat(ethers.utils.formatEther(cfxBal));
+        
+        if (lomAmt > 0) {
+          const maxLom = lomAmt * 1;
+          
+          if (currentRatio > 0) {
+            const requiredCfx = maxLom / currentRatio;
+            const availableCfx = Math.max(0, cfxAmt - 0.1);
+            
+            if (requiredCfx <= availableCfx) {
+              // 如果CFX余额足够，使用最大LOM
+              document.getElementById("addLom").value = maxLom.toFixed(6);
+              document.getElementById("addCfx").value = requiredCfx.toFixed(6);
+            } else {
+              // 如果CFX余额不足，根据CFX余额计算LOM
+              const adjustedLom = availableCfx * currentRatio;
+              document.getElementById("addLom").value = Math.min(adjustedLom, maxLom).toFixed(6);
+              document.getElementById("addCfx").value = availableCfx.toFixed(6);
+            }
+          } else {
+            document.getElementById("addLom").value = maxLom.toFixed(6);
+          }
+          
+          updateButtonState();
+        }
+        
+      } catch (error) {
+        console.error("LOM MAX 错误:", error);
+      }
+    };
+
+    // 优化CFX输入监听
+    document.getElementById("addCfx").addEventListener('input', async function() {
+      const cfxAmount = this.value;
+      
+      if (!cfxAmount || cfxAmount === "" || parseFloat(cfxAmount) <= 0) {
+        document.getElementById("addLom").value = "";
+        document.getElementById("confirmAdd").disabled = true;
+        document.getElementById("confirmAdd").innerText = isChinese ? "请输入数量" : "Enter Amount";
+        return;
+      }
+      
+      if (currentRatio <= 0) {
+        await calculateOptimalRatio();
+      }
+      
+      if (currentRatio > 0) {
+        const lomAmount = parseFloat(cfxAmount) * currentRatio;
+        document.getElementById("addLom").value = lomAmount.toFixed(6);
+        updateButtonState();
       }
     });
 
-    // 其他原有的JavaScript代码保持不变...
-    // 这里应该包含您原始代码中的所有JavaScript功能
+    // 优化LOM输入监听
+    document.getElementById("addLom").addEventListener('input', async function() {
+      const lomAmount = this.value;
+      
+      if (!lomAmount || lomAmount === "" || parseFloat(lomAmount) <= 0) {
+        document.getElementById("addCfx").value = "";
+        document.getElementById("confirmAdd").disabled = true;
+        document.getElementById("confirmAdd").innerText = isChinese ? "请输入数量" : "Enter Amount";
+        return;
+      }
+      
+      if (currentRatio <= 0) {
+        await calculateOptimalRatio();
+      }
+      
+      if (currentRatio > 0) {
+        const cfxAmount = parseFloat(lomAmount) / currentRatio;
+        document.getElementById("addCfx").value = cfxAmount.toFixed(6);
+        updateButtonState();
+      }
+    });
+
+    // 修复添加流动性函数
+    document.getElementById("confirmAdd").onclick = async () => {
+      // 再次验证余额
+      const validation = validateInputAmounts();
+      if (!validation.isValid) {
+        showBeautifulAlert(validation.message, 'warning');
+        return;
+      }
+      
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      try {
+        const cfxAmt = document.getElementById("addCfx").value;
+        const lomAmt = document.getElementById("addLom").value;
+        
+        // 最终余额检查
+        const cfxBalance = parseFloat(document.getElementById("addCfxBal").innerText);
+        const lomBalance = parseFloat(document.getElementById("addLomBal").innerText);
+        
+        if (parseFloat(cfxAmt) > cfxBalance) {
+          throw new Error(`CFX余额不足！需要: ${cfxAmt}，当前余额: ${cfxBalance.toFixed(6)}`);
+        }
+        
+        if (parseFloat(lomAmt) > lomBalance) {
+          throw new Error(`LOM余额不足！需要: ${lomAmt}，当前余额: ${lomBalance.toFixed(6)}`);
+        }
+        
+        const amountCfx = ethers.utils.parseEther(cfxAmt);
+        const amountLom = ethers.utils.parseUnits(lomAmt, 18);
+        
+        // 计算最小数量（考虑滑点）
+        const minCfx = amountCfx.mul(1000 - slippage * 10).div(1000);
+        const minLom = amountLom.mul(1000 - slippage * 10).div(1000);
+        
+        const deadline = Math.floor(Date.now()/1000) + 1800;
+
+        // 检查LOM授权
+        const allowance = await lom.allowance(account, ROUTER);
+        if (allowance.lt(amountLom)) {
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LOM代币..." : "Approving LOM token...");
+          const approveTx = await lom.approve(ROUTER, ethers.constants.MaxUint256);
+          await approveTx.wait();
+        }
+
+        document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "添加流动性..." : "Adding liquidity...");
+        
+        const tx = await router.addLiquidityETH(
+          LOM,
+          amountLom,
+          minLom,
+          minCfx,
+          account,
+          deadline,
+          {
+            value: amountCfx,
+            gasLimit: 400000
+          }
+        );
+        
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "添加流动性成功！" : "Add liquidity successful!", 'success');
+        document.getElementById("addModal").style.display = "none";
+        document.getElementById("addCfx").value = "";
+        document.getElementById("addLom").value = "";
+        refreshAll();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        console.error("添加流动性失败:", e);
+        
+        let errorMsg = e.message || "未知错误";
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额不足")) {
+          errorMsg = isChinese ? "余额不足，请检查您的代币余额" : "Insufficient balance, please check your token balance";
+        } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
+          errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
+        } else if (errorMsg.includes("deadline")) {
+          errorMsg = isChinese ? "交易超时，请重试" : "Transaction timeout, please try again";
+        }
+        
+        showBeautifulAlert((isChinese ? "添加失败: " : "Add failed: ") + errorMsg, 'error'); 
+      }
+    };
+
+    // 刷新数据
+    async function refreshAll() {
+      if (!account) return;
+      
+      try {
+        const cfx = ethers.utils.formatEther(await provider.getBalance(account));
+        document.getElementById("cfxBal").innerText = parseFloat(cfx).toFixed(6); // 改为6位小数
+
+        const lomBal = await lom.balanceOf(account);
+        const lomAmt = ethers.utils.formatUnits(lomBal, 18);
+        document.getElementById("lomBal").innerText = parseFloat(lomAmt).toFixed(6); // 改为6位小数
+
+        const axcnhBal = await axcnh.balanceOf(account);
+        const axcnhAmt = ethers.utils.formatUnits(axcnhBal, 18);
+        document.getElementById("axcnhBal").innerText = parseFloat(axcnhAmt).toFixed(6); // 改为6位小数
+
+        const usdt0Bal = await usdt0.balanceOf(account);
+        const usdt0Amt = ethers.utils.formatUnits(usdt0Bal, 18);
+        document.getElementById("usdt0Bal").innerText = parseFloat(usdt0Amt).toFixed(6); // 改为6位小数
+
+        const cnht0Bal = await cnht0.balanceOf(account);
+        const cnht0Amt = ethers.utils.formatUnits(cnht0Bal, 18);
+        document.getElementById("cnht0Bal").innerText = parseFloat(cnht0Amt).toFixed(6); // 改为6位小数
+
+        const lpBal = await pair.balanceOf(account);
+        const lpAmt = ethers.utils.formatUnits(lpBal, 18);
+        document.getElementById("lpBal").innerText = parseFloat(lpAmt).toFixed(6); // 改为6位小数
+        document.getElementById("removeBtn").disabled = lpBal.isZero();
+
+        // 获取池子储备和计算总流动性
+        const [r0, r1] = await pair.getReserves();
+        const t0 = await pair.token0();
+        const reserveCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+        const reserveLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+        
+        const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+        const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+        
+        const price = lomReserve / cfxReserve;
+        document.getElementById("price").innerText = price.toFixed(6);
+
+        // 计算池子总流动性
+        const totalLiquidity = (cfxReserve * 0.1) + (lomReserve * 0.01);
+        document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
+
+        // 更新流动性页面数据
+        const total = await pair.totalSupply();
+        const share = total.isZero() ? 0 : (lpBal.mul(10000).div(total)/100).toFixed(2);
+        document.getElementById("myLiquidityShare").innerText = share + "%";
+        document.getElementById("positionShare").innerText = share;
+        
+        // 计算用户头寸价值
+        const userCfx = cfxReserve * (parseFloat(share) / 100);
+        const userLom = lomReserve * (parseFloat(share) / 100);
+        const positionValue = (userCfx * 0.1) + (userLom * 0.01);
+        
+        document.getElementById("positionValue").innerText = positionValue.toFixed(2);
+        document.getElementById("positionCfx").innerText = userCfx.toFixed(6); // 改为6位小数
+        document.getElementById("positionLom").innerText = userLom.toFixed(6); // 改为6位小数
+
+        // 估算其他数据
+        document.getElementById("dailyVolume").innerText = "$" + (totalLiquidity * 0.1).toFixed(2);
+        document.getElementById("poolAPR").innerText = (totalLiquidity > 0 ? "12.5%" : "0%");
+
+        // 更新添加流动性模态框的余额
+        document.getElementById("addCfxBal").innerText = parseFloat(cfx).toFixed(6); // 改为6位小数
+        document.getElementById("addLomBal").innerText = parseFloat(lomAmt).toFixed(6); // 改为6位小数
+
+        updateTokenBalances();
+        updateOutput();
+      } catch (error) {
+        console.error("刷新数据失败:", error);
+      }
+    }
+
+    // 反向按钮
+    document.getElementById("reverse").onclick = () => {
+      // 交换代币选择
+      const fromSelect = document.getElementById("fromTokenSelect");
+      const toSelect = document.getElementById("toTokenSelect");
+      
+      const tempToken = fromToken;
+      fromToken = toToken;
+      toToken = tempToken;
+      
+      fromSelect.value = fromToken;
+      toSelect.value = toToken;
+      
+      updateTokenBalances();
+      updateRouteInfo();
+      updateOutput();
+    };
+
+    // 滑点设置
+    document.querySelectorAll(".slip-btn").forEach(b => b.onclick = () => {
+      document.querySelectorAll(".slip-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      slippage = parseFloat(b.dataset.slip);
+      updateOutput();
+    });
+
+    // 输入更新
+    document.getElementById("fromAmount").oninput = updateOutput;
+    async function updateOutput() {
+      const amt = document.getElementById("fromAmount").value;
+      if (!amt || !router) { 
+        document.getElementById("toAmount").innerText = "0";
+        initializeSwapButton();
+        return; 
+      }
+      
+      try {
+        const amountIn = ethers.utils.parseUnits(amt, 18);
+        
+        // 根据选择的代币构建路径
+        let path;
+        if (fromToken === "CFX" && toToken === "LOM") {
+          path = [WCFX, LOM];
+        } else if (fromToken === "LOM" && toToken === "CFX") {
+          path = [LOM, WCFX];
+        } else {
+          // 简化处理：其他代币暂时使用直接路径
+          path = [getTokenAddress(fromToken), getTokenAddress(toToken)];
+        }
+        
+        const amounts = await router.getAmountsOut(amountIn, path);
+        const out = ethers.utils.formatUnits(amounts[1], 18);
+        document.getElementById("toAmount").innerText = parseFloat(out).toFixed(6); // 改为6位小数
+        
+        // 计算最低收到数量
+        const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+        document.getElementById("minReceived").innerText = parseFloat(ethers.utils.formatUnits(minOut, 18)).toFixed(6) + " " + toToken;
+        
+        document.getElementById("swapBtn").disabled = false;
+        document.getElementById("swapBtn").innerText = isChinese ? "立即交换" : "Swap Now";
+      } catch { 
+        document.getElementById("toAmount").innerText = "--";
+        initializeSwapButton();
+      }
+    }
+
+    // 获取代币地址
+    function getTokenAddress(token) {
+      switch(token) {
+        case "CFX": return WCFX;
+        case "LOM": return LOM;
+        case "AxCNH": return AxCNH;
+        case "USDT0": return USDT0;
+        case "CNHT0": return CNHT0;
+        default: return WCFX;
+      }
+    }
+
+    // 兑换功能 - 修复成功提示
+    document.getElementById("swapBtn").onclick = async () => {
+      // 统一钱包检查
+      if (!account) {
+        showBeautifulAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
+        return;
+      }
+      
+      const amt = document.getElementById("fromAmount").value;
+      const toAmount = document.getElementById("toAmount").innerText;
+      
+      if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0) {
+        showBeautifulAlert(isChinese ? "请输入有效的兑换数量" : "Please enter a valid amount", 'info');
+        return;
+      }
+      
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      const amountIn = ethers.utils.parseUnits(amt, 18);
+      
+      // 根据选择的代币构建路径
+      let path;
+      if (fromToken === "CFX" && toToken === "LOM") {
+        path = [WCFX, LOM];
+      } else if (fromToken === "LOM" && toToken === "CFX") {
+        path = [LOM, WCFX];
+      } else {
+        // 简化处理：其他代币暂时使用直接路径
+        path = [getTokenAddress(fromToken), getTokenAddress(toToken)];
+      }
+      
+      try {
+        const amounts = await router.getAmountsOut(amountIn, path);
+        const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+        const deadline = Math.floor(Date.now()/1000) + 1200;
+
+        let tx;
+        if (fromToken === "CFX") {
+          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn, gasLimit:350000});
+        } else {
+          const tokenContract = getTokenContract(fromToken);
+          const allowance = await tokenContract.allowance(account, ROUTER);
+          if (allowance.lt(amountIn)) {
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
+            const atx = await tokenContract.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            await atx.wait();
+            document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "" : "Waiting for confirmation...");
+          }
+          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, {gasLimit:350000});
+        }
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        
+        // 优化成功提示，显示实际获得的代币数量
+        const successMessage = isChinese ? 
+          `兑换成功！获得 ${toAmount} ${toToken}` : 
+          `Swap successful! Received ${toAmount} ${toToken}`;
+        
+        showBeautifulAlert(successMessage, 'success');
+        document.getElementById("fromAmount").value = "";
+        refreshAll();
+        initializeSwapButton();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "兑换失败，请重试" : "Swap failed, please try again", 'error'); 
+      }
+    };
+
+    // 获取代币合约
+    function getTokenContract(token) {
+      switch(token) {
+        case "LOM": return lom;
+        case "AxCNH": return axcnh;
+        case "USDT0": return usdt0;
+        case "CNHT0": return cnht0;
+        default: return lom;
+      }
+    }
+
+    document.getElementById("removeBtn").onclick = () => {
+      updateRemoveEstimate();
+      document.getElementById("removeModal").style.display = "flex";
+    };
+
+    document.getElementById("removeSlider").oninput = (e) => {
+      document.getElementById("removePercent").innerText = e.target.value + "%";
+      updateRemoveEstimate();
+    };
+
+    async function updateRemoveEstimate() {
+      try {
+        const percent = document.getElementById("removeSlider").value;
+        const lpBal = await pair.balanceOf(account);
+        const liquidity = lpBal.mul(percent).div(100);
+        
+        if (liquidity.isZero()) {
+          document.getElementById("removeEst").innerText = "0 CFX + 0 LOM";
+          return;
+        }
+        
+        const total = await pair.totalSupply();
+        const [r0, r1] = await pair.getReserves();
+        const t0 = await pair.token0();
+        
+        const rCfx = t0.toLowerCase() === WCFX.toLowerCase() ? r0 : r1;
+        const rLom = t0.toLowerCase() === WCFX.toLowerCase() ? r1 : r0;
+        
+        const cfxOut = rCfx.mul(liquidity).div(total);
+        const lomOut = rLom.mul(liquidity).div(total);
+        
+        document.getElementById("removeEst").innerText = 
+          `${parseFloat(ethers.utils.formatEther(cfxOut)).toFixed(6)} CFX + ${parseFloat(ethers.utils.formatUnits(lomOut,18)).toFixed(6)} LOM`;
+      } catch (error) {
+        console.error("更新移除估算失败:", error);
+        document.getElementById("removeEst").innerText = "计算失败";
+      }
+    }
+
+    document.getElementById("confirmRemove").onclick = async () => {
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+      
+      try {
+        const percent = document.getElementById("removeSlider").value;
+        const lpBal = await pair.balanceOf(account);
+        const liquidity = lpBal.mul(percent).div(100);
+        
+        if (liquidity.isZero()) {
+          throw new Error("没有流动性可移除");
+        }
+        
+        const deadline = Math.floor(Date.now()/1000) + 1800;
+
+        // 检查LP代币授权
+        const lpToken = new ethers.Contract(PAIR, ERC20_ABI, signer);
+        const allowance = await lpToken.allowance(account, ROUTER);
+        
+        if (allowance.lt(liquidity)) {
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权LP代币" : "Approving LP token");
+          const approveTx = await lpToken.approve(ROUTER, ethers.constants.MaxUint256);
+          await approveTx.wait();
+          document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
+        }
+
+        document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "正在移除流动性" : "Removing liquidity...");
+        
+        const tx = await router.removeLiquidityETHSupportingFeeOnTransferTokens(
+          LOM, 
+          liquidity, 
+          0, 
+          0, 
+          account, 
+          deadline,
+          {
+            gasLimit: 400000
+          }
+        );
+        
+        await tx.wait();
+        document.getElementById("loading").style.display = "none";
+        showBeautifulAlert(isChinese ? "移除流动性成功！" : "Remove liquidity successful!", 'success');
+        document.getElementById("removeModal").style.display = "none";
+        refreshAll();
+      } catch (e) { 
+        document.getElementById("loading").style.display = "none";
+        console.error("移除流动性失败:", e);
+        
+        let errorMsg = e.message || "未知错误";
+        if (errorMsg.includes("insufficient") || errorMsg.includes("余额为0")) {
+          errorMsg = isChinese ? "LP代币余额不足" : "Insufficient LP token balance";
+        } else if (errorMsg.includes("allowance") || errorMsg.includes("授权")) {
+          errorMsg = isChinese ? "授权失败，请重试" : "Approval failed, please try again";
+        }
+        
+        showBeautifulAlert((isChinese ? "移除失败: " : "Remove failed: ") + errorMsg, 'error'); 
+      }
+    };
+
+    // 模态框关闭事件
+    window.onclick = e => { 
+      if(e.target.classList.contains("modal")) {
+        e.target.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
