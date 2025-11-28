@@ -1529,25 +1529,31 @@ function setupDropdownEvents() {
 
     // 选择代币
     function selectToken(token, type) {
-      if (type === 'from') {
-        // 如果选择了与"到"代币相同的代币，自动交换
-        if (token.symbol === toToken.symbol) {
-          toToken = fromToken;
-        }
-        fromToken = token;
-      } else {
-        // 如果选择了与"从"代币相同的代币，自动交换
-        if (token.symbol === fromToken.symbol) {
-          fromToken = toToken;
-        }
-        toToken = token;
-      }
-      
-      updateTokenSelectors();
-      updateBalances();
-      updateOutput();
-      updateRouteInfo();
+  if (type === 'from') {
+    // 如果选择了与"到"代币相同的代币，自动交换
+    if (token.symbol === toToken.symbol) {
+      toToken = fromToken;
     }
+    fromToken = token;
+  } else {
+    // 如果选择了与"从"代币相同的代币，自动交换
+    if (token.symbol === fromToken.symbol) {
+      fromToken = toToken;
+    }
+    toToken = token;
+  }
+  
+  updateTokenSelectors(); // 只更新显示，不重新创建
+  updateBalances();
+  updateOutput();
+  updateRouteInfo();
+  
+  // 关闭下拉菜单
+  const fromDropdown = document.getElementById("fromTokenDropdown");
+  const toDropdown = document.getElementById("toTokenDropdown");
+  if (fromDropdown) fromDropdown.style.display = 'none';
+  if (toDropdown) toDropdown.style.display = 'none';
+}
 
     // 更新路由信息
     function updateRouteInfo() {
