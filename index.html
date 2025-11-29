@@ -915,17 +915,26 @@
     }
     
     .token-select {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      outline: none;
-      padding: 5px;
-      border-radius: 8px;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-    }
+  background: transparent;
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  appearance: none; /* 清除默认下拉样式 */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.token-select:focus {
+  border-color: var(--web3-accent);
+  box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+}
+
     
     .token-select option {
       background: var(--web3-card);
