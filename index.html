@@ -1023,7 +1023,24 @@
   cursor: pointer;
   z-index: 10;
 }
-    
+    /* 连接中状态 */
+#walletBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* 连接成功状态提示 */
+#walletBtn.connected {
+    position: relative;
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: var(--web3-success) !important;
+}
+
+#walletBtn.connected:hover {
+    background: rgba(34, 197, 94, 0.2) !important;
+}
+
     
     @media (max-width: 400px) {
       .app { max-width: 100%; }
@@ -1430,13 +1447,17 @@
     };
 
     function initializeApp() {
-      initializeSwapButton();
-      setupTabs();
-      setupPercentageButtons();
-      updateAllTexts();
-      initializeSecurity();
-      setupTokenSelectors();
-    }
+    if (appInitialized) return;
+    
+    initializeSwapButton();
+    setupTabs();
+    setupPercentageButtons();
+    updateAllTexts();
+    initializeSecurity();
+    setupTokenSelectors();
+    
+    appInitialized = true;
+}
 
     function createSecurityIndicator() {
       const indicator = document.createElement('div');
@@ -1520,7 +1541,118 @@
     const AxCNH = "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E";
     const USDT0 = "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff";
     const CNHT0 = "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda";
+// ==================== 钱包连接/断开功能 ====================
+let appInitialized = false;
 
+// 连接成功提示函数
+function showWalletConnectedSuccess() {
+    const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
+    const message = isChinese ? 
+        `🎉 钱包连接成功！\n\n📍 地址: ${shortAddress}\n\n💡 提示: 再次点击钱包按钮可断开连接` :
+        `🎉 Wallet Connected Successfully!\n\n📍 Address: ${shortAddress}\n\n💡 Tip: Click wallet button again to disconnect`;
+    
+    showBeautifulAlert(message, 'success');
+}
+
+// 断开连接提示函数
+function showWalletDisconnected() {
+    const message = isChinese ? 
+        "🔌 钱包已断开连接\n\n所有数据已重置" :
+        "🔌 Wallet Disconnected\n\nAll data has been reset";
+    
+    showBeautifulAlert(message, 'info');
+}
+
+// 重置所有余额显示
+function resetAllBalances() {
+    const balanceElements = {
+        'cfxBal': '0.000000',
+        'lomBal': '0.000000', 
+        'axcnhBal': '0.000000',
+        'usdt0Bal': '0.000000',
+        'cnht0Bal': '0.000000',
+        'lpBal': '0.000000',
+        'fromBal': '0',
+        'toBal': '0',
+        'addCfxBal': '0',
+        'addLomBal': '0'
+    };
+    
+    Object.keys(balanceElements).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerText = balanceElements[id];
+        }
+    });
+}
+
+// 重置兑换页面
+function resetSwapPage() {
+    document.getElementById("fromAmount").value = "";
+    document.getElementById("toAmount").innerText = "0";
+    document.getElementById("swapBtn").disabled = true;
+    document.getElementById("swapBtn").innerText = isChinese ? "请输入数量" : "Enter Amount";
+    document.getElementById("price").innerText = "0";
+    document.getElementById("minReceived").innerText = "0 LOM";
+}
+
+// 重置流动性页面  
+function resetLiquidityPage() {
+    document.getElementById("removeBtn").disabled = true;
+    document.getElementById("myLiquidityShare").innerText = "0%";
+    document.getElementById("totalLiquidity").innerText = "$0";
+    document.getElementById("dailyVolume").innerText = "$0";
+    document.getElementById("poolAPR").innerText = "0%";
+    document.getElementById("positionValue").innerText = "0";
+    document.getElementById("positionShare").innerText = "0";
+    document.getElementById("positionCfx").innerText = "0";
+    document.getElementById("positionLom").innerText = "0";
+    document.getElementById("unclaimedFees").innerText = "$0";
+}
+
+// 断开钱包连接函数
+function disconnectWallet() {
+    const confirmMessage = isChinese ? 
+        "确定要断开钱包连接吗？" : 
+        "Are you sure you want to disconnect wallet?";
+    
+    const userConfirmed = confirm(confirmMessage);
+    
+    if (!userConfirmed) {
+        return;
+    }
+    
+    // 重置所有钱包相关变量
+    account = null;
+    provider = null;
+    signer = null;
+    router = null;
+    pair = null;
+    lom = null;
+    axcnh = null;
+    usdt0 = null;
+    cnht0 = null;
+    
+    // 清除所有定时器
+    const highestId = window.setTimeout(() => {
+        for (let i = highestId; i >= 0; i--) {
+            window.clearInterval(i);
+        }
+    }, 0);
+    
+    // 重置UI显示
+    document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+    document.getElementById("walletBtn").classList.remove('connected');
+    document.getElementById("walletBtn").disabled = false;
+    
+    // 重置所有数据
+    resetAllBalances();
+    resetSwapPage();
+    resetLiquidityPage();
+    
+    // 显示断开连接提示
+    showWalletDisconnected();
+}
     let provider, signer, account, router, pair, lom, axcnh, usdt0, cnht0;
     let slippage = 0.5;
     let isChinese = true;
@@ -1731,7 +1863,6 @@
       isChinese = !isChinese;
       document.getElementById("langBtn").innerText = isChinese ? "EN" : "CN";
       updateAllTexts();
-      initializeSwapButton();
     };
 
     function updateAllTexts() {
@@ -1802,18 +1933,33 @@
       initializeSwapButton();
     }
 
-    // 钱包连接
-    document.getElementById("walletBtn").onclick = async () => {
-      if (!window.ethereum) {
-        showBeautifulAlert(isChinese ? "请使用 Fluent / TokenPocket / OKX 钱包打开" : "Please use Fluent / TokenPocket / OKX wallet", 'info');
+    // 钱包连接/断开功能
+document.getElementById("walletBtn").onclick = async () => {
+    // 如果已经连接，点击则断开
+    if (account) {
+        disconnectWallet();
         return;
-      }
-      
-      try {
+    }
+    
+    // 未连接状态，执行连接逻辑
+    if (!window.ethereum) {
+        showBeautifulAlert(isChinese ? 
+            "🔍 未检测到钱包\n\n请使用 Fluent / TokenPocket / OKX 钱包打开" : 
+            "🔍 No Wallet Detected\n\nPlease use Fluent / TokenPocket / OKX wallet", 'info');
+        return;
+    }
+    
+    try {
+        // 显示连接中状态
+        document.getElementById("walletBtn").innerText = isChinese ? "连接中..." : "Connecting...";
+        document.getElementById("walletBtn").disabled = true;
+        
         await ethereum.request({method: "eth_requestAccounts"});
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         account = await signer.getAddress();
+        
+        // 初始化合约
         router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
         pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
         lom = new ethers.Contract(LOM, ERC20_ABI, signer);
@@ -1821,13 +1967,27 @@
         usdt0 = new ethers.Contract(USDT0, ERC20_ABI, signer);
         cnht0 = new ethers.Contract(CNHT0, ERC20_ABI, signer);
 
-        document.getElementById("walletBtn").innerText = account.slice(0, 3) + "..." + account.slice(-5);
+        // 更新UI显示
+        const displayAddress = account.slice(0, 3) + "..." + account.slice(-5);
+        document.getElementById("walletBtn").innerText = displayAddress;
+        document.getElementById("walletBtn").classList.add('connected');
+        document.getElementById("walletBtn").disabled = false;
+        
+        // 显示连接成功提示
+        showWalletConnectedSuccess();
+        
+        // 开始数据刷新
         await refreshAll();
         setInterval(refreshAll, 12000);
-      } catch(e) { 
-        showBeautifulAlert((isChinese ? "连接失败: " : "Connection failed: ") + e.message, 'error');
-      }
-    };
+        
+    } catch(e) { 
+        // 连接失败时重置按钮状态
+        document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+        document.getElementById("walletBtn").disabled = false;
+        
+        showBeautifulAlert((isChinese ? "❌ 连接失败: " : "❌ Connection failed: ") + e.message, 'error');
+    }
+};
 
     // 余额检查和验证函数
     function validateInputAmounts() {
