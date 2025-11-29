@@ -1438,7 +1438,7 @@
     });
 
     // 安全警告按钮事件 - 修复退出功能
-    document.getElementById('securityExit').onclick = function() {
+document.getElementById('securityExit').onclick = function() {
   // 改进退出方式
   if (window.history.length > 1) {
     window.history.back();
@@ -1451,8 +1451,20 @@ document.getElementById('securityContinue').onclick = function() {
   // 隐藏安全警告
   document.getElementById('securityAlert').style.display = 'none';
   
-  // 初始化应用
-  initializeApp();
+  // 延迟初始化应用，确保所有函数都已定义
+  setTimeout(function() {
+    if (typeof initializeApp === 'function') {
+      initializeApp();
+    } else {
+      // 如果initializeApp未定义，直接初始化基本功能
+      console.log("直接初始化应用");
+      if (typeof initializeSwapButton === 'function') initializeSwapButton();
+      if (typeof setupTabs === 'function') setupTabs();
+      if (typeof setupPercentageButtons === 'function') setupPercentageButtons();
+      if (typeof updateAllTexts === 'function') updateAllTexts();
+      if (typeof setupTokenSelectors === 'function') setupTokenSelectors();
+    }
+  }, 100);
 };
     function initializeApp() {
   
@@ -1661,8 +1673,7 @@ function disconnectWallet() {
     // 显示断开连接提示
     showWalletDisconnected();
 }
-     // 全局变量声明
-    let appInitialized = false;
+  
     let provider, signer, account, router, pair, lom, axcnh, usdt0, cnht0;
     let slippage = 0.5;
     let isChinese = true;
