@@ -235,12 +235,14 @@
       font-weight: bold;
       font-size: 16px;
       flex-shrink: 0;
+      cursor: pointer;
     }
     
     .token-name {
       font-size: 18px;
       font-weight: bold;
       color: var(--web3-light);
+      cursor: pointer;
     }
     
     .token-balance {
@@ -700,6 +702,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      margin-bottom: 20px;
     }
     
     .token-item {
@@ -725,6 +728,10 @@
       border-radius: 50%;
       background-size: cover;
       background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
     
     .token-item-info {
@@ -777,22 +784,6 @@
     
     @keyframes spin {
       to { transform: rotate(360deg); }
-    }
-    
-    /* 安全提示 */
-    #securityTips {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--web3-card);
-      border: 2px solid var(--web3-yellow);
-      border-radius: 12px;
-      padding: 16px;
-      max-width: 280px;
-      font-size: 12px;
-      color: var(--web3-light);
-      z-index: 9999;
-      display: none;
     }
     
     /* 美化提示 */
@@ -1050,7 +1041,7 @@
         
         <div class="token-input-group">
           <!-- 上方输入框 -->
-          <div class="token-input-wrapper" id="fromTokenWrapper">
+          <div class="token-input-wrapper">
             <div class="token-selector">
               <div class="token-selector-left">
                 <div class="token-logo" id="fromTokenLogo" style="background-image: url('https://i.imgur.com/70cXbUI.jpeg');"></div>
@@ -1069,7 +1060,7 @@
           </div>
           
           <!-- 下方输入框 -->
-          <div class="token-input-wrapper" id="toTokenWrapper">
+          <div class="token-input-wrapper">
             <div class="token-selector">
               <div class="token-selector-left">
                 <div class="token-logo" id="toTokenLogo" style="background-image: url('https://i.imgur.com/HddyTrv.jpeg');"></div>
@@ -1285,26 +1276,6 @@
     <div id="loadingText">等待区块链确认中</div>
   </div>
 
-  <!-- 安全提示浮层 -->
-  <div id="securityTips">
-    <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-      <span>🔒</span> 安全提示
-    </div>
-    <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
-    <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
-    <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
-    <button onclick="document.getElementById('securityTips').style.display='none'" style="
-      background: transparent;
-      border: 1px solid var(--web3-yellow);
-      color: var(--web3-yellow);
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      width: 100%;
-    ">知道了</button>
-  </div>
-
   <!-- 安全警告 -->
   <div class="security-alert" id="securityAlert">
     <div class="security-alert-content">
@@ -1445,12 +1416,22 @@
     // ==================== 代币选择器 ====================
     function setupTokenSelectors() {
       // 点击代币区域打开选择器
-      document.getElementById('fromTokenWrapper').addEventListener('click', function() {
+      document.getElementById('fromTokenLogo').addEventListener('click', function() {
         selectedTokenType = 'from';
         openTokenSelector();
       });
       
-      document.getElementById('toTokenWrapper').addEventListener('click', function() {
+      document.getElementById('fromTokenName').addEventListener('click', function() {
+        selectedTokenType = 'from';
+        openTokenSelector();
+      });
+      
+      document.getElementById('toTokenLogo').addEventListener('click', function() {
+        selectedTokenType = 'to';
+        openTokenSelector();
+      });
+      
+      document.getElementById('toTokenName').addEventListener('click', function() {
         selectedTokenType = 'to';
         openTokenSelector();
       });
@@ -1751,7 +1732,7 @@
 
     async function updateOutput() {
       const amt = document.getElementById("fromAmount").value;
-      if (!amt || !router) { 
+      if (!amt || !router || !account) { 
         document.getElementById("toAmount").textContent = "0";
         initializeSwapButton();
         return; 
@@ -1873,6 +1854,15 @@
       }
     };
 
+    // ==================== 流动性功能 ====================
+    document.getElementById("addBtn").onclick = () => {
+      showBeautifulAlert(isChinese ? "添加流动性功能开发中" : "Add liquidity feature is under development", 'info');
+    };
+
+    document.getElementById("removeBtn").onclick = () => {
+      showBeautifulAlert(isChinese ? "移除流动性功能开发中" : "Remove liquidity feature is under development", 'info');
+    };
+
     // ==================== 数据刷新功能 ====================
     async function refreshAll() {
       if (!account) return;
@@ -1881,12 +1871,14 @@
         // 更新CFX余额
         const cfx = ethers.utils.formatEther(await provider.getBalance(account));
         document.getElementById("cfxBal").textContent = parseFloat(cfx).toFixed(6);
+        document.getElementById("fromBal").textContent = parseFloat(cfx).toFixed(6);
         document.getElementById("tokenBalance-CFX").textContent = parseFloat(cfx).toFixed(6);
 
         // 更新LOM余额
         const lomBal = await lom.balanceOf(account);
         const lomAmt = ethers.utils.formatUnits(lomBal, 18);
         document.getElementById("lomBal").textContent = parseFloat(lomAmt).toFixed(6);
+        document.getElementById("toBal").textContent = parseFloat(lomAmt).toFixed(6);
         document.getElementById("tokenBalance-LOM").textContent = parseFloat(lomAmt).toFixed(6);
 
         // 更新其他代币余额
@@ -1956,6 +1948,7 @@
         // 估算其他数据
         document.getElementById("dailyVolume").textContent = "$" + (positionValue * 10).toFixed(2);
         document.getElementById("poolAPR").textContent = (positionValue > 0 ? "12.5%" : "0%");
+        document.getElementById("totalLiquidity").textContent = "$" + (positionValue * 100).toFixed(2);
 
         updateTokenBalances();
       } catch (error) {
