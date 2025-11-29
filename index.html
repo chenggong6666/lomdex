@@ -1037,22 +1037,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: -10px 0;
+  margin: 5px 0;
   width: 100%;
   z-index: 10;
 }
-/* 修复连接线 - 确保横向居中 */
-.swap-center::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;                    /* 改为从中心开始定位 */
-  transform: translateX(-50%);  /* 向左平移50%自身宽度实现居中 */
-  width: calc(100% - 80px);     /* 宽度减去两侧间距 */
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.3), transparent);
-  z-index: -1;
-}
+
 .swap-arrow {
   background: var(--web3-card);
   width: 44px;
