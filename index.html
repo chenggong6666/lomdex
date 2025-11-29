@@ -1445,9 +1445,11 @@
 };
 
     document.getElementById('securityContinue').onclick = function() {
-      document.getElementById('securityAlert').style.display = 'none';
-      initializeApp();
-    };
+  document.getElementById('securityAlert').style.display = 'none';
+    initializeApp();
+    appInitialized = true;
+  }
+};
 
     function initializeApp() {
     if (appInitialized) return;
