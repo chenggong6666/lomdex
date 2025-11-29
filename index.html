@@ -1821,7 +1821,7 @@
         usdt0 = new ethers.Contract(USDT0, ERC20_ABI, signer);
         cnht0 = new ethers.Contract(CNHT0, ERC20_ABI, signer);
 
-        document.getElementById("walletBtn").innerText = account.slice(0,6)+"..."+account.slice(-4);
+        document.getElementById("walletBtn").innerText = account.slice(-8);
         await refreshAll();
         setInterval(refreshAll, 12000);
       } catch(e) { 
