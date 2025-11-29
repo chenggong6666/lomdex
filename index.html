@@ -2350,9 +2350,10 @@ document.getElementById("walletBtn").onclick = async () => {
         const price = lomReserve / cfxReserve;
         document.getElementById("price").innerText = price.toFixed(6);
 
-        // 计算池子总流动性 - 修复计算逻辑
-        const totalLiquidity = (cfxReserve * 0.1) + (lomReserve * 0.01);
-        document.getElementById("totalLiquidity").innerText = "$" + totalLiquidity.toFixed(2);
+        // 计算池子总流动性计算逻辑临时用CFX价格1:1 USD）
+         const cfxPrice = 1; // 实际需对接行情API
+         const lomPrice = price; // 复用之前计算的LOM价格
+         const totalLiquidity = (cfxReserve * cfxPrice) + (lomReserve * lomPrice);
 
         // 更新流动性页面数据 - 修复份额计算
         const totalSupply = await pair.totalSupply();
