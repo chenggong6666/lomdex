@@ -1016,25 +1016,27 @@
   z-index: 10;
 
  }
-.swap-arrow {
-  background: var(--web3-card);
-  width: 44px;
-  height: 44px;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  cursor: pointer;
-  border: 1px solid rgba(76, 201, 240, 0.3);
-  transition: all 0.3s ease;
-  color: #fff;
-  filter: invert(80%) sepia(10%) saturate(300%) hue-rotate(180deg); /* 强制转为浅蓝色 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-   position: absolute;          /* 改为绝对定位 */
-  top: 50%;                    /* 垂直居中 */
-  left: 50%;                   /* 水平居中 */
-  transform: translate(-50%, -50%); /* 精确定位到中心 */
+/* 背景完全透明 */
+   background: transparent; 
+   width: 44px;
+   height: 44px;
+   border-radius: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 30px;
+   cursor: pointer;
+   /* 隐藏边框 */
+   border: none; 
+   transition: all 0.3s ease;
+   /* 箭头颜色设为你要的浅蓝色 */
+   color: #86b6d9; 
+   /* 移除阴影（可选，若要更简洁） */
+   box-shadow: none; 
+   position: absolute;          
+   top: 50%;                    
+   left: 50%;                   
+   transform: translate(-50%, -50%); /* 精确定位到中心 */
 }
   .swap-arrow:hover {
   background: rgba(76, 201, 240, 0.1);
