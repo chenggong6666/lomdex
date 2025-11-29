@@ -52,7 +52,7 @@
       position: relative;
     }
   
-/* ========== 简单金光效果 ========== */
+/* ========== 文字内金光效果 ========== */
 .logo {
   font-size: 42px;
   font-weight: 900;
@@ -64,8 +64,8 @@
   overflow: hidden;
 }
 
-.logo::after {
-  content: "";
+.logo::before {
+  content: "龙脉DEX";
   position: absolute;
   top: 0;
   left: -100%;
@@ -74,12 +74,16 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 215, 0, 0.6),
-    rgba(255, 255, 255, 0.8),
-    rgba(255, 215, 0, 0.6),
+    rgba(255, 215, 0, 0.8),
+    rgba(255, 255, 255, 1),
+    rgba(255, 215, 0, 0.8),
     transparent
   );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   animation: goldSweep 2s linear infinite;
+  filter: blur(1px);
 }
 
 @keyframes goldSweep {
