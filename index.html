@@ -82,28 +82,46 @@
   background: var(--web3-card);
   border: 1px solid rgba(76, 201, 240, 0.3);
   border-radius: 16px;
-  padding: 12px 20px;
+  padding: 10px 20px;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 120px; 
   width: 120px; 
-  height: 44px; /* 固定高度 */
   flex-shrink: 0;
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  box-sizing: border-box; /* 确保padding和border包含在尺寸内 */
-  font-size: 14px; /* 固定字体大小 */
-  line-height: 1; /* 确保文字垂直居中 */
 }
      #langBtn {
      min-width: 40px;
      width: 40px;
      flex-shrink: 0;
      }
-    
+    /* 新增的钱包按钮固定宽度样式 */
+#walletBtn.fixed-width {
+  min-width: 140px;
+  width: 140px;
+  height: 44px;
+  padding: 12px 12px;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-weight: 600;
+}
+
+#walletBtn.connected {
+  font-size: 12px;
+  letter-spacing: -0.2px;
+}
     .btn:hover {
       background: rgba(76, 201, 240, 0.2);
       border-color: var(--web3-accent);
@@ -1720,11 +1738,23 @@
     };
 
     function updateAllTexts() {
-      // 更新所有文本内容
-      const walletBtn = document.getElementById("walletBtn");
-      if (!account) {
-        walletBtn.innerText = isChinese ? "连接钱包" : "Connect Wallet";
-      }
+  // 更新所有文本内容
+  const walletBtn = document.getElementById("walletBtn");
+  
+  // 确保按钮有固定宽度类
+  if (!walletBtn.classList.contains('fixed-width')) {
+    walletBtn.classList.add('fixed-width');
+  }
+  
+  if (!account) {
+    if (isChinese) {
+      walletBtn.innerText = "连接钱包";
+      walletBtn.classList.remove('connected');
+    } else {
+      walletBtn.innerText = "Connect"; 
+      walletBtn.classList.remove('connected');
+    }
+  }
       
       // 选项卡
       document.querySelector('[data-tab="swap"]').innerText = isChinese ? "兑换" : "Swap";
