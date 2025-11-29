@@ -79,21 +79,25 @@
 }
     
     .btn {
-      background: var(--web3-card);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 16px;
-      padding: 10px 20px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 120px; 
-      width: 120px; 
-      flex-shrink: 0;
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-    }
+  background: var(--web3-card);
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  border-radius: 16px;
+  padding: 12px 20px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px; 
+  width: 120px; 
+  height: 44px; /* 固定高度 */
+  flex-shrink: 0;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  box-sizing: border-box; /* 确保padding和border包含在尺寸内 */
+  font-size: 14px; /* 固定字体大小 */
+  line-height: 1; /* 确保文字垂直居中 */
+}
      #langBtn {
      min-width: 40px;
      width: 40px;
