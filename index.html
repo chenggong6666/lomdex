@@ -1444,6 +1444,25 @@
 <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
 
+  <!-- 高级别安全防护提醒 -->
+  <div class="security-alert" id="securityAlert">
+    <div class="security-alert-content">
+      <div class="security-alert-icon">🛑</div>
+      <div class="security-alert-title">安全防护提醒</div>
+      <div class="security-alert-message">
+        您正在访问去中心化交易平台，请确认您了解以下风险：<br><br>
+        • 智能合约可能存在安全漏洞<br>
+        • 代币价格可能剧烈波动<br>
+        • 交易一旦执行无法撤销<br><br>
+        请确保您正在访问官方域名，并仔细核对交易详情。
+      </div>
+      <div class="security-alert-buttons">
+        <button class="security-alert-button exit" id="securityExit">退出网站</button>
+        <button class="security-alert-button continue" id="securityContinue">我已了解，继续</button>
+      </div>
+    </div>
+  </div>
+
   <script>
    
     // ==================== 安全防护模块 ====================
@@ -2255,7 +2274,7 @@ document.getElementById("walletBtn").onclick = async () => {
         document.getElementById("addCfx").value = cfxAmount.toFixed(6);
         updateButtonState();
       }
-    };
+    });
 
     // 修复添加流动性函数
     document.getElementById("confirmAdd").onclick = async () => {
