@@ -2505,7 +2505,7 @@ document.getElementById("walletBtn").onclick = async () => {
       
       // 检查滑点设置是否足够（特别是LOM到CFX交易）
       if (fromToken === "LOM" && toToken === "CFX" && slippage < 5) {
-        showBeautifulAlert(isChinese ? "LOM兑换CFX需要较高滑点，请将滑点设置为5%以上" : "LOM to CFX swap requires higher slippage, please set to 5% or more", 'warning');
+        showBeautifulAlert(isChinese ? "请将滑点设置为5%以上" : "LOM to CFX swap requires higher slippage, please set to 5% or more", 'warning');
         return;
       }
       
