@@ -882,51 +882,45 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-    
- /* 余额样式 */
-.token-balance {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0 0 6px 0;
-  text-align: right !important;
-  padding-right: 4px;
-  width: 100%;
+    /* ========== 全局重置（避免样式冲突） ========== */
+.token-input-wrapper * {
+  background: transparent !important;
+  color: #fff !important;
 }
 
+/* ========== 兑换页面 - 输入框容器 ========== */
 .token-input-wrapper {
   background: rgba(76, 201, 240, 0.05);
   border-radius: 16px;
-  padding: 10px; 
+  padding: 12px; 
   border: 1px solid rgba(76, 201, 240, 0.2);
   transition: all 0.3s ease;
-  display: flex;          
-  flex-direction: column; 
-  align-items: flex-start; /* 让内部元素靠左（修复整体偏右） */
-  width: 100%;            
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  position: relative; /* 为余额提供定位参考 */
 }
-
-/* 代币选择器（LOGO+名称+下拉框） */
+ 
+/* ========== 代币选择器（LOGO+下拉框） ========== */
 .token-selector {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;    
-  justify-content: flex-start; /* 内部元素靠左 */
+  margin-bottom: 8px;
+  justify-content: flex-start;
   width: 100%;
-
-    
-    .token-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    
-    /* 代币下拉框 */
+}
+.token-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
 .token-select {
   background: transparent;
   border: 1px solid rgba(76, 201, 240, 0.3);
@@ -942,6 +936,9 @@
   background-repeat: no-repeat;
   background-position: right 8px center;
 }
+
+  
+ 
 .token-select:focus {
   border-color: var(--web3-accent);
   box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
@@ -953,45 +950,45 @@
       color: white;
     }
     
-    .token-amount {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    /* 输入框样式 */
+   /* ========== 输入框 ========== */
+.token-amount {
+  width: 100%;
+  text-align: right;
+}
+
 .amount-input {
-  background: transparent;
-  border: none;
-  color: white;
+  background: transparent !important;
+  border: 1px solid rgba(76, 201, 240, 0.3) !important;
+  border-radius: 8px;
+  color: white !important;
   font-size: 18px;
   font-weight: bold;
   text-align: right;
   width: 100%;
   outline: none;
-  padding: 2px 0;
+  padding: 8px 12px;
 }
 
-/* 余额（输入框右上角） */
+/* ========== 余额（输入框右上角） ========== */
 .token-balance {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
-  position: absolute;     
-  right: 4px;             
-  top: -20px;             
-  z-index: 1;             
+  position: absolute;
+  right: 12px; /* 与容器内边距一致 */
+  top: 12px;   /* 与容器内边距一致 */
+  z-index: 1;
 }
     
-    /* ========== 转换按钮（中间箭头 - 修复偏左） ========== */
+   /* ========== 转换箭头（中间） ========== */
 .swap-center {
   position: relative;
-  height: 40px;
+  height: 48px;
   display: flex;
-  justify-content: center; /* 强制容器内元素居中 */
+  justify-content: center;
   align-items: center;
-  margin: -10px 0;
-  width: 100%; /* 占据整行宽度，确保箭头居中 */
+  margin: -24px 0; /* 让箭头覆盖在两个输入框之间 */
+  width: 100%;
 }
 
 .swap-arrow {
@@ -1007,9 +1004,7 @@
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
-  /* 无需额外margin，依赖父容器的justify-content: center */
 }
-
     
     .swap-arrow:hover {
       transform: rotate(180deg);
