@@ -1548,8 +1548,8 @@ let appInitialized = false;
 function showWalletConnectedSuccess() {
     const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
     const message = isChinese ? 
-        `🎉 钱包连接成功！\n\n📍 地址: ${shortAddress}\n\n💡 提示: 再次点击钱包按钮可断开连接` :
-        `🎉 Wallet Connected Successfully!\n\n📍 Address: ${shortAddress}\n\n💡 Tip: Click wallet button again to disconnect`;
+        ` 钱包连接成功！\n\n提示: 再次点击钱包按钮可断开连接` :
+        ` Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`;
     
     showBeautifulAlert(message, 'success');
 }
@@ -1557,8 +1557,8 @@ function showWalletConnectedSuccess() {
 // 断开连接提示函数
 function showWalletDisconnected() {
     const message = isChinese ? 
-        "🔌 钱包已断开连接\n\n所有数据已重置" :
-        "🔌 Wallet Disconnected\n\nAll data has been reset";
+        " 钱包已断开连接 " :
+        " Wallet Disconnected ";
     
     showBeautifulAlert(message, 'info');
 }
