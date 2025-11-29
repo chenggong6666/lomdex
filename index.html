@@ -1033,7 +1033,7 @@
     
  .swap-center {
   position: relative;
-  height: 50px;
+  height: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1067,13 +1067,17 @@
   transition: all 0.3s ease;
   color: var(--web3-light);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+   position: absolute;          /* 改为绝对定位 */
+  top: 50%;                    /* 垂直居中 */
+  left: 50%;                   /* 水平居中 */
+  transform: translate(-50%, -50%); /* 精确定位到中心 */
 }
   .swap-arrow:hover {
   background: rgba(76, 201, 240, 0.1);
   border-color: var(--web3-accent);
   box-shadow: 0 4px 12px rgba(76, 201, 240, 0.2);
   color: var(--web3-accent);
-  transform: translateY(-2px);
+  transform: translate(-50%, -50%) translateY(-2px);
 }
     /* 连接中状态 */
 #walletBtn:disabled {
