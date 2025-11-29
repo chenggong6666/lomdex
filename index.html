@@ -51,7 +51,9 @@
       gap: 1px;
       position: relative;
     }
-    .logo {
+    <style>
+/* ========== 增强版金光闪烁动画 ========== */
+.logo {
   font-size: 42px;
   font-weight: 900;
   background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple), var(--web3-yellow));
@@ -59,25 +61,69 @@
   color: transparent;
   position: relative;
   display: inline-block;
-  animation: textGlow 2s ease-in-out infinite alternate;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-  margin-top: 2px;
+  overflow: hidden;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
-@keyframes textGlow {
+/* 金光效果 - 增强版 */
+.logo::before {
+  content: "龙脉DEX";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 215, 0, 0.4) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 215, 0, 0.4) 80%,
+    transparent 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: goldShine 3s ease-in-out infinite;
+  filter: brightness(1.2);
+}
+
+@keyframes goldShine {
   0% {
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
-                 0 0 20px rgba(255, 215, 0, 0.2),
-                 0 0 30px rgba(255, 215, 0, 0.1);
-    filter: brightness(1);
+    left: -100%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    left: 100%;
+    opacity: 0;
   }
   100% {
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6),
-                 0 0 30px rgba(255, 215, 0, 0.4),
-                 0 0 45px rgba(255, 215, 0, 0.2);
-    filter: brightness(1.1);
+    left: 100%;
+    opacity: 0;
   }
 }
+
+/* 基础文字效果 */
+.logo::after {
+  content: "龙脉DEX";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: -1;
+}
+</style>
     
 .btn {
   background: var(--web3-card);
