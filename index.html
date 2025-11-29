@@ -89,9 +89,6 @@
   100% { left: 200%; }
 }
 
-@media (max-width: 400px) {
-  .logo { font-size: 36px; }
-}
     
 .btn {
   background: var(--web3-card);
@@ -1047,13 +1044,25 @@
 
 .swap-arrow {
   background: var(--web3-card);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 20px;
   cursor: pointer;
-  z-index: 10;
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  transition: all 0.3s ease;
+  color: var(--web3-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+  .swap-arrow:hover {
+  background: rgba(76, 201, 240, 0.1);
+  border-color: var(--web3-accent);
+  box-shadow: 0 4px 12px rgba(76, 201, 240, 0.2);
+  color: var(--web3-accent);
+  transform: translateY(-2px);
 }
     /* 连接中状态 */
 #walletBtn:disabled {
@@ -1081,6 +1090,10 @@
     min-height: 90px;
   }
   
+  .logo { 
+    font-size: 36px; 
+  }
+  
   .token-select {
     min-width: 100px;
     max-width: 120px;
@@ -1088,6 +1101,18 @@
     padding: 4px 25px 4px 8px;
   }
   
+ 
+  
+  .swap-center::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.3), transparent);
+  z-index: -1;
+}
   .token-logo {
     width: 28px;
     height: 28px;
