@@ -492,25 +492,26 @@
     }
     
     .percentage-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 8px;
-      margin-bottom: 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
     }
      
     .percent-btn {
-      background: rgba(144, 224, 239, 0.1);
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 10px;
-      padding: 6px 12px;
-      color: var(--web3-light);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      min-width: 44px;
-    }
+  background: rgba(144, 224, 239, 0.1);
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  border-radius: 10px;
+  padding: 6px 10px;
+  color: var(--web3-light);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 40px;
+  text-align: center;
+}
     
     .percent-btn:hover {
       background: var(--web3-yellow);
@@ -897,40 +898,38 @@
     }
     
     .token-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    /* ========== 重置（避免样式冲突） ========== */
-.token-input-wrapper * {
-  background: transparent !important;
-  color: #fff !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-/* ========== 兑换页面 - 输入框容器 ========== */
 .token-input-wrapper {
   background: rgba(76, 201, 240, 0.05);
   border-radius: 16px;
-  padding: 12px; 
+  padding: 16px;
   border: 1px solid rgba(76, 201, 240, 0.2);
   transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  position: relative; /* 为余额提供定位参考 */
+  position: relative;
+  min-height: 100px; /* 确保有足够高度 */
 }
- 
-/* ========== 代币选择器（LOGO+下拉框） ========== */
+
 .token-selector {
-  display: flex !important;;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  width: 100%;
+  gap: 8px;
+}
+.token-selector-left {
+  display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-  justify-content: flex-start;
-  width: 100%;
+  flex: 1;
+  min-width: 0; /* 防止溢出 */
 }
+
 .token-logo {
   width: 32px;
   height: 32px;
@@ -939,24 +938,26 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14;
-  flex-shrink: 0; /* 防止LOGO被压缩 */
+  font-size: 14px;
+  flex-shrink: 0;
 }
 .token-select {
   background: transparent;
   border: 1px solid rgba(76, 201, 240, 0.3);
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   outline: none;
-  padding: 8px 12px;
+  padding: 6px 30px 6px 10px;
   border-radius: 8px;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
-  flex: 1; 
+  min-width: 120px;
+  max-width: 150px;
+  flex-shrink: 0;
 }
 
   
@@ -972,34 +973,51 @@
       color: white;
     }
     
-   /* ========== 输入框 ========== */
 .token-amount {
   width: 100%;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
-
-.amount-input {
-  background: transparent !important;
-  border: 1px solid rgba(76, 201, 240, 0.3) !important;
+.amount-display {
+  background: transparent;
+  border: 1px solid rgba(76, 201, 240, 0.3);
   border-radius: 8px;
-  color: white !important;
-  font-size: 18px;
+  color: #94a3b8;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: right;
+  width: 100%;
+  padding: 8px 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+    
+.amount-input {
+  background: transparent;
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 24px;
   font-weight: bold;
   text-align: right;
   width: 100%;
   outline: none;
   padding: 8px 12px;
+  min-height: 44px;
 }
 
-/* ========== 余额（输入框右上角） ========== */
 .token-balance {
-  font-size: 14px;
+  font-size: 12px;
   color: #94a3b8;
-  margin: 0;
-  position: absolute;
-  right: 12px; /* 与容器内边距一致 */
-  top: 12px;   /* 与容器内边距一致 */
-  z-index: 1;
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 8px;
 }
     
    /* ========== 转换箭头（中间） ========== */
@@ -1042,18 +1060,43 @@
 }
 
     
-    @media (max-width: 400px) {
-      .app { max-width: 100%; }
-      .token-row { gap: 8px; }
-      .input { font-size: 24px; }
-      .btn { padding: 8px 16px; }
-      .stats-grid { grid-template-columns: 1fr; }
-      .position-details { grid-template-columns: 1fr; }
-      .slip-btn { padding: 6px 12px; font-size: 12px; }
-      .detail-item { font-size: 13px; padding: 8px 0; }
-      .asset-card { padding: 10px; }
-      .asset-item { padding: 4px 0; }
-    }
+    /* 移动端适配 */
+@media (max-width: 400px) {
+  .token-input-wrapper {
+    padding: 12px;
+    min-height: 90px;
+  }
+  
+  .token-select {
+    min-width: 100px;
+    max-width: 120px;
+    font-size: 14px;
+    padding: 4px 25px 4px 8px;
+  }
+  
+  .token-logo {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .amount-input,
+  .amount-display {
+    font-size: 20px;
+    padding: 6px 10px;
+    min-height: 40px;
+  }
+  
+  .token-balance {
+    font-size: 11px;
+  }
+  
+  .percent-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+    min-width: 36px;
+  }
+}
   </style>
 </head>
 <body>
@@ -1072,58 +1115,63 @@
       </div>
     </div>
 
-    <!-- 兑换页面  -->
-    <div class="tab-content active" id="swapTab">
-      <div class="card">
-        <div class="percentage-buttons">
-          <button class="percent-btn" data-percent="0.1">10%</button>
-          <button class="percent-btn" data-percent="0.25">25%</button>
-          <button class="percent-btn" data-percent="0.5">50%</button>
-          <button class="percent-btn" data-percent="0.75">75%</button>
-          <button class="percent-btn" data-percent="1">MAX</button>
-        </div>
-        
-        <div class="swap-container">
-          <!-- 上方输入框 -->
-          <div class="token-input-group">
-            <div class="token-input-wrapper">
-              <div class="token-selector">
-                <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">🐲</div>
-                <div class="token-balance"><span id="fromBal">0</span> 余额</div>
-                <select class="token-select" id="fromTokenSelect">
-                  <option value="CFX">CFX</option>
-                  <option value="LOM">LOM</option>
-                  <option value="AxCNH">AxCNH</option>
-                  <option value="USDT0">USDT0</option>
-                  <option value="CNHT0">CNHT0</option>
-                </select>
-              </div>
-              <div class="token-amount">
-                <input class="amount-input" id="fromAmount" placeholder="0" type="number">
+    <!-- 兑换页面 -->
+<div class="tab-content active" id="swapTab">
+  <div class="card">
+    <div class="percentage-buttons">
+      <button class="percent-btn" data-percent="0.1">10%</button>
+      <button class="percent-btn" data-percent="0.25">25%</button>
+      <button class="percent-btn" data-percent="0.5">50%</button>
+      <button class="percent-btn" data-percent="0.75">75%</button>
+      <button class="percent-btn" data-percent="1">MAX</button>
+    </div>
+    
+    <div class="swap-container">
+      <!-- 上方输入框 -->
+      <div class="token-input-group">
+        <div class="token-input-wrapper">
+          <div class="token-selector">
+            <div class="token-selector-left">
+              <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">🐲</div>
+              <select class="token-select" id="fromTokenSelect">
+                <option value="CFX">CFX</option>
+                <option value="LOM">LOM</option>
+                <option value="AxCNH">AxCNH</option>
+                <option value="USDT0">USDT0</option>
+                <option value="CNHT0">CNHT0</option>
+              </select>
             </div>
+            <div class="token-balance"><span id="fromBal">0</span> 余额</div>
+          </div>
+          <div class="token-amount">
+            <input class="amount-input" id="fromAmount" placeholder="0" type="number">
           </div>
         </div>
-          <!-- 中间转换按钮 -->
-          <div class="swap-center">
-            <div class="swap-arrow" id="reverse">🔃</div>
+      </div>
+      
+      <!-- 中间转换按钮 -->
+      <div class="swap-center">
+        <div class="swap-arrow" id="reverse">🔃</div>
+      </div>
+      
+      <!-- 下方输入框 -->
+      <div class="token-input-group">
+        <div class="token-input-wrapper">
+          <div class="token-selector">
+            <div class="token-selector-left">
+              <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">🐲</div>
+              <select class="token-select" id="toTokenSelect">
+                <option value="LOM">LOM</option>
+                <option value="CFX">CFX</option>
+                <option value="AxCNH">AxCNH</option>
+                <option value="USDT0">USDT0</option>
+                <option value="CNHT0">CNHT0</option>
+              </select>
+            </div>
+            <div class="token-balance"><span id="toBal">0</span> 余额</div>
           </div>
-          
-          <!-- 下方输入框 -->
-          <div class="token-input-group">
-            <div class="token-input-wrapper">
-              <div class="token-selector">
-                <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">🐲</div>
-                <div class="token-balance"><span id="toBal">0</span> 余额</div> 
-                <select class="token-select" id="toTokenSelect">
-                  <option value="LOM">LOM</option>
-                  <option value="CFX">CFX</option>
-                  <option value="AxCNH">AxCNH</option>
-                  <option value="USDT0">USDT0</option>
-                  <option value="CNHT0">CNHT0</option>
-                </select>
-              </div>
-              <div class="token-amount">
-                <div class="amount-input" id="toAmount" style="color:#94a3b8">0</div>
+          <div class="token-amount">
+            <div class="amount-display" id="toAmount">0</div>
           </div>
         </div>
       </div>
