@@ -899,16 +899,20 @@
   padding: 10px; 
   border: 1px solid rgba(76, 201, 240, 0.2);
   transition: all 0.3s ease;
+  display: flex;          
+  flex-direction: column; 
+  align-items: flex-start; /* 让内部元素靠左（修复整体偏右） */
+  width: 100%;            
 }
 
+/* 代币选择器（LOGO+名称+下拉框） */
 .token-selector {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
-  justify-content: flex-start; /* 确保靠左 */
-  width: 100%; 
-}
+  margin-bottom: 12px;    
+  justify-content: flex-start; /* 内部元素靠左 */
+  width: 100%;
 
     
     .token-logo {
@@ -922,7 +926,8 @@
       font-size: 14px;
     }
     
-    .token-select {
+    /* 代币下拉框 */
+.token-select {
   background: transparent;
   border: 1px solid rgba(76, 201, 240, 0.3);
   color: white;
@@ -932,8 +937,7 @@
   outline: none;
   padding: 8px 12px;
   border-radius: 8px;
-  appearance: none; /* 清除默认下拉样式 */
-  -webkit-appearance: none;
+  appearance: none;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
@@ -955,39 +959,47 @@
       align-items: center;
     }
     
-    .amount-input {
-   background: transparent;
-   border: none;
-   color: white;
-   font-size: 22px; /* 缩小字体 */
-   font-weight: bold;
-   text-align: right;
-   width: 100%;
-   outline: none;
-   padding: 4px 0;
- }
-    
-    .token-balance {
-      font-size: 14px;
-      color: #94a3b8;
-      margin: 0 0 6px 0;
-      text-align: right !important; 
-      padding-right: 2px;
+    /* 输入框样式 */
+.amount-input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  width: 100%;
+  outline: none;
+  padding: 2px 0;
 }
-    }
+
+/* 余额（输入框右上角） */
+.token-balance {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+  position: absolute;     
+  right: 4px;             
+  top: -20px;             
+  z-index: 1;             
+}
     
-    .swap-center {
-      position: relative;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: -10px 0;
-    }
-    
-    .swap-arrow {
+    /* ========== 转换按钮（中间箭头 - 修复偏左） ========== */
+.swap-center {
+  position: relative;
+  height: 40px;
+  display: flex;
+  justify-content: center; /* 强制容器内元素居中 */
+  align-items: center;
+  margin: -10px 0;
+  width: 100%; /* 占据整行宽度，确保箭头居中 */
+}
+
+.swap-arrow {
   width: 48px;
   height: 48px;
+  background: var(--web3-card);
+  border: 3px solid var(--web3-dark);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -995,6 +1007,7 @@
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
+  /* 无需额外margin，依赖父容器的justify-content: center */
 }
 
     
