@@ -1113,71 +1113,74 @@
       </div>
     </div>
 
-    <!-- 兑换页面 -->
-<div class="tab-content active" id="swapTab">
-  <div class="card">
-    <div class="percentage-buttons">
-      <button class="percent-btn" data-percent="0.1">10%</button>
-      <button class="percent-btn" data-percent="0.25">25%</button>
-      <button class="percent-btn" data-percent="0.5">50%</button>
-      <button class="percent-btn" data-percent="0.75">75%</button>
-      <button class="percent-btn" data-percent="1">MAX</button>
-    </div>
-    
-    <div class="swap-container">
-      <!-- 上方输入框 -->
-      <div class="token-input-group">
-        <div class="token-input-wrapper">
-          <div class="token-selector">
-            <div class="token-selector-left">
-              <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">🐲</div>
-              <select class="token-select" id="fromTokenSelect">
-                <option value="CFX">CFX</option>
-                <option value="LOM">LOM</option>
-                <option value="AxCNH">AxCNH</option>
-                <option value="USDT0">USDT0</option>
-                <option value="CNHT0">CNHT0</option>
-              </select>
-            </div>
-            <div class="token-balance"><span id="fromBal">0</span> 余额</div>
-          </div>
-          <div class="token-amount">
-            <input class="amount-input" id="fromAmount" placeholder="0" type="number">
-          </div>
+    <!-- 兑换页面 - 使用新布局 -->
+    <div class="tab-content active" id="swapTab">
+      <div class="card">
+        <div class="percentage-buttons">
+          <button class="percent-btn" data-percent="0.1">10%</button>
+          <button class="percent-btn" data-percent="0.25">25%</button>
+          <button class="percent-btn" data-percent="0.5">50%</button>
+          <button class="percent-btn" data-percent="0.75">75%</button>
+          <button class="percent-btn" data-percent="1">MAX</button>
         </div>
-      </div>
-      
-      <!-- 中间转换按钮 -->
-      <div class="swap-center">
-        <div class="swap-arrow" id="reverse">🔃</div>
-      </div>
-      
-      <!-- 下方输入框 -->
-      <div class="token-input-group">
-        <div class="token-input-wrapper">
-          <div class="token-selector">
-            <div class="token-selector-left">
-              <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">🐲</div>
-              <select class="token-select" id="toTokenSelect">
-                <option value="LOM">LOM</option>
-                <option value="CFX">CFX</option>
-                <option value="AxCNH">AxCNH</option>
-                <option value="USDT0">USDT0</option>
-                <option value="CNHT0">CNHT0</option>
-              </select>
+        
+        <div class="swap-container">
+          <!-- 上方输入框 -->
+          <div class="token-input-group">
+            <div class="token-input-wrapper">
+              <div class="token-selector">
+                <div class="token-selector-left">
+                  <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">C</div>
+                  <select class="token-select" id="fromTokenSelect">
+                    <option value="CFX">CFX</option>
+                    <option value="LOM">LOM</option>
+                    <option value="AxCNH">AxCNH</option>
+                    <option value="USDT0">USDT0</option>
+                    <option value="CNHT0">CNHT0</option>
+                  </select>
+                </div>
+                <div class="token-balance"><span id="fromBal">0</span> 余额</div>
+              </div>
+              <div class="token-amount">
+                <input class="amount-input" id="fromAmount" placeholder="0" type="number">
+              </div>
             </div>
-            <div class="token-balance"><span id="toBal">0</span> 余额</div>
           </div>
-          <div class="token-amount">
-            <div class="amount-display" id="toAmount">0</div>
+          
+          <!-- 中间转换按钮 -->
+          <div class="swap-center">
+            <div class="swap-arrow" id="reverse">⇅</div>
           </div>
+          
+          <!-- 下方输入框 -->
+          <div class="token-input-group">
+            <div class="token-input-wrapper">
+              <div class="token-selector">
+                <div class="token-selector-left">
+                  <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">L</div>
+                  <select class="token-select" id="toTokenSelect">
+                    <option value="LOM">LOM</option>
+                    <option value="CFX">CFX</option>
+                    <option value="AxCNH">AxCNH</option>
+                    <option value="USDT0">USDT0</option>
+                    <option value="CNHT0">CNHT0</option>
+                  </select>
+                </div>
+                <div class="token-balance"><span id="toBal">0</span> 余额</div>
+              </div>
+              <div class="token-amount">
+                <div class="amount-display" id="toAmount">0</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 兑换按钮 -->
+          <button class="action" id="swapBtn" disabled>请输入数量</button>
         </div>
-      </div> 
-     <button class="action" id="swapBtn" disabled>请输入数量</button>
-       </div>
+        
         <!-- 详细信息面板 -->
         <div class="details-panel">
-         <!-- 滑点容差部分 -->
+          <!-- 滑点容差部分 -->
           <div class="slippage-section">
             <div class="detail-item" style="border-bottom: none; padding: 0;">
               <span class="detail-label" id="slippageLabel">滑点容差</span>
@@ -1186,11 +1189,10 @@
                 <div class="slip-btn" data-slip="1">1%</div>
                 <div class="slip-btn" data-slip="5">5%</div>
                 <div class="slip-btn" data-slip="10">10%</div>
-                </div>
               </div>
             </div>
+          </div>
           
-      
           <div class="detail-item">
             <span class="detail-label" id="priceLabel">价格</span>
             <span class="detail-value">1 <span id="fromTokenName">CFX</span> = <span id="price">0</span> <span id="toTokenName">LOM</span></span>
@@ -1211,8 +1213,8 @@
             <span class="detail-value" id="routeInfo">CFX → LOM</span>
           </div>
         </div>
-      </div> 
-       </div>
+      </div>
+    </div>
 
     <!-- 我的资产 -->
     <div class="asset-card">
@@ -1347,101 +1349,101 @@
       </div>
     </div>
 
-
-  <!-- 添加流动性模态框 -->
-  <div class="modal" id="addModal">
-    <div class="modal-card">
-      <h3 style="margin:0 0 20px;color:var(--web3-light)" id="addTitle">添加流动性</h3>
-      
-      <!-- CFX 输入部分 -->
-      <div class="token-row">
-        <div class="token-info">
-          <div class="token-name">CFX</div>
-          <div class="balance">余额: <span id="addCfxBal">0</span></div>
+    <!-- 添加流动性模态框 -->
+    <div class="modal" id="addModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="addTitle">添加流动性</h3>
+        
+        <!-- CFX 输入部分 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-name">CFX</div>
+            <div class="balance">余额: <span id="addCfxBal">0</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
+            <button class="percent-btn" id="cfxMaxBtn" style="margin:0">MAX</button>
+            <input class="input" id="addCfx" placeholder="0" type="number" style="text-align:right;width:100%">
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
-          <button class="percent-btn" id="cfxMaxBtn" style="margin:0">MAX</button>
-          <input class="input" id="addCfx" placeholder="0" type="number" style="text-align:right;width:100%">
+        
+        <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
+        
+        <!-- LOM 输入部分 -->
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-name">LOM</div>
+            <div class="balance">余额: <span id="addLomBal">0</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
+            <button class="percent-btn" id="lomMaxBtn" style="margin:0">MAX</button>
+            <input class="input" id="addLom" placeholder="0" type="number" style="text-align:right;width:100%">
+          </div>
         </div>
-      </div>
-      
-      <div style="text-align:center;font-size:36px;color:var(--web3-light);margin:10px">+</div>
-      
-      <!-- LOM 输入部分 -->
-      <div class="token-row">
-        <div class="token-info">
-          <div class="token-name">LOM</div>
-          <div class="balance">余额: <span id="addLomBal">0</span></div>
+        
+        <div class="info" id="ratioLabel">比例: <span id="addRatio">1 CFX = 0 LOM</span></div>
+        <div class="info" style="color: var(--web3-yellow); font-size: 12px; text-align: center;">
+          提示：请确保两种代币的比例接近当前市场价格
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:150px">
-          <button class="percent-btn" id="lomMaxBtn" style="margin:0">MAX</button>
-          <input class="input" id="addLom" placeholder="0" type="number" style="text-align:right;width:100%">
+        <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+          预估Gas费: 计算中...
         </div>
+        <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
       </div>
-      
-      <div class="info" id="ratioLabel">比例: <span id="addRatio">1 CFX = 0 LOM</span></div>
-      <div class="info" style="color: var(--web3-yellow); font-size: 12px; text-align: center;">
-        提示：请确保两种代币的比例接近当前市场价格
-      </div>
-      <div class="info" id="gasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
-        预估Gas费: 计算中...
-      </div>
-      <button class="action" id="confirmAdd" disabled style="margin-top:20px">确认添加</button>
     </div>
-  </div>
 
-  <!-- 移除流动性模态框 -->
-  <div class="modal" id="removeModal">
-    <div class="modal-card">
-      <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
-      <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
-      <div style="text-align:center;font-size:18px">
-        <span id="removePercent">100%</span>
-        <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
+    <!-- 移除流动性模态框 -->
+    <div class="modal" id="removeModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
+        <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
+        <div style="text-align:center;font-size:18px">
+          <span id="removePercent">100%</span>
+          <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
+        </div>
+        <div class="info" id="removeGasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
+          预估Gas费: 计算中...
+        </div>
+        <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
       </div>
-      <div class="info" id="removeGasEstimate" style="color: var(--web3-light); font-size: 12px; text-align: center;">
-        预估Gas费: 计算中...
+    </div>
+
+    <!-- 等待提示 -->
+    <div id="loading" style="display:none">
+      <div id="loadingText">等待区块链确认中</div>
+    </div>
+
+    <!-- 安全提示浮层 -->
+    <div id="securityTips">
+      <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <span>🔒</span> 安全提示
       </div>
-      <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
+      <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
+      <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
+      <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
+      <button onclick="document.getElementById('securityTips').style.display='none'" style="
+        background: transparent;
+        border: 1px solid var(--web3-yellow);
+        color: var(--web3-yellow);
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        width: 100%;
+      ">知道了</button>
     </div>
-  </div>
 
-  <!-- 等待提示 -->
-  <div id="loading" style="display:none">
-    <div id="loadingText">等待区块链确认中</div>
-  </div>
-
-  <!-- 安全提示浮层 -->
-  <div id="securityTips">
-    <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-      <span>🔒</span> 安全提示
+    <!-- 风险提示 -->
+    <div class="risk-warning">
+      <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <span>⚠️</span>
+        <span id="riskTitle">风险提示</span>
+      </div>
+      <div id="riskText" style="opacity: 0.9;">
+        本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
+      </div>
     </div>
-    <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
-    <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
-    <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
-    <button onclick="document.getElementById('securityTips').style.display='none'" style="
-      background: transparent;
-      border: 1px solid var(--web3-yellow);
-      color: var(--web3-yellow);
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      width: 100%;
-    ">知道了</button>
-  </div>
-
-  <!-- 风险提示 -->
-  <div class="risk-warning">
-    <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-      <span>⚠️</span>
-      <span id="riskTitle">风险提示</span>
-    </div>
-    <div id="riskText" style="opacity: 0.9;">
-      本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。
-    </div>
-  </div>
-<div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
+    
+    <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
 
   <!-- 高级别安全防护提醒 -->
@@ -1464,7 +1466,6 @@
   </div>
 
   <script>
-   
     // ==================== 安全防护模块 ====================
     const SECURITY_CONFIG = {
       ALLOWED_DOMAINS: ['lomdex.vercel.app'],
@@ -1484,45 +1485,44 @@
     });
 
     // 安全警告按钮事件 - 修复退出功能
-document.getElementById('securityExit').onclick = function() {
-  // 改进退出方式
-  if (window.history.length > 1) {
-    window.history.back();
-  } else {
-    window.location.href = 'about:blank';
-  }
-};
+    document.getElementById('securityExit').onclick = function() {
+      // 改进退出方式
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'about:blank';
+      }
+    };
 
-document.getElementById('securityContinue').onclick = function() {
-  // 隐藏安全警告
-  document.getElementById('securityAlert').style.display = 'none';
-  
-  // 延迟初始化应用，确保所有函数都已定义
-  setTimeout(function() {
-    if (typeof initializeApp === 'function') {
-      initializeApp();
-    } else {
-      // 如果initializeApp未定义，直接初始化基本功能
-      console.log("直接初始化应用");
-      if (typeof initializeSwapButton === 'function') initializeSwapButton();
-      if (typeof setupTabs === 'function') setupTabs();
-      if (typeof setupPercentageButtons === 'function') setupPercentageButtons();
-      if (typeof updateAllTexts === 'function') updateAllTexts();
-      if (typeof setupTokenSelectors === 'function') setupTokenSelectors();
-    }
-  }, 100);
-};
+    document.getElementById('securityContinue').onclick = function() {
+      // 隐藏安全警告
+      document.getElementById('securityAlert').style.display = 'none';
+      
+      // 延迟初始化应用，确保所有函数都已定义
+      setTimeout(function() {
+        if (typeof initializeApp === 'function') {
+          initializeApp();
+        } else {
+          // 如果initializeApp未定义，直接初始化基本功能
+          console.log("直接初始化应用");
+          if (typeof initializeSwapButton === 'function') initializeSwapButton();
+          if (typeof setupTabs === 'function') setupTabs();
+          if (typeof setupPercentageButtons === 'function') setupPercentageButtons();
+          if (typeof updateAllTexts === 'function') updateAllTexts();
+          if (typeof setupTokenSelectors === 'function') setupTokenSelectors();
+        }
+      }, 100);
+    };
+
     function initializeApp() {
-  
-    initializeSwapButton();
-    setupTabs();
-    setupPercentageButtons();
-    updateAllTexts();
-    initializeSecurity();
-    setupTokenSelectors();
-    
-    appInitialized = true;
-}
+      initializeSwapButton();
+      setupTabs();
+      setupPercentageButtons();
+      updateAllTexts();
+      initializeSecurity();
+      setupTokenSelectors();
+      appInitialized = true;
+    }
 
     function createSecurityIndicator() {
       const indicator = document.createElement('div');
@@ -1544,6 +1544,8 @@ document.getElementById('securityContinue').onclick = function() {
       const alertOverlay = document.createElement('div');
       alertOverlay.className = 'beautiful-alert';
       
+      let icon = 'ℹ️';
+      let buttonColor = 'var(--web3-blue)';
       
       switch(type) {
         case 'success':
@@ -1606,120 +1608,9 @@ document.getElementById('securityContinue').onclick = function() {
     const AxCNH = "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E";
     const USDT0 = "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff";
     const CNHT0 = "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda";
-// ==================== 钱包连接/断开功能 ====================
-let appInitialized = false;
 
-// 连接成功提示函数
-function showWalletConnectedSuccess() {
-    const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
-    const message = isChinese ? 
-        ` 钱包连接成功！
-        提示: 再次点击可断开连接` :
-        ` Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`;
-    
-    showBeautifulAlert(message, 'success');
-}
-
-// 断开连接提示函数
-function showWalletDisconnected() {
-    const message = isChinese ? 
-        " 钱包已断开连接 " :
-        " Wallet Disconnected ";
-    
-    showBeautifulAlert(message, 'info');
-}
-
-// 重置所有余额显示
-function resetAllBalances() {
-    const balanceElements = {
-        'cfxBal': '0.000000',
-        'lomBal': '0.000000', 
-        'axcnhBal': '0.000000',
-        'usdt0Bal': '0.000000',
-        'cnht0Bal': '0.000000',
-        'lpBal': '0.000000',
-        'fromBal': '0',
-        'toBal': '0',
-        'addCfxBal': '0',
-        'addLomBal': '0'
-    };
-    
-    Object.keys(balanceElements).forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.innerText = balanceElements[id];
-        }
-    });
-}
-
-// 重置兑换页面
-function resetSwapPage() {
-    document.getElementById("fromAmount").value = "";
-    document.getElementById("toAmount").innerText = "0";
-    document.getElementById("swapBtn").disabled = true;
-    document.getElementById("swapBtn").innerText = isChinese ? "请输入数量" : "Enter Amount";
-    document.getElementById("price").innerText = "0";
-    document.getElementById("minReceived").innerText = "0 LOM";
-}
-
-// 重置流动性页面  
-function resetLiquidityPage() {
-    document.getElementById("removeBtn").disabled = true;
-    document.getElementById("myLiquidityShare").innerText = "0%";
-    document.getElementById("totalLiquidity").innerText = "$0";
-    document.getElementById("dailyVolume").innerText = "$0";
-    document.getElementById("poolAPR").innerText = "0%";
-    document.getElementById("positionValue").innerText = "0";
-    document.getElementById("positionShare").innerText = "0";
-    document.getElementById("positionCfx").innerText = "0";
-    document.getElementById("positionLom").innerText = "0";
-    document.getElementById("unclaimedFees").innerText = "$0";
-}
-
-// 断开钱包连接函数
-function disconnectWallet() {
-    const confirmMessage = isChinese ? 
-        "确定要断开钱包连接吗？" : 
-        "Are you sure you want to disconnect wallet?";
-    
-    const userConfirmed = confirm(confirmMessage);
-    
-    if (!userConfirmed) {
-        return;
-    }
-    
-    // 重置所有钱包相关变量
-    account = null;
-    provider = null;
-    signer = null;
-    router = null;
-    pair = null;
-    lom = null;
-    axcnh = null;
-    usdt0 = null;
-    cnht0 = null;
-    
-    // 清除所有定时器
-    const highestId = window.setTimeout(() => {
-        for (let i = highestId; i >= 0; i--) {
-            window.clearInterval(i);
-        }
-    }, 0);
-    
-    // 重置UI显示
-    document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
-    document.getElementById("walletBtn").classList.remove('connected');
-    document.getElementById("walletBtn").disabled = false;
-    
-    // 重置所有数据
-    resetAllBalances();
-    resetSwapPage();
-    resetLiquidityPage();
-    
-    // 显示断开连接提示
-    showWalletDisconnected();
-}
-  
+    // ==================== 钱包连接/断开功能 ====================
+    let appInitialized = false;
     let provider, signer, account, router, pair, lom, axcnh, usdt0, cnht0;
     let slippage = 0.5;
     let isChinese = true;
@@ -1750,6 +1641,116 @@ function disconnectWallet() {
       "function token0() view returns (address)",
       "function token1() view returns (address)"
     ];
+
+    // 连接成功提示函数
+    function showWalletConnectedSuccess() {
+        const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
+        const message = isChinese ? 
+            `钱包连接成功！\n\n提示: 再次点击可断开连接` :
+            `Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`;
+        
+        showBeautifulAlert(message, 'success');
+    }
+
+    // 断开连接提示函数
+    function showWalletDisconnected() {
+        const message = isChinese ? 
+            "钱包已断开连接" :
+            "Wallet Disconnected";
+        
+        showBeautifulAlert(message, 'info');
+    }
+
+    // 重置所有余额显示
+    function resetAllBalances() {
+        const balanceElements = {
+            'cfxBal': '0.000000',
+            'lomBal': '0.000000', 
+            'axcnhBal': '0.000000',
+            'usdt0Bal': '0.000000',
+            'cnht0Bal': '0.000000',
+            'lpBal': '0.000000',
+            'fromBal': '0',
+            'toBal': '0',
+            'addCfxBal': '0',
+            'addLomBal': '0'
+        };
+        
+        Object.keys(balanceElements).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerText = balanceElements[id];
+            }
+        });
+    }
+
+    // 重置兑换页面
+    function resetSwapPage() {
+        document.getElementById("fromAmount").value = "";
+        document.getElementById("toAmount").innerText = "0";
+        document.getElementById("swapBtn").disabled = true;
+        document.getElementById("swapBtn").innerText = isChinese ? "请输入数量" : "Enter Amount";
+        document.getElementById("price").innerText = "0";
+        document.getElementById("minReceived").innerText = "0 LOM";
+    }
+
+    // 重置流动性页面  
+    function resetLiquidityPage() {
+        document.getElementById("removeBtn").disabled = true;
+        document.getElementById("myLiquidityShare").innerText = "0%";
+        document.getElementById("totalLiquidity").innerText = "$0";
+        document.getElementById("dailyVolume").innerText = "$0";
+        document.getElementById("poolAPR").innerText = "0%";
+        document.getElementById("positionValue").innerText = "0";
+        document.getElementById("positionShare").innerText = "0";
+        document.getElementById("positionCfx").innerText = "0";
+        document.getElementById("positionLom").innerText = "0";
+        document.getElementById("unclaimedFees").innerText = "$0";
+    }
+
+    // 断开钱包连接函数
+    function disconnectWallet() {
+        const confirmMessage = isChinese ? 
+            "确定要断开钱包连接吗？" : 
+            "Are you sure you want to disconnect wallet?";
+        
+        const userConfirmed = confirm(confirmMessage);
+        
+        if (!userConfirmed) {
+            return;
+        }
+        
+        // 重置所有钱包相关变量
+        account = null;
+        provider = null;
+        signer = null;
+        router = null;
+        pair = null;
+        lom = null;
+        axcnh = null;
+        usdt0 = null;
+        cnht0 = null;
+        
+        // 清除所有定时器
+        const highestId = window.setTimeout(() => {
+            for (let i = highestId; i >= 0; i--) {
+                window.clearInterval(i);
+            }
+        }, 0);
+        
+        // 重置UI显示
+        document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+        document.getElementById("walletBtn").classList.remove('connected');
+        document.getElementById("walletBtn").disabled = false;
+        
+        // 重置所有数据
+        resetAllBalances();
+        resetSwapPage();
+        resetLiquidityPage();
+        
+        // 显示断开连接提示
+        showWalletDisconnected();
+    }
 
     // 初始化函数
     function initializeSwapButton() {
@@ -1933,24 +1934,24 @@ function disconnectWallet() {
     };
 
     function updateAllTexts() {
-  // 更新所有文本内容
-  const walletBtn = document.getElementById("walletBtn");
-  
-  // 确保按钮有固定宽度类
-  if (!walletBtn.classList.contains('fixed-width')) {
-    walletBtn.classList.add('fixed-width');
-  }
-  
-  if (!account) {
-    if (isChinese) {
-      walletBtn.innerText = "连接钱包";
-      walletBtn.classList.remove('connected');
-    } else {
-      walletBtn.innerText = "Connect"; 
-      walletBtn.classList.remove('connected');
-    }
-  }
+      // 更新所有文本内容
+      const walletBtn = document.getElementById("walletBtn");
       
+      // 确保按钮有固定宽度类
+      if (!walletBtn.classList.contains('fixed-width')) {
+        walletBtn.classList.add('fixed-width');
+      }
+      
+      if (!account) {
+        if (isChinese) {
+          walletBtn.innerText = "连接钱包";
+          walletBtn.classList.remove('connected');
+        } else {
+          walletBtn.innerText = "Connect"; 
+          walletBtn.classList.remove('connected');
+        }
+      }
+          
       // 选项卡
       document.querySelector('[data-tab="swap"]').innerText = isChinese ? "兑换" : "Swap";
       document.querySelector('[data-tab="liquidity"]').innerText = isChinese ? "流动性" : "Liquidity";
@@ -2001,60 +2002,60 @@ function disconnectWallet() {
     }
 
     // 钱包连接/断开功能
-document.getElementById("walletBtn").onclick = async () => {
-    // 如果已经连接，点击则断开
-    if (account) {
-        disconnectWallet();
-        return;
-    }
-    
-    // 未连接状态，执行连接逻辑
-    if (!window.ethereum) {
-        showBeautifulAlert(isChinese ? 
-            "🔍 未检测到钱包\n\n请使用 Fluent / TokenPocket / OKX 钱包打开" : 
-            "🔍 No Wallet Detected\n\nPlease use Fluent / TokenPocket / OKX wallet", 'info');
-        return;
-    }
-    
-    try {
-        // 显示连接中状态
-        document.getElementById("walletBtn").innerText = isChinese ? "连接中..." : "Connecting...";
-        document.getElementById("walletBtn").disabled = true;
-        
-        await ethereum.request({method: "eth_requestAccounts"});
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        account = await signer.getAddress();
-        
-        // 初始化合约
-        router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
-        pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
-        lom = new ethers.Contract(LOM, ERC20_ABI, signer);
-        axcnh = new ethers.Contract(AxCNH, ERC20_ABI, signer);
-        usdt0 = new ethers.Contract(USDT0, ERC20_ABI, signer);
-        cnht0 = new ethers.Contract(CNHT0, ERC20_ABI, signer);
+    document.getElementById("walletBtn").onclick = async () => {
+      // 如果已经连接，点击则断开
+      if (account) {
+          disconnectWallet();
+          return;
+      }
+      
+      // 未连接状态，执行连接逻辑
+      if (!window.ethereum) {
+          showBeautifulAlert(isChinese ? 
+              "🔍 未检测到钱包\n\n请使用 Fluent / TokenPocket / OKX 钱包打开" : 
+              "🔍 No Wallet Detected\n\nPlease use Fluent / TokenPocket / OKX wallet", 'info');
+          return;
+      }
+      
+      try {
+          // 显示连接中状态
+          document.getElementById("walletBtn").innerText = isChinese ? "连接中..." : "Connecting...";
+          document.getElementById("walletBtn").disabled = true;
+          
+          await ethereum.request({method: "eth_requestAccounts"});
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+          account = await signer.getAddress();
+          
+          // 初始化合约
+          router = new ethers.Contract(ROUTER, ROUTER_ABI, signer);
+          pair = new ethers.Contract(PAIR, PAIR_ABI, provider);
+          lom = new ethers.Contract(LOM, ERC20_ABI, signer);
+          axcnh = new ethers.Contract(AxCNH, ERC20_ABI, signer);
+          usdt0 = new ethers.Contract(USDT0, ERC20_ABI, signer);
+          cnht0 = new ethers.Contract(CNHT0, ERC20_ABI, signer);
 
-        // 更新UI显示
-        const displayAddress = account.slice(0, 3) + "..." + account.slice(-5);
-        document.getElementById("walletBtn").innerText = displayAddress;
-        document.getElementById("walletBtn").classList.add('connected');
-        document.getElementById("walletBtn").disabled = false;
-        
-        // 显示连接成功提示
-        showWalletConnectedSuccess();
-        
-        // 开始数据刷新
-        await refreshAll();
-        setInterval(refreshAll, 12000);
-        
-    } catch(e) { 
-        // 连接失败时重置按钮状态
-        document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
-        document.getElementById("walletBtn").disabled = false;
-        
-        showBeautifulAlert((isChinese ? "❌ 连接失败: " : "❌ Connection failed: ") + e.message, 'error');
-    }
-};
+          // 更新UI显示
+          const displayAddress = account.slice(0, 3) + "..." + account.slice(-5);
+          document.getElementById("walletBtn").innerText = displayAddress;
+          document.getElementById("walletBtn").classList.add('connected');
+          document.getElementById("walletBtn").disabled = false;
+          
+          // 显示连接成功提示
+          showWalletConnectedSuccess();
+          
+          // 开始数据刷新
+          await refreshAll();
+          setInterval(refreshAll, 12000);
+          
+      } catch(e) { 
+          // 连接失败时重置按钮状态
+          document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+          document.getElementById("walletBtn").disabled = false;
+          
+          showBeautifulAlert((isChinese ? "❌ 连接失败: " : "❌ Connection failed: ") + e.message, 'error');
+      }
+    };
 
     // 余额检查和验证函数
     function validateInputAmounts() {
@@ -2455,44 +2456,43 @@ document.getElementById("walletBtn").onclick = async () => {
     }
 
     // 反向按钮 - 修复数量显示问题
-   document.getElementById("reverse").onclick = () => {
-  // 交换代币选择
-  const fromSelect = document.getElementById("fromTokenSelect");
-  const toSelect = document.getElementById("toTokenSelect");
-  
-  const tempToken = fromToken;
-  fromToken = toToken;
-  toToken = tempToken;
-  
-  fromSelect.value = fromToken;
-  toSelect.value = toToken;
-  
-  // 交换输入框的值并计算新的兑换数量
-  const fromAmount = document.getElementById("fromAmount").value;
-  const toAmount = document.getElementById("toAmount").innerText;
-  
-  // 如果有输入值，交换后重新计算
-  if (fromAmount && fromAmount !== "0" && fromAmount !== "") {
-    // 先保存当前值
-    const tempValue = fromAmount;
-    // 清空输入框触发重新计算
-    document.getElementById("fromAmount").value = "";
-    // 使用toAmount作为新的输入值
-    setTimeout(() => {
-      document.getElementById("fromAmount").value = toAmount;
-      // 手动触发更新
+    document.getElementById("reverse").onclick = () => {
+      // 交换代币选择
+      const fromSelect = document.getElementById("fromTokenSelect");
+      const toSelect = document.getElementById("toTokenSelect");
+      
+      const tempToken = fromToken;
+      fromToken = toToken;
+      toToken = tempToken;
+      
+      fromSelect.value = fromToken;
+      toSelect.value = toToken;
+      
+      // 交换输入框的值并计算新的兑换数量
+      const fromAmount = document.getElementById("fromAmount").value;
+      const toAmount = document.getElementById("toAmount").innerText;
+      
+      // 如果有输入值，交换后重新计算
+      if (fromAmount && fromAmount !== "0" && fromAmount !== "") {
+        // 先保存当前值
+        const tempValue = fromAmount;
+        // 清空输入框触发重新计算
+        document.getElementById("fromAmount").value = "";
+        // 使用toAmount作为新的输入值
+        setTimeout(() => {
+          document.getElementById("fromAmount").value = toAmount;
+          // 手动触发更新
+          updateOutput();
+        }, 0);
+      } else {
+        document.getElementById("fromAmount").value = "";
+        document.getElementById("toAmount").innerText = "0";
+      }
+      
+      updateTokenBalances();
+      updateRouteInfo();
       updateOutput();
-    }, 0);
-  } else {
-    document.getElementById("fromAmount").value = "";
-    document.getElementById("toAmount").innerText = "0";
-  }
-  
-  updateTokenBalances();
-  updateRouteInfo();
-  updateOutput();
-};
-
+    };
 
     // 滑点设置
     document.querySelectorAll(".slip-btn").forEach(b => b.onclick = () => {
