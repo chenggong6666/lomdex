@@ -905,7 +905,7 @@
  
 /* ========== 代币选择器（LOGO+下拉框） ========== */
 .token-selector {
-  display: flex;
+  display: flex !important;;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
@@ -920,7 +920,8 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 14;
+  flex-shrink: 0; /* 防止LOGO被压缩 */
 }
 .token-select {
   background: transparent;
@@ -936,6 +937,9 @@
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
+.token-select {
+  flex: 1; 
+}
 }
 
   
