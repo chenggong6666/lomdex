@@ -1548,7 +1548,8 @@ let appInitialized = false;
 function showWalletConnectedSuccess() {
     const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
     const message = isChinese ? 
-        ` 钱包连接成功！\n\n提示: 再次点击钱包按钮可断开连接` :
+        ` 钱包连接成功！
+        提示: 再次点击可断开连接` :
         ` Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`;
     
     showBeautifulAlert(message, 'success');
