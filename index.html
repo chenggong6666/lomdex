@@ -1210,7 +1210,19 @@
        </div>
         <!-- 详细信息面板 -->
         <div class="details-panel">
-          
+         <!-- 滑点容差部分 -->
+          <div class="slippage-section">
+            <div class="detail-item" style="border-bottom: none; padding: 0;">
+              <span class="detail-label" id="slippageLabel">滑点容差</span>
+              <div class="slippage-controls">
+                <div class="slip-btn active" data-slip="0.5">0.5%</div>
+                <div class="slip-btn" data-slip="1">1%</div>
+                <div class="slip-btn" data-slip="5">5%</div>
+                <div class="slip-btn" data-slip="10">10%</div>
+                </div>
+              </div>
+            </div>
+       
           <div class="detail-item">
             <span class="detail-label" id="priceLabel">价格</span>
             <span class="detail-value">1 <span id="fromTokenName">CFX</span> = <span id="price">0</span> <span id="toTokenName">LOM</span></span>
@@ -1230,21 +1242,7 @@
             <span class="detail-label" id="routeLabel">路由</span>
             <span class="detail-value" id="routeInfo">CFX → LOM</span>
           </div>
-          <!-- 滑点容差部分 -->
-          <div class="slippage-section">
-            <div class="detail-item" style="border-bottom: none; padding: 0;">
-              <span class="detail-label" id="slippageLabel">滑点容差</span>
-              <div class="slippage-controls">
-                <div class="slip-btn active" data-slip="0.5">0.5%</div>
-                <div class="slip-btn" data-slip="1">1%</div>
-                <div class="slip-btn" data-slip="5">5%</div>
-                <div class="slip-btn" data-slip="10">10%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          
        
 
     <!-- 我的资产 -->
