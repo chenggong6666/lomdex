@@ -883,33 +883,32 @@
       margin-bottom: 12px;
     }
     
-  /* 强制余额靠右显示，增加优先级 */
-.token-balance {
+ .token-balance {
   font-size: 14px;
   color: #94a3b8;
   margin: 0 0 6px 0;
-  text-align: right !important; /* 强制右对齐，覆盖其他样式 */
-  padding-right: 4px; /* 与输入框右侧保持一致 */
-  width: 100%; /* 确保占据整行宽度，否则可能无法右对齐 */
-}
-
-/* 检查父容器是否有影响对齐的样式，若有则重置 */
-.token-input-wrapper {
-  text-align: left; /* 确保容器本身不影响子元素对齐 */
-}
+  text-align: right !important;
+  padding-right: 4px;
+  width: 100%;
 
 
     
-    .token-input-wrapper:focus-within {
-      border-color: var(--web3-accent);
-    }
+   .token-input-wrapper {
+  background: rgba(76, 201, 240, 0.05);
+  border-radius: 16px;
+  padding: 10px; 
+  border: 1px solid rgba(76, 201, 240, 0.2);
+  transition: all 0.3s ease;
+}
     
     .token-selector {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  justify-content: flex-start; 
+  width: 100%; 
+}
     
     .token-logo {
       width: 32px;
