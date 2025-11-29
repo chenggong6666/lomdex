@@ -1016,29 +1016,25 @@
   z-index: 10;
 
  }
-/* 背景完全透明 */
-  .swap-arrow {
-    background: transparent; 
-   width: 44px;
-   height: 44px;
-   border-radius: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   font-size: 30px;
-   cursor: pointer;
-   /* 隐藏边框 */
-   border: none; 
-   transition: all 0.3s ease;
-   /* 箭头颜色设为你要的浅蓝色 */
-   color: #86b6d9; 
-   /* 移除阴影（可选，若要更简洁） */
-   box-shadow: none; 
-   position: absolute;          
-   top: 50%;                    
-   left: 50%;                   
-   transform: translate(-50%, -50%); /* 精确定位到中心 */
+.swap-arrow {
+  background: transparent; /* 背景保持透明 */
+  width: 50px; /* 放大按钮尺寸，让箭头更明显 */
+  height: 50px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px; /* 放大箭头大小 */
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  color: #4A90E2; /* 加深箭头颜色（高对比度浅蓝色） */
+  position: absolute;          
+  top: 50%;                    
+  left: 50%;                   
+  transform: translate(-50%, -50%);
 }
+
   .swap-arrow:hover {
   background: rgba(76, 201, 240, 0.1);
   border-color: var(--web3-accent);
