@@ -240,7 +240,7 @@
       color: #fff;
       width: 100%;
       outline: none;
-      text-align: right;
+      right;
       font-weight: 600;
     }
     
@@ -884,12 +884,20 @@
     }
     
     .token-input-wrapper {
-      background: rgba(76, 201, 240, 0.05);
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid rgba(76, 201, 240, 0.2);
-      transition: all 0.3s ease;
-    }
+  position: relative; 
+  padding-top: 20px; 
+}
+
+.token-balance {
+  position: absolute; 
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0; 
+  z-index: 1; 
+}
+
     
     .token-input-wrapper:focus-within {
       border-color: var(--web3-accent);
