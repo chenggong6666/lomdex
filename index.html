@@ -56,77 +56,11 @@
 .logo {
   font-size: 42px;
   font-weight: 900;
-  background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple), var(--web3-yellow));
+  background: linear-gradient(90deg, var(--web3-light), var(--web3-purple), var(--web3-yellow));
   -webkit-background-clip: text;
   color: transparent;
   position: relative;
   display: inline-block;
-  overflow: hidden; /* 关键：隐藏超出部分 */
-}
-
-/* 修复的金光扫过效果 */
-.logo::before {
-  content: ""; /* 改为空内容，不显示文字 */
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%; /* 控制金光宽度 */
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 215, 0, 0.6),
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 215, 0, 0.6),
-    transparent
-  );
-  -webkit-background-clip: text; /* 只在文字区域显示 */
-  background-clip: text;
-  animation: textGlowSweep 2.5s ease-in-out infinite;
-  filter: blur(1px);
-  mix-blend-mode: overlay;
-}
-
-@keyframes textGlowSweep {
-  0% {
-    left: -100%;
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  35% {
-    opacity: 1;
-  }
-  50% {
-    left: 150%; /* 确保完全移出 */
-    opacity: 0;
-  }
-  100% {
-    left: 150%;
-    opacity: 0;
-  }
-}
-
-/* 可选：更明显的金光效果 */
-.logo.intense::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 215, 0, 0.8),
-    rgba(255, 255, 255, 1),
-    rgba(255, 215, 0, 0.8),
-    transparent
-  );
-  filter: blur(0.5px);
-  width: 50%; /* 更窄的金光 */
-}
-
-/* 移动端适配 */
-@media (max-width: 400px) {
-  .logo { 
-    font-size: 36px; 
-  }
 }
 
     
