@@ -92,7 +92,43 @@
   filter: blur(2px);
   mix-blend-mode: overlay;
 }
-    /* 移动端适配 */
+   @keyframes textGlowSweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    left: 100%;
+    opacity: 0;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* 增强文字本身的发光感 */
+.logo::after {
+  content: "龙脉DEX";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: -1;
+}
+
+/* 移动端适配 */
 @media (max-width: 400px) {
   .logo { 
     font-size: 36px; 
