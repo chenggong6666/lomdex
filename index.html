@@ -52,7 +52,6 @@
       position: relative;
     }
   
-/* ========== 增强版金光闪烁动画 ========== */
 .logo {
   font-size: 42px;
   font-weight: 900;
@@ -62,54 +61,30 @@
   position: relative;
   display: inline-block;
   overflow: hidden;
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
-/* 金光效果 - 增强版 */
 .logo::before {
-  content: "龙脉DEX";
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
+  width: 60%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 215, 0, 0.4) 20%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 215, 0, 0.4) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.8), rgba(255,255,255,0.9), rgba(255,215,0,0.8), transparent);
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
-  animation: goldShine 3s ease-in-out infinite;
+  animation: goldSweep 2s linear infinite;
+  transform: skewX(-20deg);
   filter: brightness(1.2);
 }
 
-@keyframes goldShine {
-  0% {
-    left: -100%;
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  40% {
-    opacity: 1;
-  }
-  60% {
-    left: 100%;
-    opacity: 0;
-  }
-  100% {
-    left: 100%;
-    opacity: 0;
-  }
+@keyframes goldSweep {
+  0% { left: -100%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 140%; opacity: 0; }
 }
 
-/* 基础文字效果 */
 .logo::after {
   content: "龙脉DEX";
   position: absolute;
@@ -122,6 +97,10 @@
   background-clip: text;
   color: transparent;
   z-index: -1;
+}
+
+@media (max-width: 400px) {
+  .logo { font-size: 36px; }
 }
     
 .btn {
