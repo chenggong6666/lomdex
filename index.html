@@ -2331,8 +2331,7 @@ document.getElementById("walletBtn").onclick = async () => {
           account,
           deadline,
           {
-            value: amountCfx,
-            gasLimit: 400000
+            value: amountCfx
           }
         );
         
@@ -2600,17 +2599,17 @@ document.getElementById("walletBtn").onclick = async () => {
 
         let tx;
         if (fromToken === "CFX") {
-          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn, gasLimit:350000});
+          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn});
         } else {
           const tokenContract = getTokenContract(fromToken);
           const allowance = await tokenContract.allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
-            const atx = await tokenContract.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+            const atx = await tokenContract.approve(ROUTER, ethers.constants.MaxUint256);
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
-          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, {gasLimit:350000});
+          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline,);
         }
         await tx.wait();
         document.getElementById("loading").style.display = "none";
@@ -2720,10 +2719,7 @@ document.getElementById("walletBtn").onclick = async () => {
           0, 
           0, 
           account, 
-          deadline,
-          {
-            gasLimit: 400000
-          }
+          deadline
         );
         
         await tx.wait();
