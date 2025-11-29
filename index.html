@@ -52,7 +52,7 @@
       position: relative;
     }
   
-/* ========== 文字内金光效果 ========== */
+/* ========== 光束扫过效果 ========== */
 .logo {
   font-size: 42px;
   font-weight: 900;
@@ -64,31 +64,29 @@
   overflow: hidden;
 }
 
-.logo::before {
-  content: "龙脉DEX";
+.logo::after {
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
+  width: 20%; /* 窄光束 */
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent,
+    rgba(255, 255, 255, 0.9),
     rgba(255, 215, 0, 0.8),
-    rgba(255, 255, 255, 1),
-    rgba(255, 215, 0, 0.8),
+    rgba(255, 255, 255, 0.9),
     transparent
   );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: goldSweep 2s linear infinite;
-  filter: blur(1px);
+  animation: beamSweep 2s linear infinite;
+  filter: blur(2px);
+  transform: skewX(-15deg); /* 让光束有点斜度 */
 }
 
-@keyframes goldSweep {
+@keyframes beamSweep {
   0% { left: -100%; }
-  100% { left: 100%; }
+  100% { left: 200%; }
 }
 
 @media (max-width: 400px) {
