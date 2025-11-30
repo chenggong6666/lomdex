@@ -46,6 +46,7 @@
       max-width: 480px;
     }
     
+    /* 修复顶部按钮自适应问题 */
     .header {
       display: flex;
       justify-content: space-between;
@@ -80,10 +81,15 @@
       font-size: 14px;
       min-width: 40px;
       height: 35px;
+      /* 添加文本溢出处理 */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     #walletBtn {
       min-width: 90px;
+      max-width: 120px;
     }
     
     #walletBtn.connected {
@@ -198,6 +204,7 @@
       min-height: 90px;
     }
     
+    /* 优化代币选择器布局，更紧凑 */
     .token-selector {
       display: flex;
       align-items: center;
@@ -219,9 +226,12 @@
       background: rgba(76, 201, 240, 0.1);
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
-      padding: 6px 12px;
+      padding: 6px 10px; /* 减小内边距使更紧凑 */
       cursor: pointer;
       transition: all 0.2s ease;
+      /* 确保内容紧凑 */
+      min-width: 0;
+      max-width: 120px;
     }
     
     .token-selector-btn:hover {
@@ -230,8 +240,8 @@
     }
     
     .token-logo {
-      width: 28px;
-      height: 28px;
+      width: 24px; /* 减小尺寸 */
+      height: 24px; /* 减小尺寸 */
       border-radius: 50%;
       background-size: cover;
       background-position: center;
@@ -239,7 +249,7 @@
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 11px; /* 减小字体 */
       flex-shrink: 0;
       border: 1px solid rgba(76, 201, 240, 0.3);
     }
@@ -247,11 +257,11 @@
     .token-symbol {
       font-weight: 600;
       color: var(--web3-light);
-      font-size: 16px;
+      font-size: 14px; /* 减小字体 */
     }
     
     .token-dropdown-arrow {
-      font-size: 14px;
+      font-size: 12px; /* 减小字体 */
       color: #94a3b8;
     }
     
@@ -980,6 +990,60 @@
       color: var(--web3-light);
       font-weight: 600;
     }
+    
+    /* 移除流动性模态框重新布局 */
+    .remove-modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .remove-percentage {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--web3-light);
+      margin-bottom: 10px;
+    }
+    
+    .remove-slider-container {
+      margin: 20px 0;
+    }
+    
+    .remove-slider {
+      width: 100%;
+      margin: 10px 0;
+    }
+    
+    .remove-estimate {
+      background: rgba(76, 201, 240, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+    
+    .remove-estimate-title {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    
+    .remove-estimate-amounts {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--web3-light);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .remove-estimate-amount {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1280,16 +1344,34 @@
       </div>
     </div>
 
-    <!-- 移除流动性模态框 -->
+    <!-- 移除流动性模态框 - 重新布局 -->
     <div class="modal" id="removeModal">
       <div class="modal-card">
-        <h3 style="margin:0 0 20px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
-        <input type="range" min="0" max="100" value="100" id="removeSlider" style="width:100%;margin:20px 0">
-        <div style="text-align:center;font-size:18px">
-          <span id="removePercent">100%</span>
-          <span id="removeEstText">预计获得 <span id="removeEst">0 CFX + 0 LOM</span></span>
+        <div class="remove-modal-content">
+          <h3 style="margin:0 0 10px;color:var(--web3-light)" id="removeTitle">移除流动性</h3>
+          
+          <div class="remove-percentage">
+            <span id="removePercent">100%</span>
+          </div>
+          
+          <div class="remove-slider-container">
+            <input type="range" min="0" max="100" value="100" id="removeSlider" class="remove-slider">
+          </div>
+          
+          <div class="remove-estimate">
+            <div class="remove-estimate-title">预计获得</div>
+            <div class="remove-estimate-amounts">
+              <div class="remove-estimate-amount">
+                <span id="removeEstCfx">0</span> CFX
+              </div>
+              <div class="remove-estimate-amount">
+                <span id="removeEstLom">0</span> LOM
+              </div>
+            </div>
+          </div>
+          
+          <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
         </div>
-        <button class="action" id="confirmRemove" style="background:linear-gradient(90deg, #ff4757, #ff6b81);margin-top:20px">确认移除</button>
       </div>
     </div>
 
@@ -1352,7 +1434,7 @@
         CNHT0: ""
       },
       SECURITY: {
-        ALLOWED_DOMAINS: ['lomswap.vercel.app'],
+        ALLOWED_DOMAINS: ['lomdex.vercel.app'],
         TRUSTED_WALLETS: ['fluent', 'tokenpocket', 'okexwallet'],
         EXPECTED_CHAIN_ID: '0x406'
       }
@@ -1550,6 +1632,12 @@
         });
         
         filteredTokens.forEach(token => {
+          // 禁止选择同一种代币
+          if ((currentTokenSelector === 'from' && token.symbol === toToken) ||
+              (currentTokenSelector === 'to' && token.symbol === fromToken)) {
+            return; // 跳过相同代币
+          }
+          
           const tokenItem = document.createElement("div");
           tokenItem.className = "token-item";
           tokenItem.innerHTML = `
@@ -1625,30 +1713,50 @@
       // 选择代币
       selectToken(token) {
         if (currentTokenSelector === 'from') {
+          // 禁止选择同一种代币
+          if (token.symbol === toToken) {
+            UI.showAlert(isChinese ? 
+              "不能选择相同的代币" : 
+              "Cannot select the same token", 'warning');
+            return;
+          }
+          
           fromToken = token.symbol;
           document.getElementById("fromTokenSymbol").textContent = token.symbol;
-          document.getElementById("fromTokenLogo").style.backgroundImage = token.logo ? `url('${token.logo}')` : '';
-          if (!token.logo) {
-            document.getElementById("fromTokenLogo").style.background = 'linear-gradient(135deg, #4361ee, #7209b7)';
-            document.getElementById("fromTokenLogo").textContent = token.symbol.charAt(0);
-          } else {
-            document.getElementById("fromTokenLogo").textContent = '';
-          }
+          this.updateTokenLogo('from', token);
         } else if (currentTokenSelector === 'to') {
+          // 禁止选择同一种代币
+          if (token.symbol === fromToken) {
+            UI.showAlert(isChinese ? 
+              "不能选择相同的代币" : 
+              "Cannot select the same token", 'warning');
+            return;
+          }
+          
           toToken = token.symbol;
           document.getElementById("toTokenSymbol").textContent = token.symbol;
-          document.getElementById("toTokenLogo").style.backgroundImage = token.logo ? `url('${token.logo}')` : '';
-          if (!token.logo) {
-            document.getElementById("toTokenLogo").style.background = 'linear-gradient(135deg, #ffd166, #ffb347)';
-            document.getElementById("toTokenLogo").textContent = token.symbol.charAt(0);
-          } else {
-            document.getElementById("toTokenLogo").textContent = '';
-          }
+          this.updateTokenLogo('to', token);
         }
         
         document.getElementById("tokenSelectorModal").style.display = "none";
         SwapModule.updateTokenDisplay();
         SwapModule.updateOutput();
+      },
+
+      // 更新代币logo显示
+      updateTokenLogo(type, token) {
+        const logoElement = document.getElementById(`${type}TokenLogo`);
+        if (token.logo) {
+          logoElement.style.backgroundImage = `url('${token.logo}')`;
+          logoElement.textContent = '';
+          logoElement.style.background = ''; // 清除默认背景
+        } else {
+          logoElement.style.backgroundImage = '';
+          logoElement.style.background = type === 'from' ? 
+            'linear-gradient(135deg, #4361ee, #7209b7)' : 
+            'linear-gradient(135deg, #ffd166, #ffb347)';
+          logoElement.textContent = token.symbol.charAt(0);
+        }
       },
 
       // 过滤代币
@@ -1709,7 +1817,6 @@
         document.getElementById("confirmAdd").innerText = isChinese ? "确认添加" : "Confirm Add";
         document.getElementById("confirmRemove").innerText = isChinese ? "确认移除" : "Confirm Remove";
         document.getElementById("ratioLabel").innerHTML = isChinese ? "比例: <span id='addRatio'>1 CFX = 0 LOM</span>" : "Ratio: <span id='addRatio'>1 CFX = 0 LOM</span>";
-        document.getElementById("removeEstText").innerHTML = isChinese ? "预计获得 <span id='removeEst'>0 CFX + 0 LOM</span>" : "Estimated <span id='removeEst'>0 CFX + 0 LOM</span>";
         
         // 加载提示
         document.getElementById("loadingText").innerText = isChinese ? "等待区块链确认中" : "Waiting for confirmation...";
@@ -1725,6 +1832,8 @@
       // 初始化安全模块
       initializeSecurity() {
         this.createSecurityIndicator();
+        this.checkDomainSecurity();
+        this.setupSecurityTips();
       },
 
       // 创建安全指示器
@@ -1733,6 +1842,33 @@
         indicator.id = 'securityIndicator';
         indicator.textContent = '🔒 安全验证通过';
         document.querySelector('.app').appendChild(indicator);
+      },
+
+      // 检查域名安全
+      checkDomainSecurity() {
+        const currentDomain = window.location.hostname;
+        const isAllowedDomain = APP_CONFIG.SECURITY.ALLOWED_DOMAINS.some(domain => 
+          currentDomain.includes(domain) || domain.includes(currentDomain)
+        );
+        
+        if (!isAllowedDomain) {
+          document.getElementById('securityIndicator').textContent = '⚠️ 域名未验证';
+          document.getElementById('securityIndicator').style.background = 'var(--web3-warning)';
+          
+          // 显示安全提示
+          document.getElementById('securityTips').style.display = 'block';
+        }
+      },
+
+      // 设置安全提示
+      setupSecurityTips() {
+        // 首次使用显示安全提示
+        if (!localStorage.getItem('securityTipsShown')) {
+          setTimeout(() => {
+            document.getElementById('securityTips').style.display = 'block';
+            localStorage.setItem('securityTipsShown', 'true');
+          }, 3000);
+        }
       }
     };
 
@@ -2095,28 +2231,15 @@
         document.getElementById("toTokenSymbol").textContent = toToken;
         
         // 更新代币Logo
-        const fromLogo = document.getElementById("fromTokenLogo");
-        const toLogo = document.getElementById("toTokenLogo");
-        
         const fromTokenData = TOKEN_LIST.find(t => t.symbol === fromToken);
         const toTokenData = TOKEN_LIST.find(t => t.symbol === toToken);
         
-        if (fromTokenData && fromTokenData.logo) {
-          fromLogo.style.backgroundImage = `url('${fromTokenData.logo}')`;
-          fromLogo.textContent = '';
-        } else {
-          fromLogo.style.backgroundImage = '';
-          fromLogo.style.background = 'linear-gradient(135deg, #4361ee, #7209b7)';
-          fromLogo.textContent = fromToken.charAt(0);
+        if (fromTokenData) {
+          AppCore.updateTokenLogo('from', fromTokenData);
         }
         
-        if (toTokenData && toTokenData.logo) {
-          toLogo.style.backgroundImage = `url('${toTokenData.logo}')`;
-          toLogo.textContent = '';
-        } else {
-          toLogo.style.backgroundImage = '';
-          toLogo.style.background = 'linear-gradient(135deg, #ffd166, #ffb347)';
-          toLogo.textContent = toToken.charAt(0);
+        if (toTokenData) {
+          AppCore.updateTokenLogo('to', toTokenData);
         }
         
         // 交换输入值
@@ -2639,7 +2762,8 @@
           const liquidity = lpBal.mul(percent).div(100);
           
           if (liquidity.isZero()) {
-            document.getElementById("removeEst").innerText = "0 CFX + 0 LOM";
+            document.getElementById("removeEstCfx").innerText = "0";
+            document.getElementById("removeEstLom").innerText = "0";
             return;
           }
           
@@ -2653,11 +2777,12 @@
           const cfxOut = rCfx.mul(liquidity).div(total);
           const lomOut = rLom.mul(liquidity).div(total);
           
-          document.getElementById("removeEst").innerText = 
-            `${parseFloat(ethers.utils.formatEther(cfxOut)).toFixed(6)} CFX + ${parseFloat(ethers.utils.formatUnits(lomOut,18)).toFixed(6)} LOM`;
+          document.getElementById("removeEstCfx").innerText = parseFloat(ethers.utils.formatEther(cfxOut)).toFixed(6);
+          document.getElementById("removeEstLom").innerText = parseFloat(ethers.utils.formatUnits(lomOut,18)).toFixed(6);
         } catch (error) {
           console.error("更新移除估算失败:", error);
-          document.getElementById("removeEst").innerText = "计算失败";
+          document.getElementById("removeEstCfx").innerText = "计算失败";
+          document.getElementById("removeEstLom").innerText = "计算失败";
         }
       },
 
