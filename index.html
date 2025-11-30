@@ -1212,7 +1212,7 @@
         <div class="token-input-wrapper">
           <div class="token-selector">
             <div class="token-selector-left">
-              <div class="token-logo" style="background: linear-gradient(135deg, #4361ee, #7209b7);">🐲</div>
+              <div class="token-logo" id="fromTokenLogo" style="background-image: url('https://i.imgur.com/70cXbUI.jpeg');"></div>
               <select class="token-select" id="fromTokenSelect">
                 <option value="CFX">CFX</option>
                 <option value="LOM">LOM</option>
@@ -1239,7 +1239,7 @@
         <div class="token-input-wrapper">
           <div class="token-selector">
             <div class="token-selector-left">
-              <div class="token-logo" style="background: linear-gradient(135deg, #ffd166, #ffb347);">🐲</div>
+              <div class="token-logo" id="toTokenLogo" style="background-image: url('https://i.imgur.com/HddyTrv.jpeg');"></div>
               <select class="token-select" id="toTokenSelect">
                 <option value="LOM">LOM</option>
                 <option value="CFX">CFX</option>
@@ -1362,7 +1362,7 @@
       <div class="stake-card">
         <div class="stake-title">质押LP赚取收益</div>
         <div class="stake-description">
-          将您的LP代币质押到农场中，赚取额外的奖励代币。年化收益率高达：
+          将您的LP代币质押到农场中,赚取额外的奖励代币.年化收益率高达:
         </div>
         <div class="stake-apr">APR: 45.8%</div>
         <a href="https://stake.fatsale.org/?utm_source=tokenpocket#/cfx/0x90117C51DD5e17C4A306fea71B0f260Df057F6e3" target="_blank" class="stake-button">
@@ -1490,7 +1490,7 @@
 
   <!-- 等待提示 -->
   <div id="loading" style="display:none">
-    <div id="loadingText">等待区块链确认中</div>
+    <div id="loadingText">请稍等区块确认中</div>
   </div>
 
   <!-- 安全提示浮层 -->
@@ -1546,8 +1546,7 @@
   </div>
 
   <script>
-   
-    // ==================== 安全防护模块 ====================
+    // ==================== 应用配置 ====================
     const SECURITY_CONFIG = {
       ALLOWED_DOMAINS: ['lomdex.vercel.app'],
       CONTRACTS: {
@@ -1558,26 +1557,42 @@
         USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
         CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda"
       }
+        // 代币Logo配置
+      TOKEN_LOGOS: {
+        CFX: "https://i.imgur.com/70cXbUI.jpeg",
+        LOM: "https://i.imgur.com/HddyTrv.jpeg",
+        AxCNH: "",
+        USDT0: "",
+        CNHT0: ""
+      },
+       // 安全配置
+      SECURITY: {
+        ALLOWED_DOMAINS: ['lomdex.vercel.app'],
+        TRUSTED_WALLETS: ['fluent', 'tokenpocket', 'okexwallet'],
+        EXPECTED_CHAIN_ID: '0x406' // Conflux eSpace
+      }     
     };
 
+    // ==================== 安全防护模块 ====================
     // 显示安全警告
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('securityAlert').style.display = 'flex';
     });
 
-    // 安全警告按钮事件 - 修复退出功能
-document.getElementById('securityExit').onclick = function() {
-  // 改进退出方式
-  if (window.history.length > 1) {
-    window.history.back();
-  } else {
-    window.location.href = 'about:blank';
-  }
-};
+    // 安全警告按钮事件
+    document.getElementById('securityExit').onclick = function() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'about:blank';
+      }
+    };
 
-document.getElementById('securityContinue').onclick = function() {
-  // 隐藏安全警告
-  document.getElementById('securityAlert').style.display = 'none';
+    document.getElementById('securityContinue').onclick = function() {
+      document.getElementById('securityAlert').style.display = 'none';
+      setTimeout(initializeApp, 100);
+    };
+
   
   // 延迟初始化应用，确保所有函数都已定义
   setTimeout(function() {
