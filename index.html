@@ -18,8 +18,10 @@
       --web3-yellow: #ffd166;
       --web3-dark: #0f172a;
       --web3-card: #1e293b;
-    
-      
+      --web3-light: #90e0ef;
+      --web3-accent: #4cc9f0;
+      --web3-success: #22c55e;
+      --web3-warning: #ff6b6b;
     }
     
     * {
@@ -43,17 +45,6 @@
       width: 100%;
       max-width: 480px;
     }
-  btn, .action, .percent-btn, .slip-btn, button {
-   border-radius: var(--btn-radius, 8px) !important; /* 使用统一圆角变量，或直接写具体值如8px */
-   overflow: hidden; /* 防止内容溢出影响圆角 */
-  }
-  /* 修复阴影直角问题 - 让阴影弧度与按钮圆角一致 */
- .btn:active, .action:active, .percent-btn:active, .slip-btn:active, button:active {
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; /* 示例阴影，可根据实际调整 */
-   border-radius: inherit !important; /* 继承按钮本身的圆角 */
-   /* 若仍有直角，可手动指定与按钮相同的圆角值 */
-   /* border-radius: 8px !important; */
-   }
     
     /* 修复顶部按钮自适应问题 */
     .header {
@@ -62,6 +53,7 @@
       align-items: center;
       margin-bottom: 20px;
       padding: 0 10px;
+      gap: 10px;
     }
     
     .logo {
@@ -85,7 +77,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-  
+      box-sizing: border-box;
       padding: 8px 12px;
       font-size: 14px;
       min-width: 40px;
@@ -99,6 +91,13 @@
     #walletBtn {
       min-width: 90px;
       max-width: 120px;
+      flex-shrink: 0;
+    }
+    
+    #langBtn {
+      min-width: 50px;
+      max-width: 60px;
+      flex-shrink: 0;
     }
     
     #walletBtn.connected {
@@ -279,6 +278,9 @@
       color: #94a3b8;
       text-align: right;
       white-space: nowrap;
+      position: absolute;
+      top: 14px;
+      right: 14px;
     }
     
     .token-amount {
@@ -286,6 +288,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 30px;
     }
     
     .amount-input {
@@ -305,7 +308,12 @@
     
     .amount-input:focus {
       border-color: var(--web3-accent);
+      box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+    }
     
+    .amount-input.invalid {
+      border-color: var(--web3-warning);
+      color: var(--web3-warning);
     }
     
     .amount-display {
@@ -378,6 +386,11 @@
       background: #475569;
       color: #94a3b8;
       cursor: not-allowed;
+    }
+    
+    .action.invalid {
+      background: var(--web3-warning);
+      color: white;
     }
     
     .details-panel {
@@ -773,37 +786,6 @@
       color: var(--web3-light);
     }
     
-    #securityTips {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--web3-card);
-      border: 2px solid var(--web3-yellow);
-      border-radius: 12px;
-      padding: 16px;
-      max-width: 280px;
-      font-size: 12px;
-      color: var(--web3-light);
-      z-index: 9999;
-      display: none;
-    }
-    
-    #securityIndicator {
-      position: absolute;
-      top: 52px;
-      right: 18px;
-      background: var(--web3-success);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: bold;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
     .beautiful-alert {
       position: fixed;
       top: 0;
@@ -1167,61 +1149,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 我的资产 -->
-    <div class="asset-card">
-      <div class="asset-header">
-        <div class="asset-title">
-          <span class="asset-icon">💰</span>
-          <span id="assetTitle">我的资产</span>
-        </div>
-        <div style="color:var(--web3-yellow);font-size:14px">✦</div>
-      </div>
-      <div class="asset-list">
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">C</div>
-            <span>CFX</span>
-          </div>
-          <div class="asset-balance" id="cfxBal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">L</div>
-            <span>LOM</span>
-          </div>
-          <div class="asset-balance" id="lomBal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">A</div>
-            <span>AxCNH</span>
-          </div>
-          <div class="asset-balance" id="axcnhBal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">U</div>
-            <span>USDT0</span>
-          </div>
-          <div class="asset-balance" id="usdt0Bal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">C</div>
-            <span>CNHT0</span>
-          </div>
-          <div class="asset-balance" id="cnht0Bal">0.000000</div>
-        </div>
-        <div class="asset-item">
-          <div class="asset-name">
-            <div class="token-icon">LP</div>
-            <span>LP Token</span>
-          </div>
-          <div class="asset-balance" id="lpBal">0.000000</div>
-        </div>
-      </div>
-    </div>
     
     <!-- 流动性页面 -->
     <div class="tab-content" id="liquidityTab">
@@ -1268,7 +1195,7 @@
 
       <!-- 我的流动性 -->
       <div class="card">
-        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="myPositionsTitle">我的流动性份额</h3>
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="myPositionsTitle">我的流动性头寸</h3>
         
         <div id="liquidityPositions">
           <div class="position-item">
@@ -1296,6 +1223,61 @@
                 <span id="unclaimedFees">$0</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的资产 -->
+      <div class="asset-card">
+        <div class="asset-header">
+          <div class="asset-title">
+            <span class="asset-icon">💰</span>
+            <span id="assetTitle">我的资产</span>
+          </div>
+          <div style="color:var(--web3-yellow);font-size:14px">✦</div>
+        </div>
+        <div class="asset-list">
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">C</div>
+              <span>CFX</span>
+            </div>
+            <div class="asset-balance" id="cfxBal">0.000000</div>
+          </div>
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">L</div>
+              <span>LOM</span>
+            </div>
+            <div class="asset-balance" id="lomBal">0.000000</div>
+          </div>
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">A</div>
+              <span>AxCNH</span>
+            </div>
+            <div class="asset-balance" id="axcnhBal">0.000000</div>
+          </div>
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">U</div>
+              <span>USDT0</span>
+            </div>
+            <div class="asset-balance" id="usdt0Bal">0.000000</div>
+          </div>
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">C</div>
+              <span>CNHT0</span>
+            </div>
+            <div class="asset-balance" id="cnht0Bal">0.000000</div>
+          </div>
+          <div class="asset-item">
+            <div class="asset-name">
+              <div class="token-icon">LP</div>
+              <span>LP Token</span>
+            </div>
+            <div class="asset-balance" id="lpBal">0.000000</div>
           </div>
         </div>
       </div>
@@ -1389,26 +1371,6 @@
       <div id="loadingText">请稍等区块确认中</div>
     </div>
 
-    <!-- 安全提示浮层 -->
-    <div id="securityTips">
-      <div style="font-weight: bold; color: var(--web3-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-        <span>🔒</span> 安全提示
-      </div>
-      <div style="margin-bottom: 6px;">• 请确认访问官方域名</div>
-      <div style="margin-bottom: 6px;">• 首次使用请小额测试</div>
-      <div style="margin-bottom: 8px;">• 仔细核对交易详情</div>
-      <button onclick="document.getElementById('securityTips').style.display='none'" style="
-        background: transparent;
-        border: 1px solid var(--web3-yellow);
-        color: var(--web3-yellow);
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 11px;
-        width: 100%;
-      ">知道了</button>
-    </div>
-
     <!-- 风险提示 -->
     <div class="risk-warning">
       <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -1433,19 +1395,17 @@
         PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85",
         AxCNH: "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E",
         USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
-        CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda"
+        CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda",
+        // 新的流动池
+        AxCNH_CNHT0_PAIR: "0x50b095DF7a8f856C6fA07fF89bcBC2dF8491A8df",
+        AxCNH_CFX_PAIR: "0x705185839E1d00FEFE9819D749023cb69bE5E26d"
       },
       TOKEN_LOGOS: {
         CFX: "https://i.imgur.com/70cXbUI.jpeg",
         LOM: "https://i.imgur.com/HddyTrv.jpeg",
-        AxCNH: "",
-        USDT0: "",
-        CNHT0: ""
-      },
-      SECURITY: {
-        ALLOWED_DOMAINS: ['lomdex.vercel.app'],
-        TRUSTED_WALLETS: ['fluent', 'tokenpocket', 'okexwallet'],
-        EXPECTED_CHAIN_ID: '0x406'
+        AxCNH: "https://i.imgur.com/x8317um.jpeg",
+        USDT0: "https://i.imgur.com/HddyTrv.jpeg", // 临时使用LOM的logo
+        CNHT0: "https://i.imgur.com/zObg9RY.jpeg"
       }
     };
 
@@ -1532,7 +1492,6 @@
         this.setupPercentageButtons();
         this.setupTokenSelectors();
         this.updateAllTexts();
-        this.initializeSecurity();
         
         console.log("龙脉DEX优化版初始化完成");
       },
@@ -1752,13 +1711,13 @@
         SwapModule.updateOutput();
       },
 
-      // 更新代币logo显示
+      // 更新代币logo显示 - 修复切换不显示问题
       updateTokenLogo(type, token) {
         const logoElement = document.getElementById(`${type}TokenLogo`);
         if (token.logo) {
           logoElement.style.backgroundImage = `url('${token.logo}')`;
           logoElement.textContent = '';
-          logoElement.style.background = ''; // 清除默认背景
+          logoElement.style.background = 'transparent'; // 清除默认背景
         } else {
           logoElement.style.backgroundImage = '';
           logoElement.style.background = type === 'from' ? 
@@ -1836,48 +1795,6 @@
         document.getElementById("riskText").innerText = isChinese ? 
           "本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。" :
           "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
-      },
-
-      // 初始化安全模块
-      initializeSecurity() {
-        this.createSecurityIndicator();
-        this.checkDomainSecurity();
-        this.setupSecurityTips();
-      },
-
-      // 创建安全指示器
-      createSecurityIndicator() {
-        const indicator = document.createElement('div');
-        indicator.id = 'securityIndicator';
-        indicator.textContent = '🔒 安全验证通过';
-        document.querySelector('.app').appendChild(indicator);
-      },
-
-      // 检查域名安全
-      checkDomainSecurity() {
-        const currentDomain = window.location.hostname;
-        const isAllowedDomain = APP_CONFIG.SECURITY.ALLOWED_DOMAINS.some(domain => 
-          currentDomain.includes(domain) || domain.includes(currentDomain)
-        );
-        
-        if (!isAllowedDomain) {
-          document.getElementById('securityIndicator').textContent = '⚠️ 域名未验证';
-          document.getElementById('securityIndicator').style.background = 'var(--web3-warning)';
-          
-          // 显示安全提示
-          document.getElementById('securityTips').style.display = 'block';
-        }
-      },
-
-      // 设置安全提示
-      setupSecurityTips() {
-        // 首次使用显示安全提示
-        if (!localStorage.getItem('securityTipsShown')) {
-          setTimeout(() => {
-            document.getElementById('securityTips').style.display = 'block';
-            localStorage.setItem('securityTipsShown', 'true');
-          }, 3000);
-        }
       }
     };
 
@@ -1903,7 +1820,7 @@
           
           await this.connectWallet();
           
-          const displayAddress = account.slice(0, 3) + "..." + account.slice(-5);
+          const displayAddress = account.slice(0, 6) + "..." + account.slice(-4);
           document.getElementById("walletBtn").innerText = displayAddress;
           document.getElementById("walletBtn").classList.add('connected');
           document.getElementById("walletBtn").disabled = false;
@@ -1913,7 +1830,7 @@
             `Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`, 'success');
           
           await DataManager.refreshAll();
-          refreshInterval = setInterval(DataManager.refreshAll, 12000);
+          refreshInterval = setInterval(DataManager.refreshAll, 10000);
           
         } catch(e) { 
           document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
@@ -2239,7 +2156,7 @@
         document.getElementById("fromTokenSymbol").textContent = fromToken;
         document.getElementById("toTokenSymbol").textContent = toToken;
         
-        // 更新代币Logo
+        // 更新代币Logo - 修复切换不显示问题
         const fromTokenData = TOKEN_LIST.find(t => t.symbol === fromToken);
         const toTokenData = TOKEN_LIST.find(t => t.symbol === toToken);
         
@@ -2270,6 +2187,15 @@
         this.updateOutput();
       },
 
+      // 检查余额是否足够
+      checkBalance() {
+        const amt = parseFloat(document.getElementById("fromAmount").value);
+        if (!amt || isNaN(amt) || amt <= 0) return false;
+        
+        const balance = parseFloat(document.getElementById("fromBal").innerText);
+        return amt <= balance;
+      },
+
       // 更新输出
       async updateOutput() {
         const amt = document.getElementById("fromAmount").value;
@@ -2278,6 +2204,15 @@
           this.updateButtonState();
           this.updateGasEstimate();
           return; 
+        }
+        
+        // 检查余额是否足够
+        const balanceValid = this.checkBalance();
+        if (!balanceValid) {
+          document.getElementById("toAmount").innerText = "0";
+          this.updateButtonState();
+          this.updateGasEstimate();
+          return;
         }
         
         try {
@@ -2300,13 +2235,23 @@
         }
       },
 
-      // 获取交换路径
+      // 获取交换路径 - 简化为自动检测
       getSwapPath() {
+        // 简化的路径选择，实际应该根据池子流动性选择最优路径
         if (fromToken === "CFX" && toToken === "LOM") {
           return [APP_CONFIG.CONTRACTS.WCFX, APP_CONFIG.CONTRACTS.LOM];
         } else if (fromToken === "LOM" && toToken === "CFX") {
           return [APP_CONFIG.CONTRACTS.LOM, APP_CONFIG.CONTRACTS.WCFX];
+        } else if (fromToken === "CFX" && toToken === "AxCNH") {
+          return [APP_CONFIG.CONTRACTS.WCFX, APP_CONFIG.CONTRACTS.AxCNH];
+        } else if (fromToken === "AxCNH" && toToken === "CFX") {
+          return [APP_CONFIG.CONTRACTS.AxCNH, APP_CONFIG.CONTRACTS.WCFX];
+        } else if (fromToken === "CFX" && toToken === "CNHT0") {
+          return [APP_CONFIG.CONTRACTS.WCFX, APP_CONFIG.CONTRACTS.CNHT0];
+        } else if (fromToken === "CNHT0" && toToken === "CFX") {
+          return [APP_CONFIG.CONTRACTS.CNHT0, APP_CONFIG.CONTRACTS.WCFX];
         } else {
+          // 默认路径
           return [this.getTokenAddress(fromToken), this.getTokenAddress(toToken)];
         }
       },
@@ -2334,17 +2279,29 @@
         }
       },
 
-      // 更新按钮状态
+      // 更新按钮状态 - 修复余额检查
       updateButtonState(enable = false) {
         const swapBtn = document.getElementById("swapBtn");
         const fromAmount = document.getElementById("fromAmount").value;
+        const amountInput = document.getElementById("fromAmount");
+        
+        // 检查余额是否足够
+        const balanceValid = this.checkBalance();
         
         if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
           swapBtn.disabled = true;
           swapBtn.innerText = isChinese ? "请输入数量" : "Enter Amount";
+          amountInput.classList.remove('invalid');
+        } else if (!balanceValid) {
+          swapBtn.disabled = true;
+          swapBtn.innerText = isChinese ? "余额不足" : "Insufficient Balance";
+          swapBtn.classList.add('invalid');
+          amountInput.classList.add('invalid');
         } else {
           swapBtn.disabled = !enable;
           swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
+          swapBtn.classList.remove('invalid');
+          amountInput.classList.remove('invalid');
         }
       },
 
@@ -2358,6 +2315,12 @@
         const fromAmount = document.getElementById("fromAmount").value;
         if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
           document.getElementById("gasEstimate").textContent = "0 CFX";
+          return;
+        }
+        
+        // 检查余额是否足够
+        if (!this.checkBalance()) {
+          document.getElementById("gasEstimate").textContent = "余额不足";
           return;
         }
         
@@ -2393,7 +2356,7 @@
         }
       },
 
-      // 执行交换
+      // 执行交换 - 修复二次确认问题
       async executeSwap() {
         if (!account) {
           UI.showAlert(isChinese ? "请先连接钱包" : "Please connect wallet first", 'warning');
@@ -2408,9 +2371,24 @@
           return;
         }
         
+        // 检查余额是否足够
+        if (!this.checkBalance()) {
+          UI.showAlert(isChinese ? "余额不足" : "Insufficient balance", 'warning');
+          return;
+        }
+        
         // 检查滑点
         if (fromToken === "LOM" && toToken === "CFX" && slippage < 5) {
           UI.showAlert(isChinese ? "请将滑点设置为5%以上" : "LOM to CFX swap requires higher slippage, please set to 5% or more", 'warning');
+          return;
+        }
+        
+        // 确认交易
+        const confirmMessage = isChinese ? 
+          `确认兑换 ${amt} ${fromToken} 为 ${toAmount} ${toToken}?\n\n滑点容差: ${slippage}%` : 
+          `Confirm swap ${amt} ${fromToken} for ${toAmount} ${toToken}?\n\nSlippage tolerance: ${slippage}%`;
+        
+        if (!confirm(confirmMessage)) {
           return;
         }
         
@@ -2685,6 +2663,15 @@
           return;
         }
         
+        // 确认交易
+        const confirmMessage = isChinese ? 
+          `确认添加流动性?\n\nCFX: ${document.getElementById("addCfx").value}\nLOM: ${document.getElementById("addLom").value}` : 
+          `Confirm add liquidity?\n\nCFX: ${document.getElementById("addCfx").value}\nLOM: ${document.getElementById("addLom").value}`;
+        
+        if (!confirm(confirmMessage)) {
+          return;
+        }
+        
         UI.showLoading(isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
         
         try {
@@ -2797,6 +2784,15 @@
 
       // 确认移除流动性
       async confirmRemoveLiquidity() {
+        // 确认交易
+        const confirmMessage = isChinese ? 
+          `确认移除 ${document.getElementById("removePercent").innerText} 流动性?\n\n预计获得:\n${document.getElementById("removeEstCfx").innerText} CFX\n${document.getElementById("removeEstLom").innerText} LOM` : 
+          `Confirm remove ${document.getElementById("removePercent").innerText} liquidity?\n\nEstimated:\n${document.getElementById("removeEstCfx").innerText} CFX\n${document.getElementById("removeEstLom").innerText} LOM`;
+        
+        if (!confirm(confirmMessage)) {
+          return;
+        }
+        
         UI.showLoading(isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
         
         try {
