@@ -3,94 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>龙脉DEX</title>
+  <title>龙脉DEX - 安全版</title>
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                 script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; 
+                 style-src 'self' 'unsafe-inline'; 
+                 img-src 'self' https://i.imgur.com data:;
+                 connect-src 'self' https://*.confluxrpc.com wss:;">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    /* 强制覆盖所有可能的交互状态样式 */
-*:active,
-*:focus,
-*:hover {
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  transform: none !important;
-  translate: 0 !important;
-  top: 0 !important;
-  left: 0 !important;
-  outline: 0 !important;
-  border-shadow: none !important; /* 部分框架特有属性 */
-}
-
-/* 针对按钮标签单独强化 */
-button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
-  &:active,
-  &:focus,
-  &:hover {
-    all: unset !important; /* 清除所有默认样式 */
-    /* 如需保留基本样式，可重新定义 */
-    display: inline-block;
-    cursor: pointer;
-  }
-}
-
-    /* 所有按钮点击时无位移、无阴影 */
-.btn:active, 
-.action:active, 
-.percent-btn:active, 
-.slip-btn:active,
-button:active {
-  transform: none !important; /* 取消浮动/位移效果 */
-  box-shadow: none !important; /* 取消点击阴影 */
-  -webkit-box-shadow: none !important;
-  position: relative !important; /* 防止定位导致的意外位移 */
-  top: 0 !important;
-  left: 0 !important;
-}
-
-/* 补充：按钮hover状态也确保无阴影（如果有） */
-.btn:hover,
-.action:hover,
-.percent-btn:hover,
-.slip-btn:hover,
-button:hover {
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-}
-
-    /* 强制清除所有元素的阴影和外发光 */
-* {
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  outline: none !important;
-  text-shadow: none !important;
-}
-
-    /* 清除所有元素的阴影和多余效果 */
-.btn, .action, .percent-btn, .slip-btn, .amount-input, .amount-display, .token-select {
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.amount-input:focus, .amount-display:focus, .token-select:focus {
-  border-color: var(--web3-accent);
-  box-shadow: none !important;
-}
-
-.btn:active, .action:active, .percent-btn:active, .slip-btn:active {
-  transform: translateY(0) !important;
-  box-shadow: none !important;
-}
-
-.swap-arrow {
-  box-shadow: none !important;
-}
-
-.swap-arrow:hover {
-  box-shadow: none !important;
-}
-
     /* 样式优化，消除长方形阴影 */
     :root {
       --web3-blue: #4361ee;
@@ -269,10 +190,10 @@ button:hover {
       padding: 4px 0;
       border-bottom: 1px solid rgba(76, 201, 240, 0.1);
     }
-    
     .asset-item:last-child {
       border-bottom: none;
     }
+    
     
     .asset-name {
       display: flex;
@@ -1114,36 +1035,19 @@ button:hover {
   border: 1px solid rgba(76, 201, 240, 0.3);
   transition: all 0.3s ease;
   color: var(--web3-light);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* 彻底清除阴影相关属性 */
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+   position: absolute;          /* 改为绝对定位 */
+  top: 50%;                    /* 垂直居中 */
+  left: 50%;                   /* 水平居中 */
+  transform: translate(-50%, -50%); /* 精确定位到中心 */
 }
-
-.swap-arrow:hover {
+  .swap-arrow:hover {
   background: rgba(76, 201, 240, 0.1);
   border-color: var(--web3-accent);
+  box-shadow: 0 4px 12px rgba(76, 201, 240, 0.2);
   color: var(--web3-accent);
   transform: translate(-50%, -50%) translateY(-2px);
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
 }
-
-   /* 按钮点击状态无阴影 */
-.btn:active, .action:active, .percent-btn:active, .slip-btn:active {
-  transform: translateY(0) !important;
-  box-shadow: none !important;
-}
-
-/* 输入框聚焦状态无阴影 */
-.amount-input:focus, .token-select:focus {
-  border-color: var(--web3-accent) !important;
-  box-shadow: none !important;
-}
- 
     /* 连接中状态 */
 #walletBtn:disabled {
     opacity: 0.7;
@@ -1163,7 +1067,83 @@ button:hover {
 }
 
   
-  .logo { 
+  /* 交易确认模态框 */
+.transaction-confirm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+    .confirm-content {
+  background: var(--web3-card);
+  border-radius: 20px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  text-align: center;
+}
+
+.transaction-details {
+  background: rgba(76, 201, 240, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid rgba(76, 201, 240, 0.2);
+  text-align: left;
+}
+
+.transaction-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.transaction-details .label {
+  color: #94a3b8;
+}
+
+.transaction-details .value {
+  color: var(--web3-light);
+  font-weight: 600;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.confirm-buttons button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#confirmCancel {
+  background: var(--web3-card);
+  color: var(--web3-light);
+  border: 1px solid rgba(76, 201, 240, 0.3);
+}
+
+#confirmProceed {
+  background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+  color: white;
+}
+
+.confirm-buttons button:hover {
+  transform: translateY(-2px);
+}
+    .logo { 
     font-size: 36px; 
   }
   
@@ -2433,7 +2413,8 @@ document.getElementById("walletBtn").onclick = async () => {
           account,
           deadline,
           {
-            value: amountCfx
+            value: amountCfx,
+            gasLimit: 400000
           }
         );
         
@@ -2701,17 +2682,17 @@ document.getElementById("walletBtn").onclick = async () => {
 
         let tx;
         if (fromToken === "CFX") {
-          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn});
+          tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(minOut, path, account, deadline, {value: amountIn, gasLimit:350000});
         } else {
           const tokenContract = getTokenContract(fromToken);
           const allowance = await tokenContract.allowance(account, ROUTER);
           if (allowance.lt(amountIn)) {
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "授权代币..." : "Approving token...");
-            const atx = await tokenContract.approve(ROUTER, ethers.constants.MaxUint256);
+            const atx = await tokenContract.approve(ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
             await atx.wait();
             document.getElementById("loadingText").innerHTML = '<span class="loading-spinner"></span>' + (isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
           }
-          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline,);
+          tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountIn, minOut, path, account, deadline, {gasLimit:350000});
         }
         await tx.wait();
         document.getElementById("loading").style.display = "none";
@@ -2821,7 +2802,10 @@ document.getElementById("walletBtn").onclick = async () => {
           0, 
           0, 
           account, 
-          deadline
+          deadline,
+          {
+            gasLimit: 400000
+          }
         );
         
         await tx.wait();
