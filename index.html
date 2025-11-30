@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>龙脉DEX - 安全版</title>
+  <title>龙脉DEX - 优化版</title>
   <meta http-equiv="Content-Security-Policy" 
         content="default-src 'self'; 
                  script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; 
@@ -92,12 +92,6 @@
       border-color: var(--web3-success) !important;
     }
     
-    .btn:hover {
-      background: rgba(76, 201, 240, 0.2);
-      border-color: var(--web3-accent);
-      transform: translateY(-2px);
-    }
-    
     .card {
       background: var(--web3-card);
       border-radius: 24px;
@@ -158,22 +152,21 @@
     
     .percentage-buttons {
       display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 16px;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-bottom: 10px;
     }
     
     .percent-btn {
       background: rgba(144, 224, 239, 0.1);
       border: 1px solid rgba(76, 201, 240, 0.3);
-      border-radius: 12px;
-      padding: 10px 0;
+      border-radius: 8px;
+      padding: 4px 8px;
       color: var(--web3-light);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      flex: 1;
       text-align: center;
     }
     
@@ -185,31 +178,31 @@
     
     .swap-container {
       position: relative;
-      padding: 20px 0;
+      padding: 16px 0;
     }
     
     .token-input-group {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
     
     .token-input-wrapper {
       background: rgba(76, 201, 240, 0.05);
       border-radius: 16px;
-      padding: 16px;
+      padding: 14px;
       border: 1px solid rgba(76, 201, 240, 0.2);
       transition: all 0.3s ease;
       position: relative;
-      min-height: 100px;
+      min-height: 90px;
     }
     
     .token-selector {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     
     .token-selector-left {
@@ -219,9 +212,26 @@
       flex: 1;
     }
     
+    .token-selector-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76, 201, 240, 0.1);
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      border-radius: 12px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .token-selector-btn:hover {
+      background: rgba(76, 201, 240, 0.2);
+      border-color: var(--web3-accent);
+    }
+    
     .token-logo {
-      width: 44px;
-      height: 44px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background-size: cover;
       background-position: center;
@@ -229,33 +239,24 @@
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 12px;
       flex-shrink: 0;
-      cursor: pointer;
-      border: 2px solid rgba(76, 201, 240, 0.3);
+      border: 1px solid rgba(76, 201, 240, 0.3);
     }
     
-    .token-select {
-      background: transparent;
-      border: 1px solid rgba(76, 201, 240, 0.3);
-      color: white;
+    .token-symbol {
+      font-weight: 600;
+      color: var(--web3-light);
       font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      outline: none;
-      padding: 6px 30px 6px 10px;
-      border-radius: 8px;
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      min-width: 120px;
-      max-width: 150px;
-      flex-shrink: 0;
+    }
+    
+    .token-dropdown-arrow {
+      font-size: 14px;
+      color: #94a3b8;
     }
     
     .token-balance {
-      font-size: 14px;
+      font-size: 12px;
       color: #94a3b8;
       text-align: right;
       white-space: nowrap;
@@ -273,13 +274,13 @@
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
       color: white;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
       text-align: right;
       width: 100%;
       outline: none;
-      padding: 12px 16px;
-      min-height: 60px;
+      padding: 10px 14px;
+      min-height: 50px;
       transition: all 0.3s ease;
     }
     
@@ -293,12 +294,12 @@
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
       color: #94a3b8;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
       text-align: right;
       width: 100%;
-      padding: 12px 16px;
-      min-height: 60px;
+      padding: 10px 14px;
+      min-height: 50px;
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -317,13 +318,13 @@
     
     .swap-arrow {
       background: var(--web3-card);
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
       border: 1px solid rgba(76, 201, 240, 0.3);
       transition: all 0.3s ease;
@@ -336,14 +337,13 @@
       border-color: var(--web3-accent);
       box-shadow: 0 4px 12px rgba(76, 201, 240, 0.2);
       color: var(--web3-accent);
-      transform: translateY(-2px);
     }
     
     .action {
       background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
       color: #fff;
       font-weight: 700;
-      padding: 16px;
+      padding: 14px;
       border: none;
       border-radius: 20px;
       width: 100%;
@@ -355,15 +355,10 @@
       overflow: hidden;
     }
     
-    .action:hover {
-      transform: translateY(-3px);
-    }
-    
     .action:disabled {
       background: #475569;
       color: #94a3b8;
       cursor: not-allowed;
-      transform: none;
     }
     
     .details-panel {
@@ -533,10 +528,6 @@
       transition: all 0.3s ease;
     }
     
-    .stat-item:hover {
-      transform: translateY(-3px);
-    }
-    
     .stat-label {
       font-size: 12px;
       color: #94a3b8;
@@ -560,10 +551,6 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-    }
-    
-    .position-item:hover {
-      transform: translateY(-3px);
     }
     
     .position-pair {
@@ -671,10 +658,6 @@
       display: inline-block;
     }
     
-    .stake-button:hover {
-      transform: translateY(-2px);
-    }
-    
     .risk-warning {
       background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
       border: 1px solid rgba(255, 209, 102, 0.3);
@@ -713,6 +696,8 @@
       width: 90%;
       max-width: 420px;
       border: 1px solid rgba(76, 201, 240, 0.3);
+      max-height: 80vh;
+      overflow-y: auto;
     }
     
     .token-row {
@@ -850,11 +835,6 @@
       transition: all 0.3s ease;
     }
     
-    .beautiful-alert-button:hover {
-      background: var(--web3-purple);
-      transform: translateY(-2px);
-    }
-    
     .loading-spinner {
       display: inline-block;
       width: 20px;
@@ -864,6 +844,101 @@
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
       margin-right: 10px;
+    }
+    
+    /* 代币选择器样式 */
+    .token-selector-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    
+    .token-selector-card {
+      background: var(--web3-card);
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 420px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .token-search {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(76, 201, 240, 0.05);
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    
+    .token-search:focus {
+      border-color: var(--web3-accent);
+    }
+    
+    .token-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .token-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .token-item:hover {
+      background: rgba(76, 201, 240, 0.1);
+    }
+    
+    .token-item-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+    
+    .token-item-info {
+      flex: 1;
+    }
+    
+    .token-item-symbol {
+      font-weight: 600;
+      color: var(--web3-light);
+      font-size: 16px;
+    }
+    
+    .token-item-name {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .token-item-balance {
+      font-size: 14px;
+      color: var(--web3-light);
+      font-weight: 600;
     }
     
     @keyframes fadeIn {
@@ -890,6 +965,21 @@
       from { opacity: 1; }
       to { opacity: 0; }
     }
+
+    /* Gas费用显示 */
+    .gas-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .gas-estimate {
+      color: var(--web3-light);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -911,30 +1001,24 @@
     <!-- 兑换页面 -->
     <div class="tab-content active" id="swapTab">
       <div class="card">
-        <div class="percentage-buttons">
-          <button class="percent-btn" data-percent="0.1">10%</button>
-          <button class="percent-btn" data-percent="0.25">25%</button>
-          <button class="percent-btn" data-percent="0.5">50%</button>
-          <button class="percent-btn" data-percent="0.75">75%</button>
-          <button class="percent-btn" data-percent="1">MAX</button>
-        </div>
-        
         <div class="swap-container">
           <!-- 上方输入框 -->
           <div class="token-input-group">
             <div class="token-input-wrapper">
               <div class="token-selector">
-                <div class="token-selector-left">
+                <div class="token-selector-btn" id="fromTokenSelector">
                   <div class="token-logo" id="fromTokenLogo" style="background-image: url('https://i.imgur.com/70cXbUI.jpeg');"></div>
-                  <select class="token-select" id="fromTokenSelect">
-                    <option value="CFX">CFX</option>
-                    <option value="LOM">LOM</option>
-                    <option value="AxCNH">AxCNH</option>
-                    <option value="USDT0">USDT0</option>
-                    <option value="CNHT0">CNHT0</option>
-                  </select>
+                  <div class="token-symbol" id="fromTokenSymbol">CFX</div>
+                  <div class="token-dropdown-arrow">▼</div>
                 </div>
                 <div class="token-balance"><span id="fromBal">0</span> 余额</div>
+              </div>
+              <div class="percentage-buttons">
+                <button class="percent-btn" data-percent="0.1">10%</button>
+                <button class="percent-btn" data-percent="0.25">25%</button>
+                <button class="percent-btn" data-percent="0.5">50%</button>
+                <button class="percent-btn" data-percent="0.75">75%</button>
+                <button class="percent-btn" data-percent="1">MAX</button>
               </div>
               <div class="token-amount">
                 <input class="amount-input" id="fromAmount" placeholder="0" type="number">
@@ -951,15 +1035,10 @@
           <div class="token-input-group">
             <div class="token-input-wrapper">
               <div class="token-selector">
-                <div class="token-selector-left">
+                <div class="token-selector-btn" id="toTokenSelector">
                   <div class="token-logo" id="toTokenLogo" style="background-image: url('https://i.imgur.com/HddyTrv.jpeg');"></div>
-                  <select class="token-select" id="toTokenSelect">
-                    <option value="LOM">LOM</option>
-                    <option value="CFX">CFX</option>
-                    <option value="AxCNH">AxCNH</option>
-                    <option value="USDT0">USDT0</option>
-                    <option value="CNHT0">CNHT0</option>
-                  </select>
+                  <div class="token-symbol" id="toTokenSymbol">LOM</div>
+                  <div class="token-dropdown-arrow">▼</div>
                 </div>
                 <div class="token-balance"><span id="toBal">0</span> 余额</div>
               </div>
@@ -967,6 +1046,12 @@
                 <div class="amount-display" id="toAmount">0</div>
               </div>
             </div>
+          </div>
+          
+          <!-- Gas费用估算 -->
+          <div class="gas-info">
+            <span class="detail-label">预估Gas费用</span>
+            <span class="gas-estimate" id="gasEstimate">计算中...</span>
           </div>
           
           <button class="action" id="swapBtn" disabled>请输入数量</button>
@@ -1143,6 +1228,19 @@
       </div>
     </div>
 
+    <!-- 代币选择器模态框 -->
+    <div class="token-selector-modal" id="tokenSelectorModal">
+      <div class="token-selector-card">
+        <h3 style="margin:0 0 16px;color:var(--web3-light)" id="tokenSelectorTitle">选择代币</h3>
+        
+        <input type="text" class="token-search" id="tokenSearch" placeholder="搜索代币名称或合约地址">
+        
+        <div class="token-list" id="tokenList">
+          <!-- 代币列表将在这里动态生成 -->
+        </div>
+      </div>
+    </div>
+
     <!-- 添加流动性模态框 -->
     <div class="modal" id="addModal">
       <div class="modal-card">
@@ -1293,6 +1391,46 @@
     let fromToken = "CFX";
     let toToken = "LOM";
     let refreshInterval;
+    let currentTokenSelector = null; // 当前正在选择的代币类型 ('from' 或 'to')
+
+    // ==================== 代币列表 ====================
+    const TOKEN_LIST = [
+      {
+        symbol: "CFX",
+        name: "Conflux",
+        address: APP_CONFIG.CONTRACTS.WCFX,
+        logo: APP_CONFIG.TOKEN_LOGOS.CFX,
+        decimals: 18
+      },
+      {
+        symbol: "LOM",
+        name: "Longmai",
+        address: APP_CONFIG.CONTRACTS.LOM,
+        logo: APP_CONFIG.TOKEN_LOGOS.LOM,
+        decimals: 18
+      },
+      {
+        symbol: "AxCNH",
+        name: "AxCNH",
+        address: APP_CONFIG.CONTRACTS.AxCNH,
+        logo: APP_CONFIG.TOKEN_LOGOS.AxCNH,
+        decimals: 18
+      },
+      {
+        symbol: "USDT0",
+        name: "Tether USD",
+        address: APP_CONFIG.CONTRACTS.USDT0,
+        logo: APP_CONFIG.TOKEN_LOGOS.USDT0,
+        decimals: 18
+      },
+      {
+        symbol: "CNHT0",
+        name: "CNH Token",
+        address: APP_CONFIG.CONTRACTS.CNHT0,
+        logo: APP_CONFIG.TOKEN_LOGOS.CNHT0,
+        decimals: 18
+      }
+    ];
 
     // ==================== 核心应用模块 ====================
     const AppCore = {
@@ -1305,7 +1443,7 @@
         this.updateAllTexts();
         this.initializeSecurity();
         
-        console.log("龙脉DEX初始化完成");
+        console.log("龙脉DEX优化版初始化完成");
       },
 
       // 设置事件监听器
@@ -1338,9 +1476,14 @@
         document.getElementById("confirmRemove").addEventListener("click", () => LiquidityModule.confirmRemoveLiquidity());
         document.getElementById("removeSlider").addEventListener("input", (e) => LiquidityModule.updateRemoveEstimate(e.target.value));
         
+        // 代币选择器
+        document.getElementById("fromTokenSelector").addEventListener("click", () => this.openTokenSelector('from'));
+        document.getElementById("toTokenSelector").addEventListener("click", () => this.openTokenSelector('to'));
+        document.getElementById("tokenSearch").addEventListener("input", (e) => this.filterTokens(e.target.value));
+        
         // 模态框关闭
         document.addEventListener("click", (e) => {
-          if (e.target.classList.contains("modal")) {
+          if (e.target.classList.contains("modal") || e.target.classList.contains("token-selector-modal")) {
             e.target.style.display = "none";
           }
         });
@@ -1382,34 +1525,135 @@
 
       // 设置代币选择器
       setupTokenSelectors() {
-        const fromSelect = document.getElementById("fromTokenSelect");
-        const toSelect = document.getElementById("toTokenSelect");
+        // 已移动到事件监听器中
+      },
+
+      // 打开代币选择器
+      openTokenSelector(type) {
+        currentTokenSelector = type;
+        const modal = document.getElementById("tokenSelectorModal");
+        modal.style.display = "flex";
+        document.getElementById("tokenSearch").value = "";
+        this.populateTokenList();
+      },
+
+      // 填充代币列表
+      populateTokenList(searchTerm = "") {
+        const tokenList = document.getElementById("tokenList");
+        tokenList.innerHTML = "";
         
-        fromSelect.addEventListener('change', function() {
-          fromToken = this.value;
-          if (fromToken === toToken) {
-            const options = Array.from(toSelect.options);
-            const differentToken = options.find(opt => opt.value !== fromToken);
-            if (differentToken) {
-              toToken = differentToken.value;
-              toSelect.value = toToken;
-            }
-          }
-          SwapModule.updateTokenDisplay();
+        const filteredTokens = TOKEN_LIST.filter(token => {
+          const term = searchTerm.toLowerCase();
+          return token.symbol.toLowerCase().includes(term) || 
+                 token.name.toLowerCase().includes(term) ||
+                 token.address.toLowerCase().includes(term);
         });
         
-        toSelect.addEventListener('change', function() {
-          toToken = this.value;
-          if (toToken === fromToken) {
-            const options = Array.from(fromSelect.options);
-            const differentToken = options.find(opt => opt.value !== toToken);
-            if (differentToken) {
-              fromToken = differentToken.value;
-              fromSelect.value = fromToken;
-            }
+        filteredTokens.forEach(token => {
+          const tokenItem = document.createElement("div");
+          tokenItem.className = "token-item";
+          tokenItem.innerHTML = `
+            <div class="token-item-logo" style="${token.logo ? `background-image: url('${token.logo}')` : 'background: linear-gradient(135deg, #4361ee, #7209b7)'}">
+              ${!token.logo ? token.symbol.charAt(0) : ''}
+            </div>
+            <div class="token-item-info">
+              <div class="token-item-symbol">${token.symbol}</div>
+              <div class="token-item-name">${token.name}</div>
+            </div>
+            <div class="token-item-balance" id="tokenBalance-${token.symbol}">0</div>
+          `;
+          
+          tokenItem.addEventListener("click", () => {
+            this.selectToken(token);
+          });
+          
+          tokenList.appendChild(tokenItem);
+          
+          // 更新代币余额
+          if (account) {
+            this.updateTokenBalance(token.symbol);
           }
-          SwapModule.updateTokenDisplay();
         });
+      },
+
+      // 更新代币余额
+      async updateTokenBalance(symbol) {
+        try {
+          let balance = "0";
+          switch(symbol) {
+            case "CFX":
+              if (provider && account) {
+                const cfxBal = await provider.getBalance(account);
+                balance = parseFloat(ethers.utils.formatEther(cfxBal)).toFixed(6);
+              }
+              break;
+            case "LOM":
+              if (lom && account) {
+                const lomBal = await lom.balanceOf(account);
+                balance = parseFloat(ethers.utils.formatUnits(lomBal, 18)).toFixed(6);
+              }
+              break;
+            case "AxCNH":
+              if (axcnh && account) {
+                const axcnhBal = await axcnh.balanceOf(account);
+                balance = parseFloat(ethers.utils.formatUnits(axcnhBal, 18)).toFixed(6);
+              }
+              break;
+            case "USDT0":
+              if (usdt0 && account) {
+                const usdt0Bal = await usdt0.balanceOf(account);
+                balance = parseFloat(ethers.utils.formatUnits(usdt0Bal, 18)).toFixed(6);
+              }
+              break;
+            case "CNHT0":
+              if (cnht0 && account) {
+                const cnht0Bal = await cnht0.balanceOf(account);
+                balance = parseFloat(ethers.utils.formatUnits(cnht0Bal, 18)).toFixed(6);
+              }
+              break;
+          }
+          
+          const balanceElement = document.getElementById(`tokenBalance-${symbol}`);
+          if (balanceElement) {
+            balanceElement.textContent = balance;
+          }
+        } catch (error) {
+          console.error(`更新${symbol}余额失败:`, error);
+        }
+      },
+
+      // 选择代币
+      selectToken(token) {
+        if (currentTokenSelector === 'from') {
+          fromToken = token.symbol;
+          document.getElementById("fromTokenSymbol").textContent = token.symbol;
+          document.getElementById("fromTokenLogo").style.backgroundImage = token.logo ? `url('${token.logo}')` : '';
+          if (!token.logo) {
+            document.getElementById("fromTokenLogo").style.background = 'linear-gradient(135deg, #4361ee, #7209b7)';
+            document.getElementById("fromTokenLogo").textContent = token.symbol.charAt(0);
+          } else {
+            document.getElementById("fromTokenLogo").textContent = '';
+          }
+        } else if (currentTokenSelector === 'to') {
+          toToken = token.symbol;
+          document.getElementById("toTokenSymbol").textContent = token.symbol;
+          document.getElementById("toTokenLogo").style.backgroundImage = token.logo ? `url('${token.logo}')` : '';
+          if (!token.logo) {
+            document.getElementById("toTokenLogo").style.background = 'linear-gradient(135deg, #ffd166, #ffb347)';
+            document.getElementById("toTokenLogo").textContent = token.symbol.charAt(0);
+          } else {
+            document.getElementById("toTokenLogo").textContent = '';
+          }
+        }
+        
+        document.getElementById("tokenSelectorModal").style.display = "none";
+        SwapModule.updateTokenDisplay();
+        SwapModule.updateOutput();
+      },
+
+      // 过滤代币
+      filterTokens(searchTerm) {
+        this.populateTokenList(searchTerm);
       },
 
       // 切换语言
@@ -1442,6 +1686,9 @@
         document.getElementById("minReceivedLabel").innerText = isChinese ? "最低收到" : "Minimum Received";
         document.getElementById("priceImpactLabel").innerText = isChinese ? "价格影响" : "Price Impact";
         document.getElementById("routeLabel").innerText = isChinese ? "路由" : "Route";
+        
+        // 代币选择器
+        document.getElementById("tokenSelectorTitle").innerText = isChinese ? "选择代币" : "Select Token";
         
         // 流动性页面
         document.getElementById("addBtn").innerText = isChinese ? "添加流动性" : "Add Liquidity";
@@ -1612,6 +1859,9 @@
           // 更新代币显示
           SwapModule.updateTokenDisplay();
           SwapModule.updateOutput();
+          
+          // 更新代币选择器中的余额
+          AppCore.populateTokenList();
           
         } catch (error) {
           console.error("刷新数据失败:", error);
@@ -1833,46 +2083,41 @@
         
         // 更新路由信息
         document.getElementById("routeInfo").innerText = `${fromToken} → ${toToken}`;
-        
-        // 更新代币Logo
-        this.updateTokenLogos();
       },
 
-      // 更新代币Logo
-      updateTokenLogos() {
+      // 反向代币
+      reverseTokens() {
+        const tempToken = fromToken;
+        fromToken = toToken;
+        toToken = tempToken;
+        
+        document.getElementById("fromTokenSymbol").textContent = fromToken;
+        document.getElementById("toTokenSymbol").textContent = toToken;
+        
+        // 更新代币Logo
         const fromLogo = document.getElementById("fromTokenLogo");
         const toLogo = document.getElementById("toTokenLogo");
         
-        if (APP_CONFIG.TOKEN_LOGOS[fromToken]) {
-          fromLogo.style.backgroundImage = `url('${APP_CONFIG.TOKEN_LOGOS[fromToken]}')`;
-          fromLogo.textContent = "";
+        const fromTokenData = TOKEN_LIST.find(t => t.symbol === fromToken);
+        const toTokenData = TOKEN_LIST.find(t => t.symbol === toToken);
+        
+        if (fromTokenData && fromTokenData.logo) {
+          fromLogo.style.backgroundImage = `url('${fromTokenData.logo}')`;
+          fromLogo.textContent = '';
         } else {
           fromLogo.style.backgroundImage = '';
           fromLogo.style.background = 'linear-gradient(135deg, #4361ee, #7209b7)';
           fromLogo.textContent = fromToken.charAt(0);
         }
         
-        if (APP_CONFIG.TOKEN_LOGOS[toToken]) {
-          toLogo.style.backgroundImage = `url('${APP_CONFIG.TOKEN_LOGOS[toToken]}')`;
-          toLogo.textContent = "";
+        if (toTokenData && toTokenData.logo) {
+          toLogo.style.backgroundImage = `url('${toTokenData.logo}')`;
+          toLogo.textContent = '';
         } else {
           toLogo.style.backgroundImage = '';
           toLogo.style.background = 'linear-gradient(135deg, #ffd166, #ffb347)';
           toLogo.textContent = toToken.charAt(0);
         }
-      },
-
-      // 反向代币
-      reverseTokens() {
-        const fromSelect = document.getElementById("fromTokenSelect");
-        const toSelect = document.getElementById("toTokenSelect");
-        
-        const tempToken = fromToken;
-        fromToken = toToken;
-        toToken = tempToken;
-        
-        fromSelect.value = fromToken;
-        toSelect.value = toToken;
         
         // 交换输入值
         const fromAmount = document.getElementById("fromAmount").value;
@@ -1899,6 +2144,7 @@
         if (!amt || !router) { 
           document.getElementById("toAmount").innerText = "0";
           this.updateButtonState();
+          this.updateGasEstimate();
           return; 
         }
         
@@ -1914,9 +2160,11 @@
           document.getElementById("minReceived").innerText = parseFloat(ethers.utils.formatUnits(minOut, 18)).toFixed(6) + " " + toToken;
           
           this.updateButtonState(true);
+          this.updateGasEstimate();
         } catch { 
           document.getElementById("toAmount").innerText = "--";
           this.updateButtonState();
+          this.updateGasEstimate();
         }
       },
 
@@ -1968,6 +2216,51 @@
         }
       },
 
+      // 更新Gas费用估算
+      async updateGasEstimate() {
+        if (!account || !provider || !router) {
+          document.getElementById("gasEstimate").textContent = "未连接钱包";
+          return;
+        }
+        
+        const fromAmount = document.getElementById("fromAmount").value;
+        if (!fromAmount || fromAmount === "0" || fromAmount === "" || parseFloat(fromAmount) <= 0) {
+          document.getElementById("gasEstimate").textContent = "0 CFX";
+          return;
+        }
+        
+        try {
+          const amountIn = ethers.utils.parseUnits(fromAmount, 18);
+          const path = this.getSwapPath();
+          const amounts = await router.getAmountsOut(amountIn, path);
+          const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+          const deadline = Math.floor(Date.now()/1000) + 1200;
+
+          let gasEstimate;
+          if (fromToken === "CFX") {
+            gasEstimate = await router.estimateGas.swapExactETHForTokensSupportingFeeOnTransferTokens(
+              minOut, path, account, deadline, 
+              {value: amountIn}
+            );
+          } else {
+            const tokenContract = this.getTokenContract(fromToken);
+            gasEstimate = await router.estimateGas.swapExactTokensForETHSupportingFeeOnTransferTokens(
+              amountIn, minOut, path, account, deadline
+            );
+          }
+          
+          // 获取当前Gas价格
+          const gasPrice = await provider.getGasPrice();
+          const gasCost = gasEstimate.mul(gasPrice);
+          const gasCostInCfx = ethers.utils.formatEther(gasCost);
+          
+          document.getElementById("gasEstimate").textContent = `${parseFloat(gasCostInCfx).toFixed(6)} CFX`;
+        } catch (error) {
+          console.error("Gas估算失败:", error);
+          document.getElementById("gasEstimate").textContent = "计算失败";
+        }
+      },
+
       // 执行交换
       async executeSwap() {
         if (!account) {
@@ -2003,20 +2296,19 @@
           if (fromToken === "CFX") {
             tx = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(
               minOut, path, account, deadline, 
-              {value: amountIn, gasLimit:350000}
+              {value: amountIn}
             );
           } else {
             const tokenContract = this.getTokenContract(fromToken);
             const allowance = await tokenContract.allowance(account, APP_CONFIG.CONTRACTS.ROUTER);
             if (allowance.lt(amountIn)) {
               UI.showLoading(isChinese ? "授权代币..." : "Approving token...");
-              const atx = await tokenContract.approve(APP_CONFIG.CONTRACTS.ROUTER, ethers.constants.MaxUint256, {gasLimit:150000});
+              const atx = await tokenContract.approve(APP_CONFIG.CONTRACTS.ROUTER, ethers.constants.MaxUint256);
               await atx.wait();
               UI.showLoading(isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
             }
             tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-              amountIn, minOut, path, account, deadline, 
-              {gasLimit:350000}
+              amountIn, minOut, path, account, deadline
             );
           }
           await tx.wait();
@@ -2304,8 +2596,7 @@
             account,
             deadline,
             {
-              value: amountCfx,
-              gasLimit: 400000
+              value: amountCfx
             }
           );
           
@@ -2404,10 +2695,7 @@
             0, 
             0, 
             account, 
-            deadline,
-            {
-              gasLimit: 400000
-            }
+            deadline
           );
           
           await tx.wait();
