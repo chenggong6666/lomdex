@@ -82,14 +82,13 @@
       font-size: 14px;
       min-width: 40px;
       height: 35px;
-      /* 添加文本溢出处理 */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     
     #walletBtn {
-      min-width: 90px;
+      min-width: 120px;
       max-width: 120px;
       flex-shrink: 0;
     }
@@ -209,7 +208,7 @@
       border: 1px solid rgba(76, 201, 240, 0.2);
       transition: all 0.3s ease;
       position: relative;
-      min-height: 90px;
+      min-height: 80px; /* 减小高度 */
     }
     
     /* 优化代币选择器布局，更紧凑 */
@@ -234,10 +233,9 @@
       background: rgba(76, 201, 240, 0.1);
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
-      padding: 6px 10px; /* 减小内边距使更紧凑 */
+      padding: 6px 10px;
       cursor: pointer;
       transition: all 0.2s ease;
-      /* 确保内容紧凑 */
       min-width: 0;
       max-width: 120px;
     }
@@ -248,8 +246,8 @@
     }
     
     .token-logo {
-      width: 24px; /* 减小尺寸 */
-      height: 24px; /* 减小尺寸 */
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background-size: cover;
       background-position: center;
@@ -257,7 +255,7 @@
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 11px; /* 减小字体 */
+      font-size: 11px;
       flex-shrink: 0;
       border: 1px solid rgba(76, 201, 240, 0.3);
     }
@@ -265,11 +263,11 @@
     .token-symbol {
       font-weight: 600;
       color: var(--web3-light);
-      font-size: 14px; /* 减小字体 */
+      font-size: 14px;
     }
     
     .token-dropdown-arrow {
-      font-size: 12px; /* 减小字体 */
+      font-size: 12px;
       color: #94a3b8;
     }
     
@@ -291,18 +289,19 @@
       margin-top: 30px;
     }
     
+    /* 优化输入框高度 */
     .amount-input {
       background: transparent;
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
       color: white;
-      font-size: 24px;
+      font-size: 20px; /* 减小字体 */
       font-weight: bold;
       text-align: right;
       width: 100%;
       outline: none;
-      padding: 10px 14px;
-      min-height: 50px;
+      padding: 8px 12px; /* 减小内边距 */
+      min-height: 42px; /* 减小高度 */
       transition: all 0.3s ease;
     }
     
@@ -321,12 +320,12 @@
       border: 1px solid rgba(76, 201, 240, 0.3);
       border-radius: 12px;
       color: #94a3b8;
-      font-size: 24px;
+      font-size: 20px; /* 减小字体 */
       font-weight: bold;
       text-align: right;
       width: 100%;
-      padding: 10px 14px;
-      min-height: 50px;
+      padding: 8px 12px; /* 减小内边距 */
+      min-height: 42px; /* 减小高度 */
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -423,6 +422,8 @@
       color: var(--web3-light);
       font-weight: 600;
       text-align: right;
+      word-break: break-word;
+      max-width: 60%;
     }
     
     .slippage-section {
@@ -558,6 +559,10 @@
       border-radius: 12px;
       border: 1px solid rgba(76, 201, 240, 0.2);
       transition: all 0.3s ease;
+      min-height: 70px; /* 固定高度 */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     
     .stat-label {
@@ -567,9 +572,10 @@
     }
     
     .stat-value {
-      font-size: 18px;
+      font-size: 16px; /* 减小字体 */
       font-weight: 600;
       color: var(--web3-light);
+      word-break: break-word;
     }
     
     .position-item {
@@ -755,7 +761,7 @@
     }
     
     .input {
-      font-size: 28px;
+      font-size: 24px; /* 减小字体 */
       background: none;
       border: none;
       color: #fff;
@@ -834,6 +840,11 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.3s ease;
+    }
+    
+    .beautiful-alert-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
     }
     
     .loading-spinner {
@@ -1035,6 +1046,137 @@
       align-items: center;
       gap: 8px;
     }
+    
+    /* 确认交易美化界面 */
+    .confirm-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    
+    .confirm-card {
+      background: var(--web3-card);
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid rgba(76, 201, 240, 0.3);
+      text-align: center;
+    }
+    
+    .confirm-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--web3-light);
+      margin-bottom: 16px;
+    }
+    
+    .confirm-content {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    
+    .confirm-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(76, 201, 240, 0.2);
+    }
+    
+    .confirm-label {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    
+    .confirm-value {
+      color: var(--web3-light);
+      font-weight: 600;
+      font-size: 14px;
+      text-align: right;
+    }
+    
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .confirm-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .confirm-cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .confirm-ok {
+      background: linear-gradient(90deg, var(--web3-blue), var(--web3-purple));
+      color: white;
+    }
+    
+    /* 移动端适配 */
+    @media (max-width: 480px) {
+      .header {
+        padding: 0 5px;
+      }
+      
+      .logo {
+        font-size: 32px;
+      }
+      
+      .card {
+        padding: 14px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .position-details {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .detail-value {
+        max-width: 50%;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .logo {
+        font-size: 28px;
+      }
+      
+      .tab-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+      
+      .token-input-wrapper {
+        padding: 12px;
+        min-height: 75px;
+      }
+      
+      .amount-input, .amount-display {
+        font-size: 18px;
+        min-height: 38px;
+        padding: 6px 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1098,7 +1240,7 @@
                 <div class="token-balance"><span id="toBal">0</span> 余额</div>
               </div>
               <div class="token-amount">
-                <div class="amount-display" id="toAmount">0</div>
+                <input class="amount-input" id="toAmount" placeholder="0" type="number">
               </div>
             </div>
           </div>
@@ -1365,6 +1507,20 @@
       </div>
     </div>
 
+    <!-- 确认交易模态框 -->
+    <div class="confirm-modal" id="confirmModal">
+      <div class="confirm-card">
+        <div class="confirm-title" id="confirmModalTitle">确认交易</div>
+        <div class="confirm-content" id="confirmModalContent">
+          <!-- 内容将通过JS动态填充 -->
+        </div>
+        <div class="confirm-buttons">
+          <button class="confirm-btn confirm-cancel" id="confirmCancel">取消</button>
+          <button class="confirm-btn confirm-ok" id="confirmOk">确认</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 等待提示 -->
     <div id="loading" style="display:none">
       <div id="loadingText">请稍等区块确认中</div>
@@ -1507,6 +1663,7 @@
         
         // 兑换相关
         document.getElementById("fromAmount").addEventListener("input", () => SwapModule.updateOutput());
+        document.getElementById("toAmount").addEventListener("input", () => SwapModule.updateInput());
         document.getElementById("reverse").addEventListener("click", () => SwapModule.reverseTokens());
         document.getElementById("swapBtn").addEventListener("click", () => SwapModule.executeSwap());
         
@@ -1532,9 +1689,14 @@
         document.getElementById("toTokenSelector").addEventListener("click", () => this.openTokenSelector('to'));
         document.getElementById("tokenSearch").addEventListener("input", (e) => this.filterTokens(e.target.value));
         
+        // 确认交易模态框
+        document.getElementById("confirmCancel").addEventListener("click", () => {
+          document.getElementById("confirmModal").style.display = "none";
+        });
+        
         // 模态框关闭
         document.addEventListener("click", (e) => {
-          if (e.target.classList.contains("modal") || e.target.classList.contains("token-selector-modal")) {
+          if (e.target.classList.contains("modal") || e.target.classList.contains("token-selector-modal") || e.target.classList.contains("confirm-modal")) {
             e.target.style.display = "none";
           }
         });
@@ -1719,6 +1881,8 @@
           logoElement.style.backgroundImage = `url('${token.logo}')`;
           logoElement.textContent = '';
           logoElement.style.background = 'transparent'; // 清除默认背景
+          logoElement.style.backgroundSize = 'cover';
+          logoElement.style.backgroundPosition = 'center';
         } else {
           logoElement.style.backgroundImage = '';
           logoElement.style.background = type === 'from' ? 
@@ -2039,7 +2203,7 @@
         
         // 重置兑换页面
         document.getElementById("fromAmount").value = "";
-        document.getElementById("toAmount").innerText = "0";
+        document.getElementById("toAmount").value = "";
         SwapModule.updateButtonState();
         document.getElementById("price").innerText = "0";
         document.getElementById("minReceived").innerText = "0 LOM";
@@ -2171,17 +2335,14 @@
         
         // 交换输入值
         const fromAmount = document.getElementById("fromAmount").value;
-        const toAmount = document.getElementById("toAmount").innerText;
+        const toAmount = document.getElementById("toAmount").value;
         
         if (fromAmount && fromAmount !== "0" && fromAmount !== "") {
-          document.getElementById("fromAmount").value = "";
-          setTimeout(() => {
-            document.getElementById("fromAmount").value = toAmount;
-            this.updateOutput();
-          }, 0);
+          document.getElementById("fromAmount").value = toAmount;
+          this.updateOutput();
         } else {
           document.getElementById("fromAmount").value = "";
-          document.getElementById("toAmount").innerText = "0";
+          document.getElementById("toAmount").value = "";
         }
         
         this.updateTokenDisplay();
@@ -2201,7 +2362,7 @@
       async updateOutput() {
         const amt = document.getElementById("fromAmount").value;
         if (!amt || !router) { 
-          document.getElementById("toAmount").innerText = "0";
+          document.getElementById("toAmount").value = "0";
           this.updateButtonState();
           this.updateGasEstimate();
           return; 
@@ -2210,7 +2371,7 @@
         // 检查余额是否足够
         const balanceValid = this.checkBalance();
         if (!balanceValid) {
-          document.getElementById("toAmount").innerText = "0";
+          document.getElementById("toAmount").value = "0";
           this.updateButtonState();
           this.updateGasEstimate();
           return;
@@ -2221,7 +2382,7 @@
           const path = this.getSwapPath();
           const amounts = await router.getAmountsOut(amountIn, path);
           const out = ethers.utils.formatUnits(amounts[1], 18);
-          document.getElementById("toAmount").innerText = parseFloat(out).toFixed(6);
+          document.getElementById("toAmount").value = parseFloat(out).toFixed(6);
           
           // 计算最低收到数量
           const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
@@ -2230,7 +2391,39 @@
           this.updateButtonState(true);
           this.updateGasEstimate();
         } catch { 
-          document.getElementById("toAmount").innerText = "--";
+          document.getElementById("toAmount").value = "--";
+          this.updateButtonState();
+          this.updateGasEstimate();
+        }
+      },
+
+      // 更新输入
+      async updateInput() {
+        const amt = document.getElementById("toAmount").value;
+        if (!amt || !router) { 
+          document.getElementById("fromAmount").value = "0";
+          this.updateButtonState();
+          this.updateGasEstimate();
+          return; 
+        }
+        
+        try {
+          const amountOut = ethers.utils.parseUnits(amt, 18);
+          const path = this.getSwapPath();
+          // 简化计算 - 实际应该使用getAmountsIn
+          const amounts = await router.getAmountsOut(ethers.utils.parseUnits("1", 18), path);
+          const rate = parseFloat(ethers.utils.formatUnits(amounts[1], 18));
+          const input = parseFloat(amt) / rate;
+          document.getElementById("fromAmount").value = input.toFixed(6);
+          
+          // 计算最低收到数量
+          const minOut = amountOut.mul(Math.floor((1000 - slippage*10))).div(1000);
+          document.getElementById("minReceived").innerText = parseFloat(ethers.utils.formatUnits(minOut, 18)).toFixed(6) + " " + toToken;
+          
+          this.updateButtonState(true);
+          this.updateGasEstimate();
+        } catch { 
+          document.getElementById("fromAmount").value = "--";
           this.updateButtonState();
           this.updateGasEstimate();
         }
@@ -2357,6 +2550,50 @@
         }
       },
 
+      // 显示确认交易模态框
+      showConfirmModal(type, details) {
+        return new Promise((resolve) => {
+          const modal = document.getElementById("confirmModal");
+          const title = document.getElementById("confirmModalTitle");
+          const content = document.getElementById("confirmModalContent");
+          const cancelBtn = document.getElementById("confirmCancel");
+          const okBtn = document.getElementById("confirmOk");
+          
+          // 设置标题
+          if (type === 'swap') {
+            title.innerText = isChinese ? "确认兑换" : "Confirm Swap";
+          } else if (type === 'add') {
+            title.innerText = isChinese ? "确认添加流动性" : "Confirm Add Liquidity";
+          } else if (type === 'remove') {
+            title.innerText = isChinese ? "确认移除流动性" : "Confirm Remove Liquidity";
+          }
+          
+          // 设置内容
+          content.innerHTML = details;
+          
+          // 设置按钮文本
+          cancelBtn.innerText = isChinese ? "取消" : "Cancel";
+          okBtn.innerText = isChinese ? "确认" : "Confirm";
+          
+          // 显示模态框
+          modal.style.display = "flex";
+          
+          // 设置事件监听器
+          const handleConfirm = () => {
+            modal.style.display = "none";
+            resolve(true);
+          };
+          
+          const handleCancel = () => {
+            modal.style.display = "none";
+            resolve(false);
+          };
+          
+          okBtn.onclick = handleConfirm;
+          cancelBtn.onclick = handleCancel;
+        });
+      },
+
       // 执行交换 - 修复二次确认问题
       async executeSwap() {
         if (!account) {
@@ -2365,7 +2602,7 @@
         }
         
         const amt = document.getElementById("fromAmount").value;
-        const toAmount = document.getElementById("toAmount").innerText;
+        const toAmount = document.getElementById("toAmount").value;
         
         if (!amt || amt === "0" || amt === "" || parseFloat(amt) <= 0) {
           UI.showAlert(isChinese ? "请输入有效的兑换数量" : "Please enter a valid amount", 'info');
@@ -2384,12 +2621,57 @@
           return;
         }
         
-        // 确认交易
-        const confirmMessage = isChinese ? 
-          `确认兑换 ${amt} ${fromToken} 为 ${toAmount} ${toToken}?\n\n滑点容差: ${slippage}%` : 
-          `Confirm swap ${amt} ${fromToken} for ${toAmount} ${toToken}?\n\nSlippage tolerance: ${slippage}%`;
+        // 美化确认交易界面
+        const confirmDetails = `
+          <div class="confirm-row">
+            <span class="confirm-label">兑换:</span>
+            <span class="confirm-value">${amt} ${fromToken}</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">获得:</span>
+            <span class="confirm-value">${toAmount} ${toToken}</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">滑点容差:</span>
+            <span class="confirm-value">${slippage}%</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">预估Gas:</span>
+            <span class="confirm-value" id="confirmGasEstimate">计算中...</span>
+          </div>
+        `;
         
-        if (!confirm(confirmMessage)) {
+        // 更新Gas估算
+        try {
+          const amountIn = ethers.utils.parseUnits(amt, 18);
+          const path = this.getSwapPath();
+          const amounts = await router.getAmountsOut(amountIn, path);
+          const minOut = amounts[1].mul(Math.floor((1000 - slippage*10))).div(1000);
+          const deadline = Math.floor(Date.now()/1000) + 1200;
+
+          let gasEstimate;
+          if (fromToken === "CFX") {
+            gasEstimate = await router.estimateGas.swapExactETHForTokensSupportingFeeOnTransferTokens(
+              minOut, path, account, deadline, 
+              {value: amountIn}
+            );
+          } else {
+            const tokenContract = this.getTokenContract(fromToken);
+            gasEstimate = await router.estimateGas.swapExactTokensForETHSupportingFeeOnTransferTokens(
+              amountIn, minOut, path, account, deadline
+            );
+          }
+          
+          const gasPrice = await provider.getGasPrice();
+          const gasCost = gasEstimate.mul(gasPrice);
+          const gasCostInCfx = ethers.utils.formatEther(gasCost);
+          document.getElementById("confirmGasEstimate").textContent = `${parseFloat(gasCostInCfx).toFixed(6)} CFX`;
+        } catch (error) {
+          document.getElementById("confirmGasEstimate").textContent = "计算失败";
+        }
+        
+        const confirmed = await this.showConfirmModal('swap', confirmDetails);
+        if (!confirmed) {
           return;
         }
         
@@ -2431,6 +2713,7 @@
           
           UI.showAlert(successMessage, 'success');
           document.getElementById("fromAmount").value = "";
+          document.getElementById("toAmount").value = "";
           DataManager.refreshAll();
           this.updateButtonState();
         } catch (e) { 
@@ -2664,21 +2947,37 @@
           return;
         }
         
-        // 确认交易
-        const confirmMessage = isChinese ? 
-          `确认添加流动性?\n\nCFX: ${document.getElementById("addCfx").value}\nLOM: ${document.getElementById("addLom").value}` : 
-          `Confirm add liquidity?\n\nCFX: ${document.getElementById("addCfx").value}\nLOM: ${document.getElementById("addLom").value}`;
+        // 美化确认交易界面
+        const cfxAmt = document.getElementById("addCfx").value;
+        const lomAmt = document.getElementById("addLom").value;
         
-        if (!confirm(confirmMessage)) {
+        const confirmDetails = `
+          <div class="confirm-row">
+            <span class="confirm-label">添加 CFX:</span>
+            <span class="confirm-value">${cfxAmt}</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">添加 LOM:</span>
+            <span class="confirm-value">${lomAmt}</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">当前比例:</span>
+            <span class="confirm-value">1 CFX = ${currentRatio.toFixed(6)} LOM</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">滑点容差:</span>
+            <span class="confirm-value">${slippage}%</span>
+          </div>
+        `;
+        
+        const confirmed = await SwapModule.showConfirmModal('add', confirmDetails);
+        if (!confirmed) {
           return;
         }
         
         UI.showLoading(isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
         
         try {
-          const cfxAmt = document.getElementById("addCfx").value;
-          const lomAmt = document.getElementById("addLom").value;
-          
           const cfxBalance = parseFloat(document.getElementById("addCfxBal").innerText);
           const lomBalance = parseFloat(document.getElementById("addLomBal").innerText);
           
@@ -2785,19 +3084,34 @@
 
       // 确认移除流动性
       async confirmRemoveLiquidity() {
-        // 确认交易
-        const confirmMessage = isChinese ? 
-          `确认移除 ${document.getElementById("removePercent").innerText} 流动性?\n\n预计获得:\n${document.getElementById("removeEstCfx").innerText} CFX\n${document.getElementById("removeEstLom").innerText} LOM` : 
-          `Confirm remove ${document.getElementById("removePercent").innerText} liquidity?\n\nEstimated:\n${document.getElementById("removeEstCfx").innerText} CFX\n${document.getElementById("removeEstLom").innerText} LOM`;
+        // 美化确认交易界面
+        const percent = document.getElementById("removeSlider").value;
+        const cfxEst = document.getElementById("removeEstCfx").innerText;
+        const lomEst = document.getElementById("removeEstLom").innerText;
         
-        if (!confirm(confirmMessage)) {
+        const confirmDetails = `
+          <div class="confirm-row">
+            <span class="confirm-label">移除比例:</span>
+            <span class="confirm-value">${percent}%</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">预计获得 CFX:</span>
+            <span class="confirm-value">${cfxEst}</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">预计获得 LOM:</span>
+            <span class="confirm-value">${lomEst}</span>
+          </div>
+        `;
+        
+        const confirmed = await SwapModule.showConfirmModal('remove', confirmDetails);
+        if (!confirmed) {
           return;
         }
         
         UI.showLoading(isChinese ? "等待区块链确认中" : "Waiting for confirmation...");
         
         try {
-          const percent = document.getElementById("removeSlider").value;
           const lpBal = await pair.balanceOf(account);
           const liquidity = lpBal.mul(percent).div(100);
           
