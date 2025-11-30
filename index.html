@@ -43,6 +43,17 @@
       width: 100%;
       max-width: 480px;
     }
+  btn, .action, .percent-btn, .slip-btn, button {
+   border-radius: var(--btn-radius, 8px) !important; /* 使用统一圆角变量，或直接写具体值如8px */
+   overflow: hidden; /* 防止内容溢出影响圆角 */
+  }
+  /* 修复阴影直角问题 - 让阴影弧度与按钮圆角一致 */
+ .btn:active, .action:active, .percent-btn:active, .slip-btn:active, button:active {
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; /* 示例阴影，可根据实际调整 */
+   border-radius: inherit !important; /* 继承按钮本身的圆角 */
+   /* 若仍有直角，可手动指定与按钮相同的圆角值 */
+   /* border-radius: 8px !important; */
+   }
     
     /* 修复顶部按钮自适应问题 */
     .header {
