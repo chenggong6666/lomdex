@@ -1061,19 +1061,36 @@
   border: 1px solid rgba(76, 201, 240, 0.3);
   transition: all 0.3s ease;
   color: var(--web3-light);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-   position: absolute;          /* 改为绝对定位 */
-  top: 50%;                    /* 垂直居中 */
-  left: 50%;                   /* 水平居中 */
-  transform: translate(-50%, -50%); /* 精确定位到中心 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* 彻底清除阴影相关属性 */
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
-  .swap-arrow:hover {
+
+.swap-arrow:hover {
   background: rgba(76, 201, 240, 0.1);
   border-color: var(--web3-accent);
-  box-shadow: 0 4px 12px rgba(76, 201, 240, 0.2);
   color: var(--web3-accent);
   transform: translate(-50%, -50%) translateY(-2px);
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
+
+   /* 按钮点击状态无阴影 */
+.btn:active, .action:active, .percent-btn:active, .slip-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+/* 输入框聚焦状态无阴影 */
+.amount-input:focus, .token-select:focus {
+  border-color: var(--web3-accent) !important;
+  box-shadow: none !important;
+}
+ 
     /* 连接中状态 */
 #walletBtn:disabled {
     opacity: 0.7;
