@@ -6,6 +6,30 @@
   <title>龙脉DEX</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
+    /* 所有按钮点击时无位移、无阴影 */
+.btn:active, 
+.action:active, 
+.percent-btn:active, 
+.slip-btn:active,
+button:active {
+  transform: none !important; /* 取消浮动/位移效果 */
+  box-shadow: none !important; /* 取消点击阴影 */
+  -webkit-box-shadow: none !important;
+  position: relative !important; /* 防止定位导致的意外位移 */
+  top: 0 !important;
+  left: 0 !important;
+}
+
+/* 补充：按钮hover状态也确保无阴影（如果有） */
+.btn:hover,
+.action:hover,
+.percent-btn:hover,
+.slip-btn:hover,
+button:hover {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
     /* 强制清除所有元素的阴影和外发光 */
 * {
   box-shadow: none !important;
