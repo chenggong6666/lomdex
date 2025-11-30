@@ -1525,27 +1525,8 @@
   </div>
 <div class="footer" id="footerText">龙脉 DEX · Conflux eSpace</div>
   </div>
-
-  <!-- 高级别安全防护提醒 -->
-  <div class="security-alert" id="securityAlert">
-    <div class="security-alert-content">
-      <div class="security-alert-icon">🛑</div>
-      <div class="security-alert-title">安全防护提醒</div>
-      <div class="security-alert-message">
-        您正在访问去中心化交易平台，请确认您了解以下风险：<br><br>
-        • 智能合约可能存在安全漏洞<br>
-        • 代币价格可能剧烈波动<br>
-        • 交易一旦执行无法撤销<br><br>
-        请确保您正在访问官方域名，并仔细核对交易详情。
-      </div>
-      <div class="security-alert-buttons">
-        <button class="security-alert-button exit" id="securityExit">退出网站</button>
-        <button class="security-alert-button continue" id="securityContinue">我已了解，继续</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
+<script>
+  
     // ==================== 应用配置 ====================
     const SECURITY_CONFIG = {
       ALLOWED_DOMAINS: ['lomdex.vercel.app'],
@@ -1641,6 +1622,8 @@
       const alertOverlay = document.createElement('div');
       alertOverlay.className = 'beautiful-alert';
       
+      let icon = 'ℹ️';
+      let buttonColor = 'var(--web3-blue)';
       
       switch(type) {
         case 'success':
@@ -1694,6 +1677,41 @@
       }
     `;
     document.head.appendChild(style);
+    // ==================== 交易确认模块 ====================
+    async function confirmTransaction(transaction) {
+      return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.className = 'transaction-confirm-modal';
+        modal.innerHTML = `
+          <div class="confirm-content">
+            <h3>请确认交易</h3>
+            <div class="transaction-details">
+              <p><span class="label">从:</span> <span class="value">${transaction.fromToken}</span></p>
+              <p><span class="label">到:</span> <span class="value">${transaction.toToken}</span></p>
+              <p><span class="label">数量:</span> <span class="value">${transaction.amount}</span></p>
+              <p><span class="label">预计收到:</span> <span class="value">${transaction.estimatedOutput}</span></p>
+              <p><span class="label">滑点容差:</span> <span class="value">${slippage}%</span></p>
+            </div>
+            <div class="confirm-buttons">
+              <button id="confirmCancel">取消</button>
+              <button id="confirmProceed">确认交易</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('confirmCancel').onclick = () => {
+          document.body.removeChild(modal);
+          resolve(false);
+        };
+        
+        document.getElementById('confirmProceed').onclick = () => {
+          document.body.removeChild(modal);
+          resolve(true);
+        };
+      });
+    }
 
     // ==================== 应用核心逻辑 ====================
     const ROUTER = "0x62b0873055bf896dd869e172119871ac24aea305";
@@ -1847,6 +1865,134 @@ function disconnectWallet() {
       "function token0() view returns (address)",
       "function token1() view returns (address)"
     ];
+    // 初始化应用
+    function initializeApp() {
+      initializeSwapButton();
+      setupTabs();
+      setupPercentageButtons();
+      updateAllTexts();
+      initializeSecurity();
+      setupTokenSelectors();
+      
+      appInitialized = true;
+    }
+    // ==================== 安全功能模块 ====================
+    function initializeSecurity() {
+      createSecurityIndicator();
+      startSecurityMonitoring();
+    }
+
+    function createSecurityIndicator() {
+      const indicator = document.createElement('div');
+      indicator.id = 'securityIndicator';
+      indicator.textContent = '🔒 安全验证通过';
+      
+      const app = document.querySelector('.app');
+      if (app) {
+        app.appendChild(indicator);
+      }
+    }
+
+    function startSecurityMonitoring() {
+      // 检查DOM是否被篡改
+      setInterval(() => {
+        const originalElements = ['walletBtn', 'swapBtn', 'fromAmount'];
+        originalElements.forEach(id => {
+          const element = document.getElementById(id);
+          if (!element || element.getAttribute('data-original') !== 'true') {
+            console.warn('可疑的DOM修改检测到:', id);
+            showSecurityWarning();
+          }
+        });
+      }, 5000);
+      
+      // 检查网络变化
+      window.ethereum?.on('chainChanged', (chainId) => {
+        if (chainId !== APP_CONFIG.SECURITY.EXPECTED_CHAIN_ID) {
+          showBeautifulAlert('网络已切换，请检查安全性', 'warning');
+        }
+      });
+    }
+
+    function showSecurityWarning() {
+      showBeautifulAlert('检测到可疑活动，请刷新页面', 'warning');
+    }
+    // 输入验证函数
+    function sanitizeInput(input, maxDecimals = 6) {
+      if (typeof input !== 'string') input = String(input);
+      
+      // 移除非法字符
+      let sanitized = input.replace(/[^0-9.]/g, '');
+      
+      // 限制小数点数量
+      const parts = sanitized.split('.');
+      if (parts.length > 1) {
+        sanitized = parts[0] + '.' + parts[1].slice(0, maxDecimals);
+      }
+      
+      // 防止科学计数法攻击
+      if (sanitized.includes('e') || sanitized.includes('E')) {
+        throw new Error('Invalid input format');
+      }
+      
+      const numValue = parseFloat(sanitized);
+      if (isNaN(numValue) || numValue < 0) {
+        throw new Error('Invalid number');
+      }
+      
+      return sanitized;
+    }
+
+    // 安全的文本设置函数
+    function setTextSafe(element, text) {
+      if (!element) return;
+      
+      const cleanText = String(text)
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;');
+        
+      element.textContent = cleanText;
+    }
+
+    // 钱包提供商验证
+    function validateWalletProvider() {
+      if (!window.ethereum) {
+        throw new Error('未检测到钱包提供商');
+      }
+      
+      const isTrusted = APP_CONFIG.SECURITY.TRUSTED_WALLETS.some(wallet => 
+        window.ethereum.isFluent || 
+        window.ethereum.isTokenPocket ||
+        window.ethereum.isOKExWallet
+      );
+      
+      if (!isTrusted) {
+        console.warn('使用未知钱包提供商:', window.ethereum);
+      }
+    }
+
+    // 安全的钱包连接
+    async function safeConnectWallet() {
+      try {
+        validateWalletProvider();
+        
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+        
+        if (!accounts || accounts.length === 0) {
+          throw new Error('用户拒绝连接');
+        }
+        
+        return accounts[0];
+      } catch (error) {
+        console.error('钱包连接失败:', error);
+        throw error;
+      }
+    }
 
     // 初始化函数
     function initializeSwapButton() {
@@ -1861,8 +2007,7 @@ function disconnectWallet() {
         swapBtn.innerText = isChinese ? "立即交换" : "Swap Now";
       }
     }
-
-    // 设置代币选择器 - 修复下拉框功能
+        // 设置代币选择器
     function setupTokenSelectors() {
       const fromSelect = document.getElementById("fromTokenSelect");
       const toSelect = document.getElementById("toTokenSelect");
@@ -1879,6 +2024,7 @@ function disconnectWallet() {
             toSelect.value = toToken;
           }
         }
+        updateTokenLogos();
         updateTokenBalances();
         updateRouteInfo();
         updateOutput();
@@ -1896,11 +2042,200 @@ function disconnectWallet() {
             fromSelect.value = fromToken;
           }
         }
+        updateTokenLogos();
         updateTokenBalances();
         updateRouteInfo();
         updateOutput();
       });
     }
+
+    // 更新代币Logo
+    function updateTokenLogos() {
+      const fromLogo = document.getElementById("fromTokenLogo");
+      const toLogo = document.getElementById("toTokenLogo");
+      
+      if (APP_CONFIG.TOKEN_LOGOS[fromToken]) {
+        fromLogo.style.backgroundImage = `url('${APP_CONFIG.TOKEN_LOGOS[fromToken]}')`;
+      } else {
+        fromLogo.style.backgroundImage = '';
+        fromLogo.style.background = 'linear-gradient(135deg, #4361ee, #7209b7)';
+        fromLogo.textContent = fromToken.charAt(0);
+      }
+      
+      if (APP_CONFIG.TOKEN_LOGOS[toToken]) {
+        toLogo.style.backgroundImage = `url('${APP_CONFIG.TOKEN_LOGOS[toToken]}')`;
+      } else {
+        toLogo.style.backgroundImage = '';
+        toLogo.style.background = 'linear-gradient(135deg, #ffd166, #ffb347)';
+        toLogo.textContent = toToken.charAt(0);
+      }
+    }
+    // ==================== 钱包连接/断开功能 ====================
+    // 连接成功提示函数
+    function showWalletConnectedSuccess() {
+      const shortAddress = account.slice(0, 3) + "..." + account.slice(-5);
+      const message = isChinese ? 
+          ` 钱包连接成功！
+          提示: 再次点击可断开连接` :
+          ` Wallet Connected Successfully!\n\nTip: Click wallet button again to disconnect`;
+      
+      showBeautifulAlert(message, 'success');
+    }
+
+    // 断开连接提示函数
+    function showWalletDisconnected() {
+      const message = isChinese ? 
+          " 钱包已断开连接 " :
+          " Wallet Disconnected ";
+      
+      showBeautifulAlert(message, 'info');
+    }
+
+    // 重置所有余额显示
+    function resetAllBalances() {
+      const balanceElements = {
+          'cfxBal': '0.000000',
+          'lomBal': '0.000000', 
+          'axcnhBal': '0.000000',
+          'usdt0Bal': '0.000000',
+          'cnht0Bal': '0.000000',
+          'lpBal': '0.000000',
+          'fromBal': '0',
+          'toBal': '0',
+          'addCfxBal': '0',
+          'addLomBal': '0'
+      };
+      
+      Object.keys(balanceElements).forEach(id => {
+          const element = document.getElementById(id);
+          if (element) {
+              setTextSafe(element, balanceElements[id]);
+          }
+      });
+    }
+    // 重置兑换页面
+    function resetSwapPage() {
+      document.getElementById("fromAmount").value = "";
+      setTextSafe(document.getElementById("toAmount"), "0");
+      document.getElementById("swapBtn").disabled = true;
+      document.getElementById("swapBtn").innerText = isChinese ? "请输入数量" : "Enter Amount";
+      setTextSafe(document.getElementById("price"), "0");
+      setTextSafe(document.getElementById("minReceived"), "0 LOM");
+    }
+
+    // 重置流动性页面  
+    function resetLiquidityPage() {
+      document.getElementById("removeBtn").disabled = true;
+      setTextSafe(document.getElementById("myLiquidityShare"), "0%");
+      setTextSafe(document.getElementById("totalLiquidity"), "$0");
+      setTextSafe(document.getElementById("dailyVolume"), "$0");
+      setTextSafe(document.getElementById("poolAPR"), "0%");
+      setTextSafe(document.getElementById("positionValue"), "0");
+      setTextSafe(document.getElementById("positionShare"), "0");
+      setTextSafe(document.getElementById("positionCfx"), "0");
+      setTextSafe(document.getElementById("positionLom"), "0");
+      setTextSafe(document.getElementById("unclaimedFees"), "$0");
+    }
+
+    // 断开钱包连接函数
+    function disconnectWallet() {
+      const confirmMessage = isChinese ? 
+          "确定要断开钱包连接吗？" : 
+          "Are you sure you want to disconnect wallet?";
+      
+      const userConfirmed = confirm(confirmMessage);
+      
+      if (!userConfirmed) {
+          return;
+      }
+      
+      // 重置所有钱包相关变量
+      account = null;
+      provider = null;
+      signer = null;
+      router = null;
+      pair = null;
+      lom = null;
+      axcnh = null;
+      usdt0 = null;
+      cnht0 = null;
+      
+      // 清除所有定时器
+      const highestId = window.setTimeout(() => {
+          for (let i = highestId; i >= 0; i--) {
+              window.clearInterval(i);
+          }
+      }, 0);
+      
+      // 重置UI显示
+      document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+      document.getElementById("walletBtn").classList.remove('connected');
+      document.getElementById("walletBtn").disabled = false;
+      
+      // 重置所有数据
+      resetAllBalances();
+      resetSwapPage();
+      resetLiquidityPage();
+      
+      // 显示断开连接提示
+      showWalletDisconnected();
+    }
+
+    // 钱包连接主函数
+    document.getElementById("walletBtn").onclick = async () => {
+      // 如果已经连接，点击则断开
+      if (account) {
+          disconnectWallet();
+          return;
+      }
+      
+      // 未连接状态，执行连接逻辑
+      if (!window.ethereum) {
+          showBeautifulAlert(isChinese ? 
+              "🔍 未检测到钱包\n\n请使用 Fluent / TokenPocket / OKX 钱包打开" : 
+              "🔍 No Wallet Detected\n\nPlease use Fluent / TokenPocket / OKX wallet", 'info');
+          return;
+      }
+      
+      try {
+          // 显示连接中状态
+          document.getElementById("walletBtn").innerText = isChinese ? "连接中..." : "Connecting...";
+          document.getElementById("walletBtn").disabled = true;
+          
+          account = await safeConnectWallet();
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+
+          // 初始化合约
+          router = new ethers.Contract(APP_CONFIG.CONTRACTS.ROUTER, ROUTER_ABI, signer);
+          pair = new ethers.Contract(APP_CONFIG.CONTRACTS.PAIR, PAIR_ABI, provider);
+          lom = new ethers.Contract(APP_CONFIG.CONTRACTS.LOM, ERC20_ABI, signer);
+          axcnh = new ethers.Contract(APP_CONFIG.CONTRACTS.AxCNH, ERC20_ABI, signer);
+          usdt0 = new ethers.Contract(APP_CONFIG.CONTRACTS.USDT0, ERC20_ABI, signer);
+          cnht0 = new ethers.Contract(APP_CONFIG.CONTRACTS.CNHT0, ERC20_ABI, signer);
+
+          // 更新UI显示
+          const displayAddress = account.slice(0, 3) + "..." + account.slice(-5);
+          document.getElementById("walletBtn").innerText = displayAddress;
+          document.getElementById("walletBtn").classList.add('connected');
+          document.getElementById("walletBtn").disabled = false;
+          
+          // 显示连接成功提示
+          showWalletConnectedSuccess();
+          
+          // 开始数据刷新
+          await refreshAll();
+          setInterval(refreshAll, 12000);
+          
+      } catch(e) { 
+          // 连接失败时重置按钮状态
+          document.getElementById("walletBtn").innerText = isChinese ? "连接钱包" : "Connect Wallet";
+          document.getElementById("walletBtn").disabled = false;
+          
+          showBeautifulAlert((isChinese ? "❌ 连接失败: " : "❌ Connection failed: ") + e.message, 'error');
+      }
+    };
+
 
     // 更新代币余额显示
     function updateTokenBalances() {
