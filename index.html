@@ -5039,94 +5039,6 @@ const RewardManager = {
   }
 };
 
-// ==================== 初始化奖励系统 ====================
-// 在原有的初始化代码中添加以下内容
-
-// 在流动性页面添加奖励系统入口按钮
-function addRewardSystemButton() {
-  const liquidityCard = document.querySelector('#liquidityTab .card');
-  if (liquidityCard) {
-    const rewardButton = document.createElement('button');
-    rewardButton.className = 'stake-lp-button';
-    rewardButton.id = 'openRewardSystemBtn';
-    rewardButton.innerHTML = `
-      <span>🏆</span>
-      <span>LP奖励系统</span>
-      <span class="countdown-timer" id="rewardCountdown" style="display: none;"></span>
-    `;
-    rewardButton.style.marginTop = '12px';
-    rewardButton.style.background = 'var(--gradient-green)';
-    
-    liquidityCard.appendChild(rewardButton);
-    
-    // 添加事件监听
-    rewardButton.addEventListener('click', () => {
-      RewardManager.openRewardModal();
-    });
-  }
-}
-
-// ==================== 事件监听器设置 ====================
-function setupRewardSystemListeners() {
-  // 奖励模态框按钮
-  document.getElementById('closeRewardModal')?.addEventListener('click', () => {
-    document.getElementById('rewardModal').style.display = 'none';
-  });
-  
-  document.getElementById('stakeLPBtn')?.addEventListener('click', () => {
-    RewardManager.openStakeModal();
-  });
-  
-  document.getElementById('claimRewardBtn')?.addEventListener('click', () => {
-    RewardManager.openClaimModal();
-  });
-  
-  // 质押模态框
-  document.getElementById('cancelStakeBtn')?.addEventListener('click', () => {
-    document.getElementById('stakeLPModal').style.display = 'none';
-  });
-  
-  document.getElementById('stakeLPMaxBtn')?.addEventListener('click', async () => {
-    const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-    if (lpBalance > 0) {
-      document.getElementById('stakeLPAmount').value = Utils.formatDisplay(lpBalance);
-      document.getElementById('confirmStakeBtn').disabled = false;
-    }
-  });
-  
-  document.getElementById('stakeLPAmount')?.addEventListener('input', (e) => {
-    const amount = parseFloat(e.target.value);
-    const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-    document.getElementById('confirmStakeBtn').disabled = !amount || amount <= 0 || amount > lpBalance;
-  });
-  
-  document.getElementById('confirmStakeBtn')?.addEventListener('click', () => {
-    RewardManager.stakeLP();
-  });
-  
-  // 领取奖励模态框
-  document.getElementById('cancelClaimBtn')?.addEventListener('click', () => {
-    document.getElementById('claimRewardModal').style.display = 'none';
-  });
-  
-  document.getElementById('confirmClaimBtn')?.addEventListener('click', () => {
-    RewardManager.claimAllRewards();
-    document.getElementById('claimRewardModal').style.display = 'none';
-  });
-  
-  // 钱包连接时初始化奖励系统
-  const originalConnect = WalletManager.connect;
-  WalletManager.connect = async function() {
-    const result = await originalConnect.apply(this, arguments);
-    if (result) {
-      addRewardSystemButton();
-      await RewardManager.init();
-    }
-    return result;
-  };
-}
-
-// ==================== 在DOM加载完成后初始化 ====================
 
 
 // ==================== 界面管理器 ====================
@@ -5586,6 +5498,106 @@ const UIManager = {
     });
   }
 };
+
+     // ==================== 初始化奖励系统 ====================
+// 在原有的初始化代码中添加以下内容
+
+// 在流动性页面添加奖励系统入口按钮
+function addRewardSystemButton() {
+  const liquidityCard = document.querySelector('#liquidityTab .card');
+  if (liquidityCard) {
+    const rewardButton = document.createElement('button');
+    rewardButton.className = 'stake-lp-button';
+    rewardButton.id = 'openRewardSystemBtn';
+    rewardButton.innerHTML = `
+      <span>🏆</span>
+      <span>LP奖励系统</span>
+      <span class="countdown-timer" id="rewardCountdown" style="display: none;"></span>
+    `;
+    rewardButton.style.marginTop = '12px';
+    rewardButton.style.background = 'var(--gradient-green)';
+    
+    liquidityCard.appendChild(rewardButton);
+    
+    // 添加事件监听
+    rewardButton.addEventListener('click', () => {
+      RewardManager.openRewardModal();
+    });
+  }
+}
+
+// ==================== 事件监听器设置 ====================
+function setupRewardSystemListeners() {
+  // 奖励模态框按钮
+  document.getElementById('closeRewardModal')?.addEventListener('click', () => {
+    document.getElementById('rewardModal').style.display = 'none';
+  });
+  
+  document.getElementById('stakeLPBtn')?.addEventListener('click', () => {
+    RewardManager.openStakeModal();
+  });
+  
+  document.getElementById('claimRewardBtn')?.addEventListener('click', () => {
+    RewardManager.openClaimModal();
+  });
+  
+  // 质押模态框
+  document.getElementById('cancelStakeBtn')?.addEventListener('click', () => {
+    document.getElementById('stakeLPModal').style.display = 'none';
+  });
+  
+  document.getElementById('stakeLPMaxBtn')?.addEventListener('click', async () => {
+    const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
+    if (lpBalance > 0) {
+      document.getElementById('stakeLPAmount').value = Utils.formatDisplay(lpBalance);
+      document.getElementById('confirmStakeBtn').disabled = false;
+    }
+  });
+  
+  document.getElementById('stakeLPAmount')?.addEventListener('input', (e) => {
+    const amount = parseFloat(e.target.value);
+    const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
+    document.getElementById('confirmStakeBtn').disabled = !amount || amount <= 0 || amount > lpBalance;
+  });
+  
+  document.getElementById('confirmStakeBtn')?.addEventListener('click', () => {
+    RewardManager.stakeLP();
+  });
+  
+  // 领取奖励模态框
+  document.getElementById('cancelClaimBtn')?.addEventListener('click', () => {
+    document.getElementById('claimRewardModal').style.display = 'none';
+  });
+  
+  document.getElementById('confirmClaimBtn')?.addEventListener('click', () => {
+    RewardManager.claimAllRewards();
+    document.getElementById('claimRewardModal').style.display = 'none';
+  });
+  
+  // 钱包连接时初始化奖励系统
+  const originalConnect = WalletManager.connect;
+  WalletManager.connect = async function() {
+    const result = await originalConnect.apply(this, arguments);
+    if (result) {
+      addRewardSystemButton();
+      await RewardManager.init();
+    }
+    return result;
+  };
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 延迟执行以确保其他元素已加载
+  setTimeout(() => {
+    addRewardSystemButton();
+    setupRewardSystemListeners();
+    
+    // 如果已经连接了钱包，初始化奖励系统
+    if (account) {
+      RewardManager.init();
+    }
+  }, 1000);
+});
 
 // ==================== 初始化应用 ====================
 document.addEventListener('DOMContentLoaded', function() {
