@@ -2032,196 +2032,250 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
     }
-  /* 在现有的CSS样式后面添加奖励系统样式 */
-  .tier-reward-item {
-    background: var(--gradient-card);
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border-color);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .tier-reward-item.active {
-    border-color: var(--accent-yellow);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
-  }
-  
-  .tier-reward-item.locked {
-    opacity: 0.7;
-  }
-  
-  .tier-reward-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .tier-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-  
-  .tier-icon {
-    font-size: 16px;
-  }
-  
-  .tier-status {
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-  
-  .tier-status.available {
-    background: rgba(46, 160, 67, 0.2);
-    color: var(--success);
-  }
-  
-  .tier-status.locked {
-    background: rgba(255, 107, 107, 0.2);
-    color: var(--warning);
-  }
-  
-  .tier-status.claimed {
-    background: rgba(138, 43, 226, 0.2);
-    color: var(--accent-purple);
-  }
-  
-  .tier-progress {
-    margin-top: 8px;
-  }
-  
-  .tier-progress-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-bottom: 4px;
-  }
-  
-  .tier-progress-bar {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  
-  .tier-progress-fill {
-    height: 100%;
-    background: var(--gradient-yellow);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-  }
-  
-  .tier-reward-amount {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--accent-yellow);
-    margin-top: 8px;
-    text-align: right;
-  }
-  
-  .stake-history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: rgba(26, 115, 232, 0.05);
-    border-radius: 8px;
-    margin-bottom: 6px;
-    border: 1px solid var(--border-color);
-  }
-  
-  .stake-history-time {
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-  
-  .stake-history-amount {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-  
-  .stake-history-duration {
-    font-size: 11px;
-    color: var(--accent-yellow);
-    margin-top: 2px;
-  }
-  
-  .reward-counter {
-    position: relative;
-  }
-  
-  .reward-counter::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      rgba(255, 215, 0, 0.1) 50%, 
-      transparent 100%);
-    animation: shine 2s infinite;
-    pointer-events: none;
-  }
-  
-  @keyframes shine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-  
-  .countdown-timer {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--accent-yellow);
-    background: rgba(255, 215, 0, 0.1);
-    padding: 4px 8px;
-    border-radius: 6px;
-    margin-left: 8px;
-  }
-  
-  .reward-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin: 16px 0;
-  }
-  
-  .reward-stat-item {
-    background: rgba(26, 115, 232, 0.05);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-    border: 1px solid var(--border-color);
-  }
-  
-  .reward-stat-label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-bottom: 4px;
-  }
-  
-  .reward-stat-value {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-  
-  .reward-stat-value.highlight {
-    color: var(--accent-yellow);
-  }
+    
+    /* ========== 奖励系统样式 ========== */
+    .tier-reward-item {
+      background: var(--gradient-card);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .tier-reward-item.active {
+      border-color: var(--accent-yellow);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+    }
+    
+    .tier-reward-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .tier-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .tier-icon {
+      font-size: 16px;
+    }
+    
+    .tier-status {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    
+    .tier-status.available {
+      background: rgba(46, 160, 67, 0.2);
+      color: var(--success);
+    }
+    
+    .tier-status.locked {
+      background: rgba(255, 107, 107, 0.2);
+      color: var(--warning);
+    }
+    
+    .tier-status.claimed {
+      background: rgba(138, 43, 226, 0.2);
+      color: var(--accent-purple);
+    }
+    
+    .tier-progress {
+      margin-top: 8px;
+    }
+    
+    .tier-progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    
+    .tier-progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .tier-progress-fill {
+      height: 100%;
+      background: var(--gradient-yellow);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    
+    .tier-reward-amount {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-yellow);
+      margin-top: 8px;
+      text-align: right;
+    }
+    
+    .reward-counter {
+      position: relative;
+    }
+    
+    .reward-counter::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 215, 0, 0.1) 50%, 
+        transparent 100%);
+      animation: shine 2s infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .countdown-timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--accent-yellow);
+      background: rgba(255, 215, 0, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+    
+    .reward-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    
+    .reward-stat-item {
+      background: rgba(26, 115, 232, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+    
+    .reward-stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    
+    .reward-stat-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .reward-stat-value.highlight {
+      color: var(--accent-yellow);
+    }
+    
+    /* ========== 奖励模态框特殊样式 ========== */
+    .reward-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .reward-data-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin: 10px 0;
+      padding: 6px 12px;
+      background: rgba(26, 115, 232, 0.1);
+      border-radius: 6px;
+    }
+    
+    .reward-action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    
+    .reward-action-btn {
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .reward-action-btn.primary {
+      background: var(--gradient-primary);
+      color: white;
+    }
+    
+    .reward-action-btn.success {
+      background: var(--gradient-green);
+      color: white;
+    }
+    
+    .reward-action-btn.warning {
+      background: var(--gradient-yellow);
+      color: #0f172a;
+    }
+    
+    .reward-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .reward-action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    
+    .reward-info-card {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.1));
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 0;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+    
+    .reward-loading {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .reward-error {
+      text-align: center;
+      padding: 40px;
+    }
   </style>
 </head>
 <body>
@@ -2774,7 +2828,16 @@
   <!-- LP奖励系统模态框 -->
 <div class="modal-overlay" id="rewardModal">
   <div class="modal-card" style="max-width: 500px;">
-    <h3 class="modal-title">🏆 LP持有奖励系统</h3>
+    <div class="reward-header">
+      <h3 class="modal-title">🏆 LP持有奖励系统</h3>
+      <button class="btn" id="refreshRewardBtn" style="background: var(--gradient-primary); padding: 8px 16px; font-size: 12px;">
+        🔄 刷新数据
+      </button>
+    </div>
+    
+    <div class="reward-data-time" id="lastUpdateTime">
+      数据最后更新于: --:--:--
+    </div>
     
     <div class="card" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.1));">
       <div style="text-align: center; margin-bottom: 16px;">
@@ -2796,20 +2859,21 @@
           <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);" id="holdTime">0 天</div>
         </div>
         <div style="text-align: center;">
-          <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">惩罚率</div>
-          <div style="font-size: 16px; font-weight: 600; color: var(--accent-red);">20%</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">总质押LP</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--accent-purple);" id="totalStakedLP">0</div>
         </div>
       </div>
     </div>
     
-    <!-- 激活状态和倒计时 -->
-    <div class="card" style="margin-bottom: 16px; text-align: center;">
-      <div id="countdownTimer">
-        <!-- 倒计时或激活状态将在这里显示 -->
-      </div>
-      <button id="activateRewardBtn" class="stake-lp-button" style="margin-top: 12px; width: 100%;">
+    <!-- 激活状态和批量领取 -->
+    <div class="reward-action-buttons">
+      <button id="activateRewardBtn" class="reward-action-btn warning">
         <span>🚀</span>
         <span>激活奖励系统</span>
+      </button>
+      <button id="claimAllRewardsBtn" class="reward-action-btn success" disabled>
+        <span>💰</span>
+        <span>领取所有奖励</span>
       </button>
     </div>
     
@@ -2826,23 +2890,11 @@
       
       <div class="tier-rewards-container" id="tierRewardsContainer">
         <!-- 阶梯奖励将通过JS动态生成 -->
-      </div>
-    </div>
-    
-    <!-- LP快照历史 -->
-    <div class="card" style="margin-bottom: 16px;">
-      <div class="card-title">
-        <span class="card-title-icon">📊</span>
-        <span>LP持有记录</span>
-      </div>
-      
-      <div style="max-height: 150px; overflow-y: auto;">
-        <div id="lpSnapshotContainer" style="font-size: 11px; color: var(--text-secondary); text-align: center; padding: 20px;">
-          ${userRewardData.lpSnapshots.length > 0 ? 
-            userRewardData.lpSnapshots.map(s => 
-              `${new Date(s.time * 1000).toLocaleDateString()}: ${s.lpAmount.toFixed(4)} LP`
-            ).join('<br>') : 
-            '暂无记录'}
+        <div class="reward-loading">
+          <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+          <div style="color: var(--text-secondary); font-size: 14px;">
+            加载奖励数据中...
+          </div>
         </div>
       </div>
     </div>
@@ -2851,7 +2903,7 @@
     <div style="display: flex; gap: 10px; margin-top: 20px;">
       <button class="modal-btn cancel" id="closeRewardModal">关闭</button>
       <div style="flex: 2; font-size: 11px; color: var(--text-secondary); text-align: center; padding: 12px;">
-        💡 提示: 保持LP持有量稳定可获得最大奖励
+        💡 提示: 所有计算在智能合约中完成，数据准确可靠
       </div>
     </div>
   </div>
@@ -2917,18 +2969,16 @@
     };
 
     // ==================== 奖励系统配置 ====================
-   const REWARD_CONFIG = {
-  TOTAL_REWARDS: 25555555,
-  DURATION_DAYS: 360,
-  TIERS: [
-    { days: 30, multiplier: 1.2, name: "青铜", icon: "🥉", rewardPercent: 0.05 },
-    { days: 90, multiplier: 1.5, name: "白银", icon: "🥈", rewardPercent: 0.10 },
-    { days: 180, multiplier: 1.8, name: "黄金", icon: "🥇", rewardPercent: 0.20 },
-    { days: 360, multiplier: 2.5, name: "钻石", icon: "💎", rewardPercent: 0.30 }
-  ],
-  PENALTY_RATE: 0.20, // 20%惩罚
-  BASE_REWARD_PER_LP: 0.0001 // 每LP的基础奖励率
-};
+    const REWARD_CONFIG = {
+      TOTAL_REWARDS: 25555555,
+      TIER_CONFIGS: [
+        { days: 30, multiplier: 1.2, name: "青铜", icon: "🥉", rewardPercent: 0.05 },
+        { days: 90, multiplier: 1.5, name: "白银", icon: "🥈", rewardPercent: 0.10 },
+        { days: 180, multiplier: 1.8, name: "黄金", icon: "🥇", rewardPercent: 0.20 },
+        { days: 360, multiplier: 2.5, name: "钻石", icon: "💎", rewardPercent: 0.30 }
+      ],
+      CONTRACT_ADDRESS: "0x..." // 需要部署奖励合约后的地址
+    };
 
     // ==================== 应用状态 ====================
     let provider, signer, account, router, pair, lom, usdc, axcnh, usdt0, cnht0, axcnhUsdt0Pair;
@@ -2946,18 +2996,15 @@
     let walletInviteMap = JSON.parse(localStorage.getItem('lomswap_wallet_invite_map') || '{}');
 
     // ==================== 奖励系统状态 ====================
-    let userRewardData = {
-  activated: false,
-  activationTime: 0,
-  lpSnapshots: [], // 记录LP快照 [{time, lpAmount}]
-  lastUpdateTime: 0,
-  tierStatus: [], // 每个阶梯的状态
-  claimedTiers: [], // 已领取的阶梯
-  penalties: 0 // 累计惩罚
-};
-
-let rewardInterval = null;
-let totalDistributedRewards = 0;
+    let rewardContract = null;
+    let cachedRewardData = {
+      userInfo: null,
+      tierStatus: null,
+      poolInfo: null,
+      tierConfigs: null,
+      lastUpdate: 0,
+      isInitialized: false
+    };
 
     // ==================== 核心代币列表 ====================
     const TOKEN_LIST = [
@@ -3038,23 +3085,28 @@ let totalDistributedRewards = 0;
     ];
 
     // ==================== 奖励合约ABI ====================
-    const REWARD_ABI = [
-      "function stake(uint256 amount) external",
-      "function unstake(uint256 amount) external",
-      "function claimReward() external",
+    const REWARD_CONTRACT_ABI = [
+      // 用户信息查询
+      "function getUserInfo(address user) external view returns (uint256 lpAmount, uint256 pendingRewards, uint256 lastUpdateTime, uint256 activationTime, bool isActive)",
+      
+      // 阶梯状态查询
+      "function getUserTierStatus(address user) external view returns (uint256[] memory tierIndexes, bool[] memory isAvailable, bool[] memory isClaimed, uint256[] memory rewardAmounts, uint256[] memory claimTimes)",
+      
+      // 池子信息
+      "function getPoolInfo() external view returns (uint256 totalRewards, uint256 distributedRewards, uint256 totalStakedLP, uint256 rewardRate)",
+      
+      // 阶梯配置
+      "function getTierConfigs() external view returns (uint256[] memory durations, uint256[] memory multipliers, string[] memory names)",
+      
+      // 用户操作
+      "function activateRewards() external",
       "function claimTierReward(uint256 tierIndex) external",
-      "function getUserInfo(address user) external view returns (uint256 lpAmount, uint256 pendingRewards, uint256 lastUpdateTime, uint256[] memory stakeTimes, uint256[] memory stakeAmounts)",
-      "function getTierStatus(address user) external view returns (uint256[] memory durations, uint256[] memory startTimes, bool[] memory claimed, bool[] memory available)",
-      "function calculateRewards(address user) external view returns (uint256 pending, uint256[] memory tierRewards)",
-      "function totalStakedLP() external view returns (uint256)",
-      "function totalDistributedRewards() external view returns (uint256)",
-      "function rewardBalance() external view returns (uint256)",
-      "function dailyReward() external view returns (uint256)",
-      "function accRewardPerShare() external view returns (uint256)",
-      "event Staked(address indexed user, uint256 amount)",
-      "event Unstaked(address indexed user, uint256 amount)",
-      "event RewardClaimed(address indexed user, uint256 amount)",
-      "event TierRewardClaimed(address indexed user, uint256 tier, uint256 amount)"
+      "function claimAllRewards() external",
+      
+      // 事件
+      "event RewardsActivated(address indexed user, uint256 timestamp)",
+      "event TierRewardClaimed(address indexed user, uint256 tierIndex, uint256 amount)",
+      "event RewardsClaimed(address indexed user, uint256 amount)"
     ];
 
     // ==================== 工具模块 ====================
@@ -3788,6 +3840,15 @@ let totalDistributedRewards = 0;
         usdt0 = new ethers.Contract(APP_CONFIG.CONTRACTS.USDT0, ERC20_ABI, signer);
         cnht0 = new ethers.Contract(APP_CONFIG.CONTRACTS.CNHT0, ERC20_ABI, signer);
         axcnhUsdt0Pair = new ethers.Contract(APP_CONFIG.CONTRACTS.AXCNH_USDT0_PAIR, PAIR_ABI, signer);
+        
+        // 初始化奖励合约
+        if (REWARD_CONFIG.CONTRACT_ADDRESS !== "0x...") {
+          rewardContract = new ethers.Contract(
+            REWARD_CONFIG.CONTRACT_ADDRESS,
+            REWARD_CONTRACT_ABI,
+            signer
+          );
+        }
       },
 
       restoreInviteAddress() {
@@ -3832,6 +3893,7 @@ let totalDistributedRewards = 0;
         usdt0 = null;
         cnht0 = null;
         axcnhUsdt0Pair = null;
+        rewardContract = null;
         
         if (refreshInterval) {
           clearInterval(refreshInterval);
@@ -4608,466 +4670,706 @@ let totalDistributedRewards = 0;
       }
     };
 
-   // ==================== 奖励系统管理器 ====================
-const RewardManager = {
-  async init() {
-    if (!account) return;
-    
-    // 从localStorage加载用户奖励数据
-    const savedData = localStorage.getItem(`lomswap_rewards_${account.toLowerCase()}`);
-    if (savedData) {
-      userRewardData = JSON.parse(savedData);
-    }
-    
-    // 初始化阶梯状态
-    if (userRewardData.tierStatus.length === 0) {
-      userRewardData.tierStatus = REWARD_CONFIG.TIERS.map(tier => ({
-        ...tier,
-        startTime: userRewardData.activationTime,
-        claimed: false,
-        available: false,
-        rewardAmount: 0,
-        penaltyAmount: 0
-      }));
-    }
-    
-    // 如果已激活，开始计算奖励
-    if (userRewardData.activated) {
-      this.startRewardCalculation();
-    }
-    
-    // 更新总已发放奖励（模拟数据）
-    totalDistributedRewards = Math.floor(Math.random() * 1000000);
-  },
-
-  startRewardCalculation() {
-    if (rewardInterval) clearInterval(rewardInterval);
-    
-    rewardInterval = setInterval(() => {
-      if (userRewardData.activated && pair && account) {
-        this.calculateRewards();
-        this.updateRewardUI();
-      }
-    }, 1000);
-  },
-
-  async calculateRewards() {
-    if (!pair || !account) return;
-    
-    const currentTime = Math.floor(Date.now() / 1000);
-    const currentLP = await this.getCurrentLP();
-    
-    // 记录LP快照（每小时记录一次）
-    if (userRewardData.lpSnapshots.length === 0 || 
-        (currentTime - userRewardData.lpSnapshots[userRewardData.lpSnapshots.length - 1].time) > 3600) {
-      userRewardData.lpSnapshots.push({
-        time: currentTime,
-        lpAmount: currentLP
-      });
+    // ==================== 奖励系统管理器 ====================
+    const RewardManager = {
+      // 配置
+      CONTRACTS: {
+        REWARD: REWARD_CONFIG.CONTRACT_ADDRESS,
+        LP_TOKEN: APP_CONFIG.CONTRACTS.PAIR
+      },
       
-      // 保存数据
-      this.saveUserData();
-    }
-    
-    // 更新每个阶梯的可用状态
-    const activationTime = userRewardData.activationTime;
-    if (!activationTime) return;
-    
-    userRewardData.tierStatus.forEach((tier, index) => {
-      const timePassed = currentTime - activationTime;
-      const requiredTime = tier.days * 86400;
+      // 缓存数据
+      cachedData: {
+        userInfo: null,
+        tierStatus: null,
+        poolInfo: null,
+        tierConfigs: null,
+        lastUpdate: 0
+      },
       
-      // 检查是否达到领取时间
-      tier.available = timePassed >= requiredTime && !userRewardData.claimedTiers.includes(index);
-      
-      // 如果达到时间，计算奖励金额
-      if (tier.available && tier.rewardAmount === 0) {
-        this.calculateTierReward(index);
-      }
-    });
-  },
-
-  async calculateTierReward(tierIndex) {
-    if (!userRewardData.activated || !pair) return;
-    
-    const tier = userRewardData.tierStatus[tierIndex];
-    const activationTime = userRewardData.activationTime;
-    const currentTime = Math.floor(Date.now() / 1000);
-    const requiredTime = tier.days * 86400;
-    
-    if (currentTime - activationTime < requiredTime) return;
-    
-    // 获取LP快照历史
-    const snapshots = userRewardData.lpSnapshots;
-    if (snapshots.length === 0) return;
-    
-    // 计算平均LP持有量
-    let totalLPScore = 0;
-    let lastSnapshot = snapshots[0];
-    
-    for (let i = 1; i < snapshots.length; i++) {
-      const snapshot = snapshots[i];
-      const timeDiff = snapshot.time - lastSnapshot.time;
-      const avgLP = (lastSnapshot.lpAmount + snapshot.lpAmount) / 2;
-      
-      // 只计算到目标时间为止
-      const snapshotTimeFromStart = snapshot.time - activationTime;
-      const lastTimeFromStart = lastSnapshot.time - activationTime;
-      
-      if (snapshotTimeFromStart >= requiredTime) {
-        // 这是最后一次计算
-        const remainingTime = requiredTime - lastTimeFromStart;
-        if (remainingTime > 0) {
-          totalLPScore += avgLP * remainingTime;
-        }
-        break;
-      } else {
-        totalLPScore += avgLP * timeDiff;
-      }
-      
-      lastSnapshot = snapshot;
-    }
-    
-    // 计算基础奖励
-    const baseReward = totalLPScore * REWARD_CONFIG.BASE_REWARD_PER_LP;
-    
-    // 应用阶梯乘数
-    const tierReward = baseReward * tier.multiplier;
-    
-    // 计算惩罚（如果有LP减少）
-    const penalty = this.calculatePenalty(tierIndex);
-    
-    // 最终奖励 = 阶梯奖励 - 惩罚
-    const finalReward = Math.max(0, tierReward - penalty);
-    
-    tier.rewardAmount = finalReward;
-    tier.penaltyAmount = penalty;
-    
-    // 保存数据
-    this.saveUserData();
-  },
-
-  calculatePenalty(tierIndex) {
-    const snapshots = userRewardData.lpSnapshots;
-    if (snapshots.length < 2) return 0;
-    
-    let totalPenalty = 0;
-    let lastLP = snapshots[0].lpAmount;
-    
-    for (let i = 1; i < snapshots.length; i++) {
-      const snapshot = snapshots[i];
-      
-      // 检查LP是否减少
-      if (snapshot.lpAmount < lastLP) {
-        const lpDecrease = lastLP - snapshot.lpAmount;
-        const timeRatio = (snapshot.time - userRewardData.activationTime) / (REWARD_CONFIG.TIERS[tierIndex].days * 86400);
+      // 初始化
+      async init() {
+        if (!account) return;
         
-        // 惩罚 = 减少的LP * 基础奖励率 * 惩罚率 * 时间比例
-        const penalty = lpDecrease * REWARD_CONFIG.BASE_REWARD_PER_LP * 
-                       REWARD_CONFIG.PENALTY_RATE * timeRatio;
-        totalPenalty += penalty;
-      }
-      
-      lastLP = snapshot.lpAmount;
-    }
-    
-    return totalPenalty;
-  },
-
-  async getCurrentLP() {
-    try {
-      if (!pair || !account) return 0;
-      const lpBal = await pair.balanceOf(account);
-      return parseFloat(ethers.utils.formatUnits(lpBal, 18));
-    } catch {
-      return 0;
-    }
-  },
-
-  async activateRewards() {
-    if (!account) {
-      Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
-      return;
-    }
-    
-    const currentLP = await this.getCurrentLP();
-    if (currentLP === 0) {
-      Utils.showError(isChinese ? "您需要持有LP代币才能激活奖励" : "You need to hold LP tokens to activate rewards");
-      return;
-    }
-    
-    const confirmed = await Utils.confirmDialog(
-      isChinese ? 
-      "确认激活奖励系统？激活后将开始计算30天、90天、180天、360天奖励。中途移除流动性将扣除相应奖励和20%惩罚。" :
-      "Confirm to activate reward system? After activation, 30-day, 90-day, 180-day, and 360-day rewards will be calculated. Removing liquidity will deduct rewards plus 20% penalty."
-    );
-    
-    if (!confirmed) return;
-    
-    userRewardData.activated = true;
-    userRewardData.activationTime = Math.floor(Date.now() / 1000);
-    userRewardData.lpSnapshots = [{
-      time: userRewardData.activationTime,
-      lpAmount: currentLP
-    }];
-    
-    // 初始化阶梯状态
-    userRewardData.tierStatus = REWARD_CONFIG.TIERS.map(tier => ({
-      ...tier,
-      startTime: userRewardData.activationTime,
-      claimed: false,
-      available: false,
-      rewardAmount: 0,
-      penaltyAmount: 0
-    }));
-    
-    userRewardData.claimedTiers = [];
-    userRewardData.penalties = 0;
-    
-    this.saveUserData();
-    this.startRewardCalculation();
-    
-    Utils.showNotification(
-      isChinese ? "奖励系统已激活！请保持持有LP代币以获取最大奖励。" :
-      "Reward system activated! Keep holding LP tokens to maximize rewards.",
-      "success"
-    );
-    
-    this.updateRewardUI();
-  },
-
-  async claimTierReward(tierIndex) {
-    if (!userRewardData.activated) {
-      Utils.showError(isChinese ? "请先激活奖励系统" : "Please activate reward system first");
-      return;
-    }
-    
-    const tier = userRewardData.tierStatus[tierIndex];
-    if (!tier.available) {
-      Utils.showError(isChinese ? "该奖励暂不可领取" : "This reward is not available yet");
-      return;
-    }
-    
-    if (tier.rewardAmount <= 0) {
-      Utils.showError(isChinese ? "奖励金额计算中，请稍候" : "Reward amount calculating, please wait");
-      return;
-    }
-    
-    // 再次确认当前持有足够LP
-    const currentLP = await this.getCurrentLP();
-    const initialLP = userRewardData.lpSnapshots[0]?.lpAmount || 0;
-    
-    if (currentLP < initialLP * 0.5) {
-      Utils.showError(isChinese ? "LP持有量过低，可能影响奖励" : "LP holdings too low, may affect rewards");
-    }
-    
-    const confirmed = await Utils.confirmDialog(
-      isChinese ? 
-      `确认领取${tier.name}奖励？奖励金额：${tier.rewardAmount.toFixed(6)} LOM，惩罚扣除：${tier.penaltyAmount.toFixed(6)} LOM` :
-      `Confirm to claim ${tier.name} reward? Reward: ${tier.rewardAmount.toFixed(6)} LOM, Penalty: ${tier.penaltyAmount.toFixed(6)} LOM`
-    );
-    
-    if (!confirmed) return;
-    
-    // 模拟领取（实际项目中需要调用合约）
-    userRewardData.claimedTiers.push(tierIndex);
-    tier.claimed = true;
-    tier.available = false;
-    
-    // 更新总发放奖励
-    totalDistributedRewards += tier.rewardAmount;
-    
-    this.saveUserData();
-    
-    Utils.showNotification(
-      isChinese ? 
-      `${tier.name}奖励领取成功！获得 ${tier.rewardAmount.toFixed(6)} LOM` :
-      `${tier.name} reward claimed successfully! Received ${tier.rewardAmount.toFixed(6)} LOM`,
-      "success"
-    );
-    
-    this.updateRewardUI();
-  },
-
-  saveUserData() {
-    if (account) {
-      localStorage.setItem(`lomswap_rewards_${account.toLowerCase()}`, JSON.stringify(userRewardData));
-    }
-  },
-
-  updateRewardUI() {
-    if (!document.getElementById('rewardModal')?.style.display) return;
-    
-    // 更新总奖励池
-    document.getElementById('totalRewardPool').textContent = 
-      REWARD_CONFIG.TOTAL_REWARDS.toLocaleString() + ' LOM';
-    
-    // 更新已发放奖励
-    document.getElementById('distributedRewards').textContent = 
-      totalDistributedRewards.toLocaleString() + ' LOM';
-    
-    // 更新用户LP
-    this.updateUserLPInfo();
-    
-    // 更新阶梯奖励显示
-    this.updateTierRewardsDisplay();
-    
-    // 更新倒计时或激活状态
-    this.updateActivationStatus();
-  },
-
-  async updateUserLPInfo() {
-    const currentLP = await this.getCurrentLP();
-    document.getElementById('myStakedLP').textContent = Utils.formatDisplay(currentLP) + ' LP';
-    
-    // 如果有激活时间，显示持有时间
-    if (userRewardData.activationTime > 0) {
-      const holdTime = Math.floor((Date.now() / 1000 - userRewardData.activationTime) / 86400);
-      document.getElementById('holdTime').textContent = holdTime + ' 天';
-    }
-  },
-
-  updateTierRewardsDisplay() {
-    const container = document.getElementById('tierRewardsContainer');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    userRewardData.tierStatus.forEach((tier, index) => {
-      const tierElement = document.createElement('div');
-      tierElement.className = `tier-reward-item ${tier.available ? 'active' : ''} ${tier.claimed ? 'claimed' : ''}`;
-      
-      // 计算倒计时
-      let countdownText = '';
-      if (!tier.claimed && userRewardData.activationTime > 0) {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const requiredTime = tier.days * 86400;
-        const timePassed = currentTime - userRewardData.activationTime;
-        const timeLeft = Math.max(0, requiredTime - timePassed);
+        // 初始化合约
+        await this.initContracts();
         
-        if (timeLeft > 0) {
-          const daysLeft = Math.ceil(timeLeft / 86400);
-          countdownText = `${daysLeft}天后可领取`;
+        // 加载缓存数据
+        this.loadCachedData();
+        
+        // 如果有缓存且未过期（30秒内），使用缓存
+        if (this.cachedData.userInfo && Date.now() - this.cachedData.lastUpdate < 30000) {
+          this.updateUIFromCache();
+          return;
         }
-      }
+        
+        // 否则从合约获取数据
+        await this.fetchAllData();
+      },
       
-      tierElement.innerHTML = `
-        <div class="tier-reward-header">
-          <div class="tier-title">
-            <span class="tier-icon">${tier.icon}</span>
-            <span>${tier.name}奖励 (${tier.days}天)</span>
-          </div>
-          <div class="tier-status ${tier.claimed ? 'claimed' : tier.available ? 'available' : 'locked'}">
-            ${tier.claimed ? '已领取' : tier.available ? '可领取' : countdownText || '未激活'}
-          </div>
-        </div>
-        ${!tier.claimed ? `
-          <div class="tier-progress">
-            <div class="tier-progress-info">
-              <span>奖励比例</span>
-              <span>${(tier.rewardPercent * 100).toFixed(1)}%</span>
-            </div>
-            <div class="tier-progress-bar">
-              <div class="tier-progress-fill" style="width: ${userRewardData.activationTime ? 
-                Math.min(100, ((Date.now()/1000 - userRewardData.activationTime) / (tier.days * 86400)) * 100) : 0}%"></div>
-            </div>
-          </div>
-          ${tier.rewardAmount > 0 ? `
-            <div class="tier-reward-amount">
-              <div>预计奖励: ${tier.rewardAmount.toFixed(6)} LOM</div>
-              ${tier.penaltyAmount > 0 ? `<div style="font-size: 11px; color: var(--accent-red);">惩罚扣除: -${tier.penaltyAmount.toFixed(6)} LOM</div>` : ''}
-              ${tier.available ? 
-                `<button class="claim-tier-btn" data-tier="${index}" 
-                  style="margin-top: 8px; padding: 8px 16px; background: var(--gradient-yellow); color: #0f172a; 
-                  border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%;">
-                  领取奖励
-                </button>` : 
-                `<div style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">
-                  ${userRewardData.activationTime ? '持有时间越长，奖励越高' : '激活后开始计时'}
-                </div>`
+      // 初始化合约
+      async initContracts() {
+        if (!signer || REWARD_CONFIG.CONTRACT_ADDRESS === "0x...") return;
+        
+        try {
+          this.rewardContract = new ethers.Contract(
+            REWARD_CONFIG.CONTRACT_ADDRESS,
+            REWARD_CONTRACT_ABI,
+            signer
+          );
+        } catch (error) {
+          console.error('初始化奖励合约失败:', error);
+        }
+      },
+      
+      // 手动刷新数据
+      async refreshData() {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        if (!this.rewardContract) {
+          Utils.showError(isChinese ? "奖励合约未配置" : "Reward contract not configured");
+          return;
+        }
+        
+        try {
+          Utils.showNotification(isChinese ? '刷新数据中...' : 'Refreshing data...', 'info');
+          
+          await this.fetchAllData();
+          this.updateAllUI();
+          
+          Utils.showNotification(isChinese ? '数据刷新成功' : 'Data refreshed successfully', 'success');
+        } catch (error) {
+          console.error('刷新数据失败:', error);
+          Utils.showError(Utils.getErrorMessage(error));
+        }
+      },
+      
+      // 获取所有数据
+      async fetchAllData() {
+        if (!this.rewardContract || !account) return;
+        
+        try {
+          // 并行获取数据
+          const [userInfo, tierStatus, poolInfo, tierConfigs] = await Promise.all([
+            this.rewardContract.getUserInfo(account),
+            this.rewardContract.getUserTierStatus(account),
+            this.rewardContract.getPoolInfo(),
+            this.rewardContract.getTierConfigs()
+          ]);
+          
+          // 处理数据
+          this.cachedData = {
+            userInfo: {
+              lpAmount: parseFloat(ethers.utils.formatUnits(userInfo.lpAmount, 18)),
+              pendingRewards: parseFloat(ethers.utils.formatUnits(userInfo.pendingRewards, 18)),
+              lastUpdateTime: userInfo.lastUpdateTime.toNumber(),
+              activationTime: userInfo.activationTime.toNumber(),
+              isActive: userInfo.isActive
+            },
+            tierStatus: this.processTierStatus(tierStatus),
+            poolInfo: {
+              totalRewards: parseFloat(ethers.utils.formatUnits(poolInfo.totalRewards, 18)),
+              distributedRewards: parseFloat(ethers.utils.formatUnits(poolInfo.distributedRewards, 18)),
+              totalStakedLP: parseFloat(ethers.utils.formatUnits(poolInfo.totalStakedLP, 18)),
+              rewardRate: parseFloat(ethers.utils.formatUnits(poolInfo.rewardRate, 18))
+            },
+            tierConfigs: this.processTierConfigs(tierConfigs),
+            lastUpdate: Date.now()
+          };
+          
+          // 保存到本地存储
+          this.saveCachedData();
+          
+        } catch (error) {
+          console.error('获取数据失败:', error);
+          throw error;
+        }
+      },
+      
+      // 处理阶梯状态数据
+      processTierStatus(tierData) {
+        const [tierIndexes, isAvailable, isClaimed, rewardAmounts, claimTimes] = tierData;
+        
+        return tierIndexes.map((index, i) => ({
+          index: index.toNumber(),
+          isAvailable: isAvailable[i],
+          isClaimed: isClaimed[i],
+          rewardAmount: parseFloat(ethers.utils.formatUnits(rewardAmounts[i], 18)),
+          claimTime: claimTimes[i].toNumber()
+        }));
+      },
+      
+      // 处理阶梯配置
+      processTierConfigs(configData) {
+        const [durations, multipliers, names] = configData;
+        
+        return durations.map((duration, i) => ({
+          days: duration.toNumber() / 86400, // 转换为天数
+          multiplier: parseFloat(ethers.utils.formatUnits(multipliers[i], 18)),
+          name: names[i]
+        }));
+      },
+      
+      // 激活奖励系统
+      async activateRewards() {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        if (!this.rewardContract) {
+          Utils.showError(isChinese ? "奖励合约未配置" : "Reward contract not configured");
+          return;
+        }
+        
+        const confirmed = await Utils.confirmDialog(
+          isChinese ? 
+          "确认激活奖励系统？激活后将开始计算30天、90天、180天、360天奖励。" :
+          "Confirm to activate reward system? After activation, rewards will be calculated for 30, 90, 180, and 360 days."
+        );
+        
+        if (!confirmed) return;
+        
+        try {
+          Utils.showNotification(isChinese ? '激活中...' : 'Activating...', 'info');
+          
+          const tx = await this.rewardContract.activateRewards();
+          await tx.wait();
+          
+          // 刷新数据
+          await this.fetchAllData();
+          
+          Utils.showNotification(
+            isChinese ? "奖励系统激活成功！" : "Reward system activated successfully!",
+            "success"
+          );
+          
+          // 更新UI
+          this.updateAllUI();
+          
+        } catch (error) {
+          console.error('激活失败:', error);
+          Utils.showError(Utils.getErrorMessage(error));
+        }
+      },
+      
+      // 领取阶梯奖励
+      async claimTierReward(tierIndex) {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        if (!this.rewardContract) {
+          Utils.showError(isChinese ? "奖励合约未配置" : "Reward contract not configured");
+          return;
+        }
+        
+        const tier = this.cachedData.tierStatus?.find(t => t.index === tierIndex);
+        if (!tier) {
+          Utils.showError(isChinese ? "奖励不存在" : "Reward not found");
+          return;
+        }
+        
+        if (!tier.isAvailable || tier.isClaimed) {
+          Utils.showError(isChinese ? "该奖励暂不可领取" : "This reward is not available yet");
+          return;
+        }
+        
+        const confirmed = await Utils.confirmDialog(
+          isChinese ? 
+          `确认领取${this.getTierName(tierIndex)}奖励？奖励金额：${tier.rewardAmount.toFixed(6)} LOM` :
+          `Confirm to claim ${this.getTierName(tierIndex)} reward? Reward amount: ${tier.rewardAmount.toFixed(6)} LOM`
+        );
+        
+        if (!confirmed) return;
+        
+        try {
+          Utils.showNotification(isChinese ? '领取中...' : 'Claiming...', 'info');
+          
+          const tx = await this.rewardContract.claimTierReward(tierIndex);
+          await tx.wait();
+          
+          // 刷新数据
+          await this.fetchAllData();
+          
+          Utils.showNotification(
+            isChinese ? 
+            `奖励领取成功！获得 ${tier.rewardAmount.toFixed(6)} LOM` :
+            `Reward claimed successfully! Received ${tier.rewardAmount.toFixed(6)} LOM`,
+            "success"
+          );
+          
+          // 更新UI
+          this.updateAllUI();
+          
+        } catch (error) {
+          console.error('领取失败:', error);
+          Utils.showError(Utils.getErrorMessage(error));
+        }
+      },
+      
+      // 领取所有可领取的奖励
+      async claimAllRewards() {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        if (!this.rewardContract) {
+          Utils.showError(isChinese ? "奖励合约未配置" : "Reward contract not configured");
+          return;
+        }
+        
+        const availableRewards = this.cachedData.tierStatus?.filter(t => 
+          t.isAvailable && !t.isClaimed && t.rewardAmount > 0
+        );
+        
+        if (!availableRewards || availableRewards.length === 0) {
+          Utils.showError(isChinese ? "没有可领取的奖励" : "No rewards available to claim");
+          return;
+        }
+        
+        const totalAmount = availableRewards.reduce((sum, t) => sum + t.rewardAmount, 0);
+        
+        const confirmed = await Utils.confirmDialog(
+          isChinese ? 
+          `确认领取所有奖励？共 ${availableRewards.length} 个奖励，总计 ${totalAmount.toFixed(6)} LOM` :
+          `Confirm to claim all rewards? Total ${availableRewards.length} rewards, ${totalAmount.toFixed(6)} LOM`
+        );
+        
+        if (!confirmed) return;
+        
+        try {
+          Utils.showNotification(isChinese ? '领取所有奖励中...' : 'Claiming all rewards...', 'info');
+          
+          const tx = await this.rewardContract.claimAllRewards();
+          await tx.wait();
+          
+          // 刷新数据
+          await this.fetchAllData();
+          
+          Utils.showNotification(
+            isChinese ? 
+            `成功领取 ${availableRewards.length} 个奖励，总计 ${totalAmount.toFixed(6)} LOM` :
+            `Successfully claimed ${availableRewards.length} rewards, total ${totalAmount.toFixed(6)} LOM`,
+            "success"
+          );
+          
+          // 更新UI
+          this.updateAllUI();
+          
+        } catch (error) {
+          console.error('领取失败:', error);
+          Utils.showError(Utils.getErrorMessage(error));
+        }
+      },
+      
+      // 获取阶梯名称
+      getTierName(tierIndex) {
+        const config = this.cachedData.tierConfigs?.find(c => 
+          c.days === [30, 90, 180, 360][tierIndex]
+        );
+        return config?.name || `阶梯${tierIndex + 1}`;
+      },
+      
+      // 更新所有UI
+      updateAllUI() {
+        this.updateRewardModalUI();
+        this.updateRewardButton();
+      },
+      
+      // 更新奖励模态框UI
+      updateRewardModalUI() {
+        if (!document.getElementById('rewardModal')?.style.display) return;
+        
+        const data = this.cachedData;
+        if (!data.userInfo) return;
+        
+        // 使用requestAnimationFrame优化DOM更新
+        requestAnimationFrame(() => {
+          // 更新总奖励池
+          if (data.poolInfo) {
+            document.getElementById('totalRewardPool').textContent = 
+              data.poolInfo.totalRewards.toLocaleString(undefined, {
+                maximumFractionDigits: 0
+              }) + ' LOM';
+            
+            document.getElementById('distributedRewards').textContent = 
+              data.poolInfo.distributedRewards.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+              }) + ' LOM';
+            
+            document.getElementById('totalStakedLP').textContent = 
+              data.poolInfo.totalStakedLP.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+              }) + ' LP';
+          }
+          
+          // 更新用户LP信息
+          document.getElementById('myStakedLP').textContent = 
+            Utils.formatDisplay(data.userInfo.lpAmount) + ' LP';
+          
+          // 更新持有时间
+          if (data.userInfo.activationTime > 0) {
+            const holdTime = Math.floor((Date.now() / 1000 - data.userInfo.activationTime) / 86400);
+            document.getElementById('holdTime').textContent = holdTime + ' 天';
+          } else {
+            document.getElementById('holdTime').textContent = '0 天';
+          }
+          
+          // 更新最后更新时间
+          const updateTime = new Date(data.lastUpdate).toLocaleTimeString();
+          document.getElementById('lastUpdateTime').textContent = 
+            `数据最后更新于: ${updateTime}`;
+          
+          // 更新阶梯奖励显示
+          this.updateTierRewardsDisplay();
+          
+          // 更新按钮状态
+          this.updateButtonStates();
+        });
+      },
+      
+      // 更新奖励按钮
+      updateRewardButton() {
+        const button = document.getElementById('openRewardSystemBtn');
+        if (!button) return;
+        
+        const data = this.cachedData;
+        if (!data.userInfo) return;
+        
+        let buttonText = '🏆 LP持有奖励';
+        let buttonStyle = 'var(--gradient-yellow)';
+        
+        if (data.userInfo.isActive) {
+          // 检查可领取的奖励
+          const availableRewards = data.tierStatus?.filter(t => 
+            t.isAvailable && !t.isClaimed && t.rewardAmount > 0
+          );
+          
+          if (availableRewards && availableRewards.length > 0) {
+            buttonText = `🎁 ${availableRewards.length}个奖励可领取`;
+            buttonStyle = 'var(--gradient-green)';
+          } else {
+            // 检查下一个阶梯
+            const nextTier = data.tierStatus?.find(t => !t.isClaimed);
+            if (nextTier && data.userInfo.activationTime > 0) {
+              const tierConfig = data.tierConfigs?.find(c => 
+                c.days === [30, 90, 180, 360][nextTier.index]
+              );
+              if (tierConfig) {
+                buttonText = `⏳ ${tierConfig.name}奖励`;
+                buttonStyle = 'var(--gradient-primary)';
               }
-            </div>
-          ` : ''}
-        ` : `
-          <div class="tier-reward-amount" style="color: var(--success);">
-            ✅ 已领取 ${tier.rewardAmount?.toFixed(6) || '0'} LOM
-          </div>
-        `}
-      `;
+            }
+          }
+        }
+        
+        button.innerHTML = `
+          <span>${data.userInfo.isActive ? '📊' : '🏆'}</span>
+          <span>${buttonText}</span>
+        `;
+        button.style.background = buttonStyle;
+      },
       
-      container.appendChild(tierElement);
-    });
-    
-    // 添加事件监听
-    container.querySelectorAll('.claim-tier-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const tierIndex = parseInt(e.target.dataset.tier);
-        await this.claimTierReward(tierIndex);
-      });
-    });
-  },
+      // 保存缓存数据
+      saveCachedData() {
+        if (!account) return;
+        
+        try {
+          localStorage.setItem(
+            `lomswap_rewards_cache_${account.toLowerCase()}`,
+            JSON.stringify(this.cachedData)
+          );
+        } catch (error) {
+          console.error('保存缓存数据失败:', error);
+        }
+      },
+      
+      // 加载缓存数据
+      loadCachedData() {
+        if (!account) return;
+        
+        try {
+          const cached = localStorage.getItem(`lomswap_rewards_cache_${account.toLowerCase()}`);
+          if (cached) {
+            this.cachedData = JSON.parse(cached);
+          }
+        } catch (error) {
+          console.error('加载缓存数据失败:', error);
+        }
+      },
+      
+      // 更新UI（使用缓存）
+      updateUIFromCache() {
+        this.updateRewardButton();
+        
+        // 如果奖励模态框是打开的，更新它
+        if (document.getElementById('rewardModal')?.style.display === 'flex') {
+          this.updateRewardModalUI();
+        }
+      },
+      
+      // 更新阶梯奖励显示
+      updateTierRewardsDisplay() {
+        const container = document.getElementById('tierRewardsContainer');
+        if (!container) return;
+        
+        const data = this.cachedData;
+        
+        // 如果没有数据，显示加载状态
+        if (!data.userInfo || !data.tierStatus || !data.tierConfigs) {
+          container.innerHTML = `
+            <div class="reward-loading">
+              <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+              <div style="color: var(--text-secondary); font-size: 14px;">
+                ${isChinese ? '加载奖励数据中...' : 'Loading reward data...'}
+              </div>
+            </div>
+          `;
+          return;
+        }
+        
+        // 生成阶梯奖励HTML
+        const tiersHTML = this.generateTiersHTML();
+        container.innerHTML = tiersHTML;
+        
+        // 添加事件监听器
+        this.attachTierEventListeners();
+      },
+      
+      // 生成阶梯HTML
+      generateTiersHTML() {
+        const data = this.cachedData;
+        const userInfo = data.userInfo;
+        const tierStatus = data.tierStatus;
+        const tierConfigs = data.tierConfigs;
+        
+        if (!userInfo || !tierStatus || !tierConfigs) return '';
+        
+        return tierStatus.map((tier, index) => {
+          const tierConfig = tierConfigs.find(c => c.days === [30, 90, 180, 360][tier.index]) || 
+                           REWARD_CONFIG.TIER_CONFIGS[tier.index];
+          
+          const isActive = tier.isAvailable;
+          const isClaimed = tier.isClaimed;
+          
+          // 计算进度
+          let progress = 0;
+          if (userInfo.activationTime > 0 && !isClaimed) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const timePassed = currentTime - userInfo.activationTime;
+            const totalTime = tierConfig.days * 86400;
+            progress = Math.min(100, (timePassed / totalTime) * 100);
+          }
+          
+          // 计算倒计时
+          let countdownText = '';
+          if (!isClaimed && userInfo.activationTime > 0 && !tier.isAvailable) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const requiredTime = tierConfig.days * 86400;
+            const timePassed = currentTime - userInfo.activationTime;
+            const timeLeft = Math.max(0, requiredTime - timePassed);
+            
+            if (timeLeft > 0) {
+              const daysLeft = Math.ceil(timeLeft / 86400);
+              countdownText = `${daysLeft}天后可领取`;
+            }
+          }
+          
+          return `
+            <div class="tier-reward-item ${isActive ? 'active' : ''} ${isClaimed ? 'claimed' : ''}">
+              <div class="tier-reward-header">
+                <div class="tier-title">
+                  <span class="tier-icon">${tierConfig?.icon || '🏅'}</span>
+                  <span>${tierConfig?.name || `阶梯${tier.index + 1}`} (${tierConfig?.days || 0}天)</span>
+                </div>
+                <div class="tier-status ${isClaimed ? 'claimed' : isActive ? 'available' : 'locked'}">
+                  ${isClaimed ? '已领取' : isActive ? '可领取' : countdownText || '未激活'}
+                </div>
+              </div>
+              ${!isClaimed ? `
+                <div class="tier-progress">
+                  <div class="tier-progress-info">
+                    <span>奖励比例</span>
+                    <span>${((tierConfig?.rewardPercent || 0) * 100).toFixed(1)}%</span>
+                  </div>
+                  <div class="tier-progress-bar">
+                    <div class="tier-progress-fill" style="width: ${progress}%"></div>
+                  </div>
+                </div>
+                ${tier.rewardAmount > 0 ? `
+                  <div class="tier-reward-amount">
+                    <div>预计奖励: ${tier.rewardAmount.toFixed(6)} LOM</div>
+                    ${isActive ? 
+                      `<button class="claim-tier-btn" data-tier="${tier.index}" 
+                        style="margin-top: 8px; padding: 8px 16px; background: var(--gradient-yellow); 
+                        color: #0f172a; border: none; border-radius: 8px; font-size: 12px; 
+                        font-weight: 600; cursor: pointer; width: 100%;">
+                        领取奖励
+                      </button>` : 
+                      `<div style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">
+                        ${userInfo.activationTime ? '持有时间越长，奖励越高' : '激活后开始计时'}
+                      </div>`
+                    }
+                  </div>
+                ` : ''}
+              ` : `
+                <div class="tier-reward-amount" style="color: var(--success);">
+                  ✅ 已领取 ${tier.rewardAmount?.toFixed(6) || '0'} LOM
+                </div>
+              `}
+            </div>
+          `;
+        }).join('');
+      },
+      
+      // 更新按钮状态
+      updateButtonStates() {
+        const data = this.cachedData;
+        const activateBtn = document.getElementById('activateRewardBtn');
+        const claimAllBtn = document.getElementById('claimAllRewardsBtn');
+        
+        if (!data.userInfo) {
+          if (activateBtn) activateBtn.disabled = true;
+          if (claimAllBtn) claimAllBtn.disabled = true;
+          return;
+        }
+        
+        // 更新激活按钮
+        if (activateBtn) {
+          if (data.userInfo.isActive) {
+            activateBtn.innerHTML = '<span>✅</span><span>已激活</span>';
+            activateBtn.disabled = true;
+          } else {
+            activateBtn.innerHTML = '<span>🚀</span><span>激活奖励系统</span>';
+            activateBtn.disabled = false;
+          }
+        }
+        
+        // 更新领取所有按钮
+        if (claimAllBtn) {
+          const availableRewards = data.tierStatus?.filter(t => 
+            t.isAvailable && !t.isClaimed && t.rewardAmount > 0
+          );
+          
+          if (availableRewards && availableRewards.length > 0) {
+            const totalAmount = availableRewards.reduce((sum, t) => sum + t.rewardAmount, 0);
+            claimAllBtn.innerHTML = `<span>💰</span><span>领取所有奖励 (${totalAmount.toFixed(2)} LOM)</span>`;
+            claimAllBtn.disabled = false;
+          } else {
+            claimAllBtn.innerHTML = '<span>💰</span><span>领取所有奖励</span>';
+            claimAllBtn.disabled = true;
+          }
+        }
+      },
+      
+      // 添加阶梯事件监听器
+      attachTierEventListeners() {
+        const container = document.getElementById('tierRewardsContainer');
+        if (!container) return;
+        
+        // 使用事件委托
+        container.addEventListener('click', (e) => {
+          const claimBtn = e.target.closest('.claim-tier-btn');
+          if (claimBtn) {
+            const tierIndex = parseInt(claimBtn.dataset.tier);
+            this.claimTierReward(tierIndex);
+          }
+        });
+      },
+      
+      // 打开奖励模态框
+      async openRewardModal() {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        // 显示模态框
+        document.getElementById('rewardModal').style.display = 'flex';
+        
+        // 显示加载状态
+        const container = document.getElementById('tierRewardsContainer');
+        if (container) {
+          container.innerHTML = `
+            <div class="reward-loading">
+              <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+              <div style="color: var(--text-secondary); font-size: 14px;">
+                ${isChinese ? '加载奖励数据中...' : 'Loading reward data...'}
+              </div>
+            </div>
+          `;
+        }
+        
+        // 异步获取数据
+        try {
+          await this.fetchAllData();
+          this.updateRewardModalUI();
+        } catch (error) {
+          console.error('获取奖励数据失败:', error);
+          
+          // 如果获取失败，尝试使用缓存
+          if (this.cachedData.userInfo) {
+            this.updateRewardModalUI();
+          } else {
+            this.showErrorState();
+          }
+        }
+      },
+      
+      // 显示错误状态
+      showErrorState() {
+        const container = document.getElementById('tierRewardsContainer');
+        if (container) {
+          container.innerHTML = `
+            <div class="reward-error">
+              <div style="font-size: 48px; margin-bottom: 20px;">😢</div>
+              <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                ${isChinese ? '加载奖励数据失败' : 'Failed to load reward data'}
+              </div>
+              <button class="btn" onclick="RewardManager.refreshData()" 
+                style="background: var(--gradient-primary);">
+                ${isChinese ? '重试' : 'Retry'}
+              </button>
+            </div>
+          `;
+        }
+      }
+    };
 
-  updateActivationStatus() {
-    const activationStatus = document.getElementById('activationStatus');
-    const countdownTimer = document.getElementById('countdownTimer');
-    const activateBtn = document.getElementById('activateRewardBtn');
-    
-    if (!userRewardData.activated) {
-      // 显示激活按钮和倒计时提示
-      if (activateBtn) {
-        activateBtn.style.display = 'block';
-        activateBtn.disabled = false;
-        activateBtn.innerHTML = `
-          <span>🚀</span>
-          <span>激活奖励系统</span>
+    // ==================== 添加奖励系统按钮 ====================
+    function addRewardSystemButton() {
+      const liquidityCard = document.querySelector('#liquidityTab .card');
+      if (liquidityCard) {
+        // 检查是否已存在按钮
+        if (document.getElementById('openRewardSystemBtn')) {
+          return;
+        }
+        
+        const rewardButton = document.createElement('button');
+        rewardButton.className = 'stake-lp-button';
+        rewardButton.id = 'openRewardSystemBtn';
+        rewardButton.innerHTML = `
+          <span>🏆</span>
+          <span>LP持有奖励</span>
         `;
-      }
-      
-      if (countdownTimer) {
-        countdownTimer.innerHTML = `
-          <div style="text-align: center; padding: 20px;">
-            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">
-              激活后开始计算30/90/180/360天奖励
-            </div>
-            <div style="font-size: 12px; color: var(--accent-yellow);">
-              总奖励池: ${REWARD_CONFIG.TOTAL_REWARDS.toLocaleString()} LOM
-            </div>
-          </div>
-        `;
-      }
-    } else {
-      // 显示已激活状态
-      if (activateBtn) {
-        activateBtn.style.display = 'none';
-      }
-      
-      if (countdownTimer) {
-        const activationTime = new Date(userRewardData.activationTime * 1000);
-        countdownTimer.innerHTML = `
-          <div style="text-align: center; padding: 10px; background: rgba(46, 160, 67, 0.1); border-radius: 10px;">
-            <div style="font-size: 12px; color: var(--success); margin-bottom: 4px;">
-              ✅ 奖励系统已激活
-            </div>
-            <div style="font-size: 11px; color: var(--text-secondary);">
-              激活时间: ${activationTime.toLocaleDateString()}
-            </div>
-          </div>
-        `;
+        
+        rewardButton.style.marginTop = '12px';
+        rewardButton.style.background = 'var(--gradient-yellow)';
+        
+        // 在流动性卡片后面添加按钮
+        liquidityCard.parentNode.insertBefore(rewardButton, liquidityCard.nextSibling);
+        
+        rewardButton.addEventListener('click', () => {
+          RewardManager.openRewardModal();
+        });
       }
     }
-  },
-
-  async openRewardModal() {
-    if (!account) {
-      Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
-      return;
-    }
-    
-    await this.init();
-    document.getElementById('rewardModal').style.display = 'flex';
-    this.updateRewardUI();
-  }
-};
 
     // ==================== 界面管理器 ====================
     const UIManager = {
@@ -5126,6 +5428,14 @@ const RewardManager = {
         document.getElementById("unlockInviteBtn").addEventListener("click", () => InviteManager.unbindInviteAddress());
         document.getElementById("goToStakeLocked").addEventListener("click", () => InviteManager.goToStaking());
         
+        // 奖励系统事件
+        document.getElementById("refreshRewardBtn")?.addEventListener("click", () => RewardManager.refreshData());
+        document.getElementById("activateRewardBtn")?.addEventListener("click", () => RewardManager.activateRewards());
+        document.getElementById("claimAllRewardsBtn")?.addEventListener("click", () => RewardManager.claimAllRewards());
+        document.getElementById("closeRewardModal")?.addEventListener("click", () => {
+          document.getElementById("rewardModal").style.display = "none";
+        });
+        
         // 模态框关闭事件
         document.addEventListener("click", (e) => {
           if (e.target.classList.contains("modal-overlay") || 
@@ -5163,9 +5473,6 @@ const RewardManager = {
           e.target.classList.remove('invite-input-error');
           errorText.classList.remove('show');
         });
-        
-        // 奖励系统事件监听器
-        this.setupRewardSystemListeners();
       },
 
       showFooterAndRiskWarning() {
@@ -5527,94 +5834,9 @@ const RewardManager = {
         toInput.addEventListener('blur', () => {
           toWrapper.classList.remove('focused');
         });
-      },
-
-      setupRewardSystemListeners() {
-        
-        // 质押模态框
-        document.getElementById('cancelStakeBtn')?.addEventListener('click', () => {
-          document.getElementById('stakeLPModal').style.display = 'none';
-        });
-        
-        document.getElementById('stakeLPMaxBtn')?.addEventListener('click', async () => {
-          const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-          if (lpBalance > 0) {
-            document.getElementById('stakeLPAmount').value = Utils.formatDisplay(lpBalance);
-            document.getElementById('confirmStakeBtn').disabled = false;
-          }
-        });
-        
-        document.getElementById('stakeLPAmount')?.addEventListener('input', (e) => {
-          const amount = parseFloat(e.target.value);
-          const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-          document.getElementById('confirmStakeBtn').disabled = !amount || amount <= 0 || amount > lpBalance;
-        });
-        
-        document.getElementById('confirmStakeBtn')?.addEventListener('click', () => {
-          RewardManager.stakeLP();
-        });
-        
-        // 领取奖励模态框
-        document.getElementById('cancelClaimBtn')?.addEventListener('click', () => {
-          document.getElementById('claimRewardModal').style.display = 'none';
-        });
-        
-        document.getElementById('confirmClaimBtn')?.addEventListener('click', () => {
-          RewardManager.claimAllRewards();
-          document.getElementById('claimRewardModal').style.display = 'none';
-        });
       }
     };
 
-    // ==================== 添加奖励系统按钮 ====================
-function addRewardSystemButton() {
-  const liquidityCard = document.querySelector('#liquidityTab .card');
-  if (liquidityCard) {
-    // 检查是否已存在按钮
-    if (document.getElementById('openRewardSystemBtn')) {
-      return;
-    }
-    
-    const rewardButton = document.createElement('button');
-    rewardButton.className = 'stake-lp-button';
-    rewardButton.id = 'openRewardSystemBtn';
-    
-    // 根据激活状态显示不同文本
-    let buttonText = '🏆 LP持有奖励';
-    if (userRewardData.activated) {
-      // 计算最快可领取的阶梯
-      const availableTier = userRewardData.tierStatus.find(t => t.available && !t.claimed);
-      if (availableTier) {
-        buttonText = `🎁 ${availableTier.name}奖励可领取`;
-      } else {
-        // 显示下一个阶梯的倒计时
-        const nextTier = userRewardData.tierStatus.find(t => !t.claimed);
-        if (nextTier && userRewardData.activationTime) {
-          const currentTime = Math.floor(Date.now() / 1000);
-          const timePassed = currentTime - userRewardData.activationTime;
-          const timeLeft = Math.max(0, nextTier.days * 86400 - timePassed);
-          const daysLeft = Math.ceil(timeLeft / 86400);
-          buttonText = `⏳ ${nextTier.name}奖励 ${daysLeft}天后`;
-        }
-      }
-    }
-    
-    rewardButton.innerHTML = `
-      <span>${userRewardData.activated ? '📊' : '🏆'}</span>
-      <span>${buttonText}</span>
-    `;
-    
-    rewardButton.style.marginTop = '12px';
-    rewardButton.style.background = userRewardData.activated ? 'var(--gradient-green)' : 'var(--gradient-yellow)';
-    
-    // 在流动性卡片后面添加按钮
-    liquidityCard.parentNode.insertBefore(rewardButton, liquidityCard.nextSibling);
-    
-    rewardButton.addEventListener('click', () => {
-      RewardManager.openRewardModal();
-    });
-  }
-}
     // ==================== 初始化应用 ====================
     document.addEventListener('DOMContentLoaded', function() {
       UIManager.init();
@@ -5648,7 +5870,9 @@ function addRewardSystemButton() {
             // 重新初始化奖励系统
             RewardManager.init();
             // 重新添加奖励系统按钮
-            addRewardSystemButton();
+            setTimeout(() => {
+              addRewardSystemButton();
+            }, 500);
           }
         });
         
