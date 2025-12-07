@@ -216,7 +216,7 @@
     .card {
       background: var(--card-bg);
       border-radius: 20px;
-      padding: 20px;
+      padding: 24px;
       margin-bottom: 16px;
       border: 1px solid var(--border-color);
       position: relative;
@@ -245,7 +245,6 @@
       border-radius: 16px;
       padding: 16px;
       border: 1px solid var(--border-color);
-      transition: all 0.3s ease;
       margin-bottom: 8px;
     }
     
@@ -265,10 +264,6 @@
       color: var(--accent-yellow);
       font-weight: 600;
       cursor: pointer;
-    }
-    
-    .balance-amount:hover {
-      text-decoration: underline;
     }
     
     .token-selector {
@@ -658,27 +653,19 @@
       transform: translateY(-1px);
     }
     
-    /* ========== 质押页面样式 ========== */
-    .staking-container {
+    /* ========== LP奖励页面样式 ========== */
+    .lp-rewards-container {
       padding: 2px 0;
     }
     
-    .staking-overview-card {
-      background: var(--gradient-card);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-    }
-    
-    .staking-header {
+    .rewards-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     
-    .staking-title {
+    .rewards-title {
       font-size: 22px;
       font-weight: 800;
       background: var(--gradient-yellow);
@@ -690,92 +677,87 @@
       gap: 10px;
     }
     
-    .staking-icon {
+    .rewards-icon {
       font-size: 28px;
     }
     
-    .apr-badge {
-      background: var(--gradient-orange);
-      color: #0f172a;
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 16px;
-      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-    }
-    
-    .staking-stats-grid {
+    .rewards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
     
-    .stat-card {
+    .reward-stat {
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
       text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
     }
     
-    .stat-label {
-      font-size: 13px;
+    .reward-stat:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-yellow);
+    }
+    
+    .reward-label {
+      font-size: 12px;
       color: var(--text-secondary);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
     
-    .stat-icon {
-      color: var(--accent-yellow);
-      font-size: 14px;
-    }
-    
-    .stat-value {
-      font-size: 24px;
+    .reward-value {
+      font-size: 20px;
       font-weight: 800;
       color: var(--text-primary);
       font-family: 'SF Mono', Monaco, monospace;
       margin-bottom: 4px;
     }
     
-    .stat-value.green {
+    .reward-value.green {
       color: var(--accent-green);
     }
     
-    .stat-value.yellow {
+    .reward-value.yellow {
       color: var(--accent-yellow);
     }
     
-    .stat-value.teal {
+    .reward-value.teal {
       color: var(--accent-teal);
     }
     
-    .stat-value.orange {
+    .reward-value.orange {
       color: var(--accent-orange);
     }
     
-    .stat-unit {
+    .reward-unit {
       font-size: 12px;
       color: var(--text-secondary);
     }
     
-    .time-multiplier-bar {
+    .multiplier-section {
+      background: var(--gradient-card);
+      border-radius: 16px;
+      padding: 20px;
       margin: 20px 0;
+      border: 1px solid var(--border-color);
     }
     
-    .multiplier-label {
+    .multiplier-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     
-    .multiplier-text {
-      font-size: 15px;
+    .multiplier-label {
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
       display: flex;
@@ -784,7 +766,7 @@
     }
     
     .multiplier-value {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       background: var(--gradient-yellow);
       -webkit-background-clip: text;
@@ -792,34 +774,30 @@
       color: transparent;
     }
     
-    .multiplier-progress {
-      height: 10px;
+    .multiplier-bar {
+      height: 8px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
+      border-radius: 4px;
       overflow: hidden;
-      position: relative;
+      margin-bottom: 8px;
     }
     
-    .multiplier-progress-fill {
+    .multiplier-fill {
       height: 100%;
       background: var(--gradient-yellow);
-      border-radius: 5px;
+      border-radius: 4px;
       transition: width 1s ease-in-out;
-      position: relative;
     }
     
     .multiplier-stages {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-secondary);
     }
     
     .stage {
       text-align: center;
-      position: relative;
-      flex: 1;
     }
     
     .stage.active {
@@ -827,132 +805,89 @@
       font-weight: 600;
     }
     
-    .stage::before {
-      content: '';
-      position: absolute;
-      top: -16px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text-secondary);
-    }
-    
-    .stage.active::before {
-      background: var(--accent-yellow);
-      box-shadow: 0 0 8px var(--accent-yellow);
-    }
-    
-    .action-section {
-      margin-bottom: 20px;
-    }
-    
-    .action-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .action-icon {
-      color: var(--accent-yellow);
-      font-size: 20px;
-    }
-    
-    .lp-balance-display {
+    .activation-section {
       background: rgba(255, 215, 0, 0.1);
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
-    .lp-balance-label {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-    
-    .lp-balance-value {
-      font-size: 32px;
-      font-weight: 800;
-      color: var(--accent-yellow);
-      font-family: 'SF Mono', Monaco, monospace;
-    }
-    
-    .lp-balance-unit {
-      font-size: 16px;
-      color: var(--text-secondary);
-      margin-left: 8px;
-    }
-    
-    .activation-requirements {
-      background: rgba(26, 115, 232, 0.1);
-      border: 1px solid rgba(26, 115, 232, 0.3);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    
-    .requirements-icon {
-      color: var(--primary-blue);
-      margin-right: 8px;
-    }
-    
-    .invite-system {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.1));
       border-radius: 16px;
       padding: 20px;
       margin: 20px 0;
       border: 1px solid rgba(255, 215, 0, 0.3);
     }
     
-    .invite-header {
+    .activation-header {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 16px;
     }
     
-    .invite-icon {
+    .activation-icon {
       color: var(--accent-yellow);
       font-size: 24px;
     }
     
-    .invite-title {
+    .activation-title {
       font-size: 18px;
       font-weight: 700;
       color: var(--text-primary);
     }
     
-    .invite-subtitle {
+    .lp-balance-display {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .lp-balance-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .lp-balance-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+    
+    .lp-balance-unit {
       font-size: 14px;
       color: var(--text-secondary);
-      margin-bottom: 20px;
+      margin-left: 6px;
+    }
+    
+    .min-requirement {
+      background: rgba(26, 115, 232, 0.1);
+      border: 1px solid rgba(26, 115, 232, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: var(--text-secondary);
       line-height: 1.5;
+    }
+    
+    .requirement-icon {
+      color: var(--primary-blue);
+      margin-right: 6px;
     }
     
     .invite-input-container {
       position: relative;
-      margin-bottom: 16px;
+      margin: 16px 0;
     }
     
     .invite-input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 12px 16px;
       background: rgba(255, 215, 0, 0.05);
       border: 1px solid rgba(255, 215, 0, 0.3);
-      border-radius: 12px;
+      border-radius: 10px;
       color: var(--text-primary);
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
       transition: all 0.3s ease;
       font-family: 'SF Mono', Monaco, monospace;
@@ -967,98 +902,22 @@
       color: var(--text-muted);
     }
     
-    .invite-input-error {
-      border-color: var(--accent-red) !important;
-      background: rgba(255, 71, 87, 0.05) !important;
-    }
-    
-    .invite-error-text {
-      color: var(--accent-red);
-      font-size: 13px;
-      margin-top: 8px;
-      display: none;
-    }
-    
-    .invite-error-text.show {
-      display: block;
-    }
-    
-    .invite-locked {
-      background: rgba(46, 160, 67, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid var(--success);
-      margin-top: 20px;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    .invite-locked-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    
-    .invite-locked-text {
-      font-size: 16px;
-      color: var(--success);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .locked-icon {
-      font-size: 20px;
-    }
-    
-    .invite-address-container {
-      background: rgba(46, 160, 67, 0.15);
-      border-radius: 12px;
-      padding: 16px;
-      margin: 16px 0;
-      text-align: center;
-      border: 1px solid rgba(46, 160, 67, 0.3);
-    }
-    
-    .invite-address-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .invite-address {
-      font-size: 15px;
-      color: var(--text-primary);
-      font-weight: 600;
-      word-break: break-all;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
-      font-family: 'SF Mono', Monaco, monospace;
-      margin-top: 8px;
-    }
-    
     .invite-benefits {
       background: rgba(255, 215, 0, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 20px 0;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 16px 0;
       border: 1px solid rgba(255, 215, 0, 0.3);
     }
     
     .benefit-title {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent-yellow);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     
     .benefit-list {
@@ -1068,22 +927,18 @@
     }
     
     .benefit-item {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--text-secondary);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
       line-height: 1.5;
-    }
-    
-    .benefit-item:last-child {
-      margin-bottom: 0;
     }
     
     .benefit-icon {
       color: var(--accent-yellow);
-      font-size: 14px;
+      font-size: 12px;
       flex-shrink: 0;
       margin-top: 2px;
     }
@@ -1091,12 +946,12 @@
     .action-buttons {
       display: flex;
       gap: 12px;
-      margin-top: 24px;
+      margin-top: 20px;
     }
     
     .action-button {
       flex: 1;
-      padding: 16px 20px;
+      padding: 14px 20px;
       border-radius: 12px;
       font-size: 16px;
       font-weight: 700;
@@ -1106,8 +961,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      min-height: 56px;
+      gap: 8px;
     }
     
     .action-button.primary {
@@ -1130,7 +984,7 @@
     
     .action-button:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     }
     
     .action-button:disabled {
@@ -1140,117 +994,111 @@
       box-shadow: none !important;
     }
     
-    .penalty-warning {
-      background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.05));
-      border: 1px solid var(--accent-red);
+    .activated-status {
+      background: rgba(46, 160, 67, 0.1);
       border-radius: 12px;
       padding: 20px;
       margin: 20px 0;
+      border: 1px solid var(--success);
     }
     
-    .penalty-header {
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .status-text {
+      font-size: 16px;
+      color: var(--success);
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
     }
     
-    .penalty-icon {
+    .status-details {
+      background: rgba(46, 160, 67, 0.15);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 16px 0;
+      border: 1px solid rgba(46, 160, 67, 0.3);
+      text-align: center;
+    }
+    
+    .status-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .status-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 600;
+      word-break: break-all;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+    
+    .warning-box {
+      background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.05));
+      border: 1px solid var(--accent-red);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+    
+    .warning-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .warning-icon {
       color: var(--accent-red);
-      font-size: 20px;
+      font-size: 18px;
     }
     
-    .penalty-title {
-      font-size: 16px;
+    .warning-title {
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent-red);
     }
     
-    .penalty-content {
-      font-size: 14px;
+    .warning-content {
+      font-size: 12px;
       color: var(--text-secondary);
       line-height: 1.5;
     }
     
-    .rewards-detail-card {
-      background: var(--gradient-card);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-    }
-    
-    .rewards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    
-    .reward-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .reward-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .reward-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-primary);
-      font-family: 'SF Mono', Monaco, monospace;
-      margin-bottom: 4px;
-    }
-    
-    .reward-value.green {
-      color: var(--accent-green);
-    }
-    
-    .reward-value.orange {
-      color: var(--accent-orange);
-    }
-    
-    .reward-value.teal {
-      color: var(--accent-teal);
-    }
-    
-    .reward-value.yellow {
-      color: var(--accent-yellow);
-    }
-    
     .cooldown-timer {
       background: rgba(26, 115, 232, 0.1);
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 10px;
+      padding: 16px;
       text-align: center;
       border: 1px solid rgba(26, 115, 232, 0.3);
-      margin: 20px 0;
+      margin: 16px 0;
       display: none;
     }
     
     .cooldown-label {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
     }
     
     .cooldown-value {
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--primary-blue);
       font-family: 'SF Mono', Monaco, monospace;
@@ -1403,7 +1251,7 @@
       
       .card {
         margin: 10px;
-        padding: 16px;
+        padding: 20px;
       }
       
       .header {
@@ -1420,7 +1268,6 @@
         font-size: 18px;
       }
       
-      .staking-stats-grid,
       .rewards-grid,
       .liquidity-stats,
       .position-grid {
@@ -1436,27 +1283,16 @@
         flex-direction: column;
       }
       
-      .staking-overview-card,
-      .staking-action-card,
-      .rewards-detail-card {
-        padding: 20px;
-        margin: 10px;
-      }
-      
       .amount-input {
         font-size: 24px;
       }
       
       .lp-balance-value {
-        font-size: 28px;
-      }
-      
-      .stat-value {
         font-size: 22px;
       }
       
       .reward-value {
-        font-size: 20px;
+        font-size: 18px;
       }
     }
   </style>
@@ -1480,7 +1316,7 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="swap">兑换</button>
         <button class="tab-btn" data-tab="liquidity">流动性</button>
-        <button class="tab-btn" data-tab="staking">LP奖励</button>
+        <button class="tab-btn" data-tab="lpRewards">LP奖励</button>
       </div>
     </div>
 
@@ -1560,10 +1396,6 @@
               <span class="detail-label">最低收到</span>
               <span class="detail-value" id="minReceived">0 LOM</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">价格影响</span>
-              <span class="detail-value" id="priceImpact">< 0.01%</span>
-            </div>
           </div>
 
           <!-- 交易按钮 -->
@@ -1575,7 +1407,7 @@
     <!-- 流动性页面 -->
     <div class="tab-content" id="liquidityTab">
       <div class="card">
-        <div class="card-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
           <span style="color: var(--accent-yellow); font-size: 20px;">💧</span>
           <span style="font-size: 18px; font-weight: 700;">CFX-LOM 流动池</span>
         </div>
@@ -1634,276 +1466,200 @@
         </div>
         
         <!-- 质押入口 -->
-        <div class="lp-balance-display" style="margin-top: 20px; cursor: pointer;" onclick="switchToStakingTab()">
+        <div class="lp-balance-display" style="margin-top: 20px; cursor: pointer;" onclick="switchToRewardsTab()">
           <div class="lp-balance-label">使用LP代币赚取奖励</div>
           <div style="margin-top: 8px;">
             <span class="lp-balance-value">45.8%</span>
             <span class="lp-balance-unit">APY</span>
           </div>
           <div style="font-size: 14px; color: var(--accent-yellow); margin-top: 12px;">
-            🚀 点击进入LP奖励农场 →
+            🚀 点击进入LP奖励页面 →
           </div>
         </div>
       </div>
     </div>
 
     <!-- LP奖励页面 -->
-    <div class="tab-content" id="stakingTab">
-      <div class="staking-container">
-        <!-- LP奖励概览卡片 -->
-        <div class="staking-overview-card">
-          <div class="staking-header">
-            <div class="staking-title">
-              <span class="staking-icon">🏆</span>
-              <span id="stakingTitle">LP持仓奖励农场</span>
-            </div>
-            <div class="apr-badge" id="aprBadge">APR: 45.8%</div>
+    <div class="tab-content" id="lpRewardsTab">
+      <div class="card">
+        <!-- 奖励概览 -->
+        <div class="rewards-header">
+          <div class="rewards-title">
+            <span class="rewards-icon">🏆</span>
+            <span id="rewardsTitle">LP持仓奖励</span>
           </div>
-          
-          <div class="staking-stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">
-                <span class="stat-icon">💰</span>
-                <span id="lpBalanceLabel">我的LP持仓</span>
-              </div>
-              <div class="stat-value yellow" id="myLPHolding">0</div>
-              <div class="stat-unit" id="lpUnit">LP</div>
-            </div>
-            
-            <div class="stat-card">
-              <div class="stat-label">
-                <span class="stat-icon">📊</span>
-                <span id="activeSharesLabel">活跃份额</span>
-              </div>
-              <div class="stat-value teal" id="activeShares">0</div>
-              <div class="stat-unit">LP</div>
-            </div>
-            
-            <div class="stat-card">
-              <div class="stat-label">
-                <span class="stat-icon">📈</span>
-                <span id="pendingRewardLabel">待领取奖励</span>
-              </div>
-              <div class="stat-value green" id="pendingReward">0</div>
-              <div class="stat-unit">LOM</div>
-            </div>
-            
-            <div class="stat-card">
-              <div class="stat-label">
-                <span class="stat-icon">👥</span>
-                <span id="referralRewardLabel">邀请奖励</span>
-              </div>
-              <div class="stat-value orange" id="referralReward">0</div>
-              <div class="stat-unit">LOM</div>
-            </div>
-          </div>
-          
-          <!-- 时间倍率进度条 -->
-          <div class="time-multiplier-bar">
-            <div class="multiplier-label">
-              <div class="multiplier-text">
-                <span>⏱️</span>
-                <span id="multiplierLabel">时间倍率:</span>
-              </div>
-              <div class="multiplier-value" id="multiplierValue">1.0x</div>
-            </div>
-            <div class="multiplier-progress">
-              <div class="multiplier-progress-fill" id="multiplierProgress" style="width: 0%"></div>
-            </div>
-            <div class="multiplier-stages">
-              <div class="stage" id="stage30">30天</div>
-              <div class="stage" id="stage90">90天</div>
-              <div class="stage" id="stage180">180天</div>
-              <div class="stage" id="stage360">360天</div>
-            </div>
+          <div style="background: var(--gradient-orange); color: #0f172a; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 16px;">
+            APR: 45.8%
           </div>
         </div>
-
-        <!-- 激活操作卡片 -->
-        <div class="card">
-          <div class="action-section">
-            <div class="action-title">
-              <span class="action-icon">🚀</span>
-              <span id="activateTitle">激活LP持仓奖励</span>
-            </div>
-            
-            <div class="lp-balance-display">
-              <div class="lp-balance-label" id="lpBalanceLabel">您的LP代币余额</div>
-              <div>
-                <span class="lp-balance-value" id="lpBalance">0.000000</span>
-                <span class="lp-balance-unit">LP</span>
-              </div>
-            </div>
-            
-            <div class="activation-requirements">
-              <span class="requirements-icon">⚡</span>
-              <span id="activationRequirements">激活条件：钱包中需持有至少 100 LP 代币</span>
-              <div style="font-size: 13px; margin-top: 12px; color: var(--text-secondary);">
-                📌 激活后合约将记录您的LP持仓，奖励基于实时持仓计算<br>
-                📌 无需质押或转移LP代币，资金始终在您钱包中<br>
-                📌 系统会自动检测您的LP余额变化
-              </div>
-            </div>
-            
-            <!-- 邀请系统 -->
-            <div class="invite-system" id="inviteSystem">
-              <div class="invite-header">
-                <span class="invite-icon">👥</span>
-                <span class="invite-title" id="inviteTitle">邀请系统 (可选)</span>
-              </div>
-              
-              <div class="invite-subtitle" id="inviteSubtitle">
-                绑定邀请人地址可获得额外5%奖励分成。邀请人可获得您收益的5%作为奖励。
-              </div>
-              
-              <div class="invite-input-container">
-                <input type="text" class="invite-input" id="inviteAddress" 
-                       placeholder="请输入邀请人钱包地址 (0x开头)" 
-                       pattern="^0x[a-fA-F0-9]{40}$">
-                <div class="invite-error-text" id="inviteErrorText">
-                  请输入有效的钱包地址 (0x开头，共42位)
-                </div>
-              </div>
-              
-              <div class="invite-benefits">
-                <div class="benefit-title">
-                  <span>🎁</span>
-                  <span>邀请奖励好处</span>
-                </div>
-                <ul class="benefit-list">
-                  <li class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>邀请人获得您收益的5%作为奖励</span>
-                  </li>
-                  <li class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>被邀请人无任何损失</span>
-                  </li>
-                  <li class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>奖励锁定30天后可领取</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            
-            <!-- 已激活状态 -->
-            <div class="invite-locked" id="activatedSection" style="display:none">
-              <div class="invite-locked-header">
-                <div class="invite-locked-text">
-                  <span class="locked-icon">✅</span>
-                  <span id="activatedTitle">奖励已激活</span>
-                </div>
-              </div>
-              
-              <div class="invite-address-container">
-                <div class="invite-address-label">
-                  <span>⏰</span>
-                  <span>激活时间:</span>
-                </div>
-                <div class="invite-address" id="activationTime">--</div>
-              </div>
-              
-              <div class="invite-address-container" id="referrerContainer" style="display:none">
-                <div class="invite-address-label">
-                  <span>👤</span>
-                  <span>邀请人:</span>
-                </div>
-                <div class="invite-address" id="referrerAddress">--</div>
-              </div>
-              
-              <div class="invite-address-container">
-                <div class="invite-address-label">
-                  <span>📊</span>
-                  <span>当前检测到LP:</span>
-                </div>
-                <div class="invite-address" id="currentLPBalance">--</div>
-              </div>
-            </div>
-            
-            <div class="action-buttons" id="activationButtons">
-              <button class="action-button primary" id="activateBtn" onclick="activateStaking()">
-                <span>🚀</span>
-                <span id="activateBtnText">激活奖励</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 奖励详情卡片 -->
-        <div class="rewards-detail-card">
-          <div class="action-title">
-            <span class="action-icon">🏆</span>
-            <span id="rewardsTitle">奖励管理</span>
-          </div>
-          
-          <div class="rewards-grid">
-            <div class="reward-item">
-              <div class="reward-label">
-                <span>💰</span>
-                <span>待领取奖励</span>
-              </div>
-              <div class="reward-value green" id="pendingRewardDetail">0</div>
-              <div class="stat-unit">LOM</div>
-            </div>
-            
-            <div class="reward-item">
-              <div class="reward-label">
-                <span>👥</span>
-                <span>邀请奖励</span>
-              </div>
-              <div class="reward-value orange" id="pendingReferralDetail">0</div>
-              <div class="stat-unit">LOM</div>
-            </div>
-            
-            <div class="reward-item">
-              <div class="reward-label">
-                <span>⏰</span>
-                <span>下次可领取</span>
-              </div>
-              <div class="reward-value teal" id="nextClaimTime">--</div>
-            </div>
-            
-            <div class="reward-item">
-              <div class="reward-label">
-                <span>📅</span>
-                <span>激活时长</span>
-              </div>
-              <div class="reward-value yellow" id="activeDuration">0天</div>
-            </div>
-          </div>
-          
-          <!-- 惩罚警告 -->
-          <div class="penalty-warning" id="penaltyWarning">
-            <div class="penalty-header">
-              <span class="penalty-icon">⚠️</span>
-              <span class="penalty-title" id="penaltyTitle">减持惩罚警告</span>
-            </div>
-            <div class="penalty-content" id="penaltyContent">
-              ⚠️ 激活后减持LP将面临50%的奖励惩罚！<br>
-              ⚠️ 30天内减持将失去邀请奖励资格<br>
-              ⚠️ 7天内最多减持30%，且需要1天冷却时间
-            </div>
-          </div>
-          
-          <!-- 冷却时间显示 -->
-          <div class="cooldown-timer" id="cooldownTimer">
-            <div class="cooldown-label">
-              <span>⏳</span>
-              <span id="cooldownLabel">减持冷却时间</span>
-            </div>
-            <div class="cooldown-value" id="cooldownValue">00:00:00</div>
-          </div>
-          
-          <div class="action-buttons">
-            <button class="action-button claim" id="claimBtn" onclick="claimRewards()" disabled>
+        
+        <!-- 奖励统计 -->
+        <div class="rewards-grid">
+          <div class="reward-stat">
+            <div class="reward-label">
               <span>💰</span>
-              <span id="claimBtnText">领取奖励</span>
-            </button>
-            <button class="action-button referral" id="claimReferralBtn" onclick="claimReferralRewards()" disabled>
+              <span>我的LP持仓</span>
+            </div>
+            <div class="reward-value yellow" id="myLPHolding">0</div>
+            <div class="reward-unit">LP</div>
+          </div>
+          
+          <div class="reward-stat">
+            <div class="reward-label">
+              <span>📊</span>
+              <span>活跃份额</span>
+            </div>
+            <div class="reward-value teal" id="activeShares">0</div>
+            <div class="reward-unit">LP</div>
+          </div>
+          
+          <div class="reward-stat">
+            <div class="reward-label">
+              <span>📈</span>
+              <span>待领取奖励</span>
+            </div>
+            <div class="reward-value green" id="pendingReward">0</div>
+            <div class="reward-unit">LOM</div>
+          </div>
+          
+          <div class="reward-stat">
+            <div class="reward-label">
               <span>👥</span>
-              <span id="claimReferralBtnText">领取邀请奖励</span>
+              <span>邀请奖励</span>
+            </div>
+            <div class="reward-value orange" id="referralReward">0</div>
+            <div class="reward-unit">LOM</div>
+          </div>
+        </div>
+        
+        <!-- 时间倍率 -->
+        <div class="multiplier-section">
+          <div class="multiplier-header">
+            <div class="multiplier-label">
+              <span>⏱️</span>
+              <span>时间倍率:</span>
+            </div>
+            <div class="multiplier-value" id="multiplierValue">1.0x</div>
+          </div>
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" id="multiplierProgress" style="width: 0%"></div>
+          </div>
+          <div class="multiplier-stages">
+            <div class="stage" id="stage30">30天</div>
+            <div class="stage" id="stage90">90天</div>
+            <div class="stage" id="stage180">180天</div>
+            <div class="stage" id="stage360">360天</div>
+          </div>
+        </div>
+        
+        <!-- 激活奖励 -->
+        <div class="activation-section" id="activationSection">
+          <div class="activation-header">
+            <span class="activation-icon">🚀</span>
+            <span class="activation-title">激活奖励</span>
+          </div>
+          
+          <div class="lp-balance-display">
+            <div class="lp-balance-label">您的LP代币余额</div>
+            <div>
+              <span class="lp-balance-value" id="lpBalance">0.000000</span>
+              <span class="lp-balance-unit">LP</span>
+            </div>
+          </div>
+          
+          <div class="min-requirement">
+            <span class="requirement-icon">⚡</span>
+            <span>激活条件：钱包中需持有至少 100 LP 代币</span>
+          </div>
+          
+          <!-- 邀请系统 -->
+          <div class="invite-input-container">
+            <input type="text" class="invite-input" id="inviteAddress" 
+                   placeholder="输入邀请人地址 (可选)">
+          </div>
+          
+          <div class="invite-benefits">
+            <div class="benefit-title">
+              <span>🎁</span>
+              <span>邀请奖励好处</span>
+            </div>
+            <ul class="benefit-list">
+              <li class="benefit-item">
+                <span class="benefit-icon">✓</span>
+                <span>邀请人获得您收益的5%作为奖励</span>
+              </li>
+              <li class="benefit-item">
+                <span class="benefit-icon">✓</span>
+                <span>奖励锁定30天后可领取</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="action-buttons" id="activationButtons">
+            <button class="action-button primary" id="activateBtn" onclick="activateRewards()">
+              <span>🚀</span>
+              <span id="activateBtnText">激活奖励</span>
             </button>
+          </div>
+        </div>
+        
+        <!-- 已激活状态 -->
+        <div class="activated-status" id="activatedStatus" style="display: none;">
+          <div class="status-header">
+            <div class="status-text">
+              <span>✅</span>
+              <span>奖励已激活</span>
+            </div>
+          </div>
+          
+          <div class="status-details">
+            <div class="status-label">
+              <span>⏰</span>
+              <span>激活时间:</span>
+            </div>
+            <div class="status-value" id="activationTime">--</div>
+          </div>
+          
+          <div class="status-details" id="referrerDetails" style="display: none;">
+            <div class="status-label">
+              <span>👤</span>
+              <span>邀请人:</span>
+            </div>
+            <div class="status-value" id="referrerAddress">--</div>
+          </div>
+        </div>
+        
+        <!-- 奖励领取 -->
+        <div class="action-buttons">
+          <button class="action-button claim" id="claimBtn" onclick="claimRewards()" disabled>
+            <span>💰</span>
+            <span id="claimBtnText">领取奖励</span>
+          </button>
+          <button class="action-button referral" id="claimReferralBtn" onclick="claimReferralRewards()" disabled>
+            <span>👥</span>
+            <span id="claimReferralBtnText">领取邀请奖励</span>
+          </button>
+        </div>
+        
+        <!-- 冷却时间显示 -->
+        <div class="cooldown-timer" id="cooldownTimer">
+          <div class="cooldown-label">
+            <span>⏳</span>
+            <span>减持冷却时间</span>
+          </div>
+          <div class="cooldown-value" id="cooldownValue">00:00:00</div>
+        </div>
+        
+        <!-- 惩罚警告 -->
+        <div class="warning-box">
+          <div class="warning-header">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-title">减持惩罚警告</span>
+          </div>
+          <div class="warning-content">
+            ⚠️ 激活后减持LP将面临50%的奖励惩罚<br>
+            ⚠️ 30天内减持将失去邀请奖励资格<br>
+            ⚠️ 7天内最多减持30%，且需要1天冷却时间
           </div>
         </div>
       </div>
@@ -1949,8 +1705,7 @@
       WCFX: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
       ROUTER: "0x62b0873055bf896dd869e172119871ac24aea305",
       PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85",
-      CHAIN_ID: 1030,
-      MIN_ACTIVATION: 100 // 最小激活要求 100 LP
+      CHAIN_ID: 1030
     };
 
     // ==================== 合约ABI ====================
@@ -1958,8 +1713,6 @@
       "function activate(address referrer)",
       "function claimAll()",
       "function claimReferral()",
-      "function lpToken() view returns (address)",
-      "function rewardToken() view returns (address)",
       "function minActivation() view returns (uint256)",
       "function totalShares() view returns (uint256)",
       "function accRewardPerShare() view returns (uint256)",
@@ -1967,18 +1720,14 @@
       "function rewardPerSecond() view returns (uint256)",
       "function users(address) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingReferral, uint256 lastClaimTime, uint256 activeTime, uint256 lastReduceTime, uint256 referralUnlockTime, address referrer, bool cleanInFirst30Days)",
       "function pendingReward(address user) view returns (uint256)",
-      "function blacklist(address) view returns (bool)",
-      "function paused() view returns (bool)"
+      "function blacklist(address) view returns (bool)"
     ];
 
     const ERC20_ABI = [
       "function balanceOf(address owner) view returns (uint256)",
       "function decimals() view returns (uint8)",
       "function symbol() view returns (string)",
-      "function name() view returns (string)",
-      "function totalSupply() view returns (uint256)",
-      "function approve(address spender, uint256 amount) returns (bool)",
-      "function allowance(address owner, address spender) view returns (uint256)"
+      "function name() view returns (string)"
     ];
 
     const PAIR_ABI = [
@@ -1989,26 +1738,13 @@
       "function token1() view returns (address)"
     ];
 
-    const ROUTER_ABI = [
-      "function getAmountsOut(uint amountIn, address[] path) view returns (uint[] memory amounts)",
-      "function swapExactETHForTokensSupportingFeeOnTransferTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) payable",
-      "function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
-      "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)",
-      "function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) payable returns (uint amountToken, uint amountETH, uint liquidity)",
-      "function removeLiquidityETH(address token, uint liquidity, uint amountTokenMin, uint amountETHMin, address to, uint deadline) returns (uint amountToken, uint amountETH)"
-    ];
-
     // ==================== 全局变量 ====================
     let provider, signer, account;
-    let rewardContract, lpTokenContract, lomTokenContract, pairContract, routerContract;
+    let rewardContract, lpTokenContract, lomTokenContract, pairContract;
     let isChinese = true;
-    let fromToken = "CFX";
-    let toToken = "LOM";
-    let slippage = 0.1;
+    let userRewardData = null;
     let refreshInterval;
     let cooldownInterval;
-    let userStakingData = null;
-    let currentReserves = { cfx: 0, lom: 0 };
 
     // ==================== 工具函数 ====================
     class Utils {
@@ -2060,13 +1796,13 @@
         if (!seconds) return '0天';
         const days = Math.floor(seconds / 86400);
         const hours = Math.floor((seconds % 86400) / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
         
         if (days > 0) {
           return `${days}天${hours > 0 ? ` ${hours}小时` : ''}`;
         } else if (hours > 0) {
-          return `${hours}小时${minutes > 0 ? ` ${minutes}分钟` : ''}`;
+          return `${hours}小时`;
         } else {
+          const minutes = Math.floor((seconds % 3600) / 60);
           return `${minutes}分钟`;
         }
       }
@@ -2117,6 +1853,10 @@
 
       static showError(message) {
         const errorBox = document.getElementById('swapErrorBox');
+        if (!errorBox) {
+          alert(message);
+          return;
+        }
         const errorText = document.getElementById('swapErrorText');
         errorText.textContent = message;
         errorBox.classList.add('show');
@@ -2124,16 +1864,6 @@
         setTimeout(() => {
           errorBox.classList.remove('show');
         }, 5000);
-      }
-
-      static showLoading(button, text) {
-        button.disabled = true;
-        const originalText = button.innerHTML;
-        button.innerHTML = `<div class="loading-spinner"></div> ${text}`;
-        return () => {
-          button.disabled = false;
-          button.innerHTML = originalText;
-        };
       }
     }
 
@@ -2168,8 +1898,8 @@
           
           if (refreshInterval) clearInterval(refreshInterval);
           refreshInterval = setInterval(() => {
-            DataManager.refreshAll();
-            StakingManager.refreshData();
+            RewardsManager.refreshData();
+            LiquidityManager.refreshData();
           }, 10000);
           
           return true;
@@ -2206,26 +1936,19 @@
         lpTokenContract = new ethers.Contract(CONFIG.LP_TOKEN, ERC20_ABI, signer);
         lomTokenContract = new ethers.Contract(CONFIG.LOM_TOKEN, ERC20_ABI, signer);
         pairContract = new ethers.Contract(CONFIG.PAIR, PAIR_ABI, signer);
-        routerContract = new ethers.Contract(CONFIG.ROUTER, ROUTER_ABI, signer);
       }
 
       static updateUI() {
         const walletBtn = document.getElementById("walletBtn");
-        const swapBtn = document.getElementById("swapBtn");
-        
         walletBtn.classList.remove('connecting');
         
         if (account) {
           const displayAddress = Utils.formatAddress(account);
           walletBtn.textContent = displayAddress;
           walletBtn.classList.add('connected');
-          swapBtn.textContent = isChinese ? "请输入数量" : "Enter Amount";
-          swapBtn.disabled = false;
         } else {
           walletBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
           walletBtn.classList.remove('connected');
-          swapBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
-          swapBtn.disabled = false;
         }
       }
 
@@ -2237,7 +1960,6 @@
         lpTokenContract = null;
         lomTokenContract = null;
         pairContract = null;
-        routerContract = null;
         
         if (refreshInterval) {
           clearInterval(refreshInterval);
@@ -2250,348 +1972,23 @@
         }
         
         this.updateUI();
-        DataManager.resetAllData();
-        StakingManager.resetData();
+        RewardsManager.resetData();
+        LiquidityManager.resetData();
       }
     }
 
-    // ==================== 数据管理 ====================
-    class DataManager {
-      static async refreshAll() {
-        if (!account) return;
-        
-        try {
-          await this.updateAllBalances();
-          await this.updatePoolInfo();
-          this.updateSwapButtonState();
-        } catch (error) {
-          console.error('刷新数据失败:', error);
-        }
-      }
-
-      static async updateAllBalances() {
-        if (!account) return;
-        
-        try {
-          // 获取CFX余额
-          const cfxBal = await provider.getBalance(account);
-          const cfxBalance = parseFloat(ethers.utils.formatEther(cfxBal));
-          
-          // 获取LOM余额
-          const lomBal = await lomTokenContract.balanceOf(account);
-          const lomBalance = parseFloat(ethers.utils.formatUnits(lomBal, 18));
-          
-          // 更新显示
-          if (fromToken === "CFX") {
-            document.getElementById('fromBal').textContent = Utils.formatNumber(cfxBalance);
-          }
-          if (toToken === "LOM") {
-            document.getElementById('toBal').textContent = Utils.formatNumber(lomBalance);
-          }
-          
-        } catch (error) {
-          console.error("更新余额失败:", error);
-        }
-      }
-
-      static async updatePoolInfo() {
-        try {
-          if (!pairContract || !account) return;
-          
-          // 获取池子储备
-          const [r0, r1] = await pairContract.getReserves();
-          const t0 = await pairContract.token0();
-          
-          const reserveCfx = t0.toLowerCase() === CONFIG.WCFX.toLowerCase() ? r0 : r1;
-          const reserveLom = t0.toLowerCase() === CONFIG.WCFX.toLowerCase() ? r1 : r0;
-          
-          const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-          const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
-          
-          currentReserves.cfx = cfxReserve;
-          currentReserves.lom = lomReserve;
-          
-          // 获取总供应量
-          const totalSupply = await pairContract.totalSupply();
-          const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
-          
-          // 获取用户LP余额
-          const lpBal = await pairContract.balanceOf(account);
-          const lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-          
-          let share = 0;
-          let userCfx = 0;
-          let userLom = 0;
-          
-          if (totalSupplyNum > 0 && lpAmt > 0) {
-            share = (lpAmt / totalSupplyNum) * 100;
-            userCfx = cfxReserve * (share / 100);
-            userLom = lomReserve * (share / 100);
-          }
-          
-          // 更新显示
-          document.getElementById("cfxReserve").textContent = cfxReserve.toFixed(2);
-          document.getElementById("lomReserve").textContent = lomReserve.toFixed(2);
-          document.getElementById("userCfx").textContent = Utils.formatNumber(userCfx);
-          document.getElementById("userLom").textContent = Utils.formatNumber(userLom);
-          document.getElementById("userLp").textContent = Utils.formatNumber(lpAmt);
-          document.getElementById("userPoolShare").textContent = share.toFixed(4) + "%";
-          
-          const removeBtn = document.getElementById("removeBtn");
-          if (removeBtn) {
-            removeBtn.disabled = lpAmt <= 0;
-          }
-          
-        } catch (error) {
-          console.error("更新池子信息失败:", error);
-        }
-      }
-
-      static updateSwapButtonState() {
-        const swapBtn = document.getElementById("swapBtn");
-        const fromAmount = document.getElementById("fromAmount").value;
-        
-        if (!account) {
-          swapBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
-          swapBtn.disabled = false;
-          return;
-        }
-        
-        if (!fromAmount || fromAmount === "0" || fromAmount === "") {
-          swapBtn.textContent = isChinese ? "请输入数量" : "Enter Amount";
-          swapBtn.disabled = true;
-          return;
-        }
-        
-        swapBtn.textContent = isChinese ? "立即兑换" : "Swap Now";
-        swapBtn.disabled = false;
-      }
-
-      static resetAllData() {
-        const elements = {
-          'fromBal': '0.000000',
-          'toBal': '0.000000',
-          'cfxReserve': '0.00',
-          'lomReserve': '0.00',
-          'userCfx': '0.000000',
-          'userLom': '0.000000',
-          'userLp': '0.000000',
-          'userPoolShare': '0%',
-          'price': '1 CFX = 0 LOM',
-          'minReceived': '0 LOM'
-        };
-        
-        Object.keys(elements).forEach(id => {
-          const element = document.getElementById(id);
-          if (element) element.textContent = elements[id];
-        });
-        
-        document.getElementById("fromAmount").value = "";
-        document.getElementById("toAmount").value = "";
-        document.getElementById("removeBtn").disabled = true;
-      }
-    }
-
-    // ==================== 兑换管理 ====================
-    class SwapManager {
-      static async updateOutputFromInput() {
-        const amount = document.getElementById('fromAmount').value;
-        
-        if (!amount || amount === '0' || amount === '' || !routerContract) {
-          document.getElementById('toAmount').value = "";
-          document.getElementById('minReceived').textContent = `0 ${toToken}`;
-          DataManager.updateSwapButtonState();
-          return;
-        }
-        
-        try {
-          const fromDecimals = fromToken === 'CFX' ? 18 : 18;
-          const toDecimals = toToken === 'LOM' ? 18 : 18;
-          
-          const amountIn = ethers.utils.parseUnits(amount, fromDecimals);
-          const path = this.getSwapPath();
-          
-          const amounts = await routerContract.getAmountsOut(amountIn, path);
-          const out = ethers.utils.formatUnits(amounts[amounts.length - 1], toDecimals);
-          
-          document.getElementById('toAmount').value = Utils.formatNumber(out);
-          
-          // 计算最小收到数量
-          const minOut = parseFloat(out) * (1 - slippage / 100);
-          document.getElementById('minReceived').textContent = 
-            `${Utils.formatNumber(minOut)} ${toToken}`;
-          
-          // 计算价格
-          const price = parseFloat(out) / parseFloat(amount);
-          document.getElementById('price').textContent = 
-            `1 ${fromToken} = ${Utils.formatNumber(price)} ${toToken}`;
-          
-          DataManager.updateSwapButtonState();
-          
-        } catch (error) {
-          console.error('计算输出失败:', error);
-          document.getElementById('toAmount').value = "";
-          document.getElementById('swapBtn').textContent = isChinese ? '计算失败' : 'Calculation Failed';
-          document.getElementById('swapBtn').disabled = true;
-        }
-      }
-
-      static getSwapPath() {
-        const path = [];
-        
-        if (fromToken === 'CFX') {
-          path.push(CONFIG.WCFX);
-          if (toToken === 'LOM') path.push(CONFIG.LOM_TOKEN);
-        } else if (fromToken === 'LOM') {
-          path.push(CONFIG.LOM_TOKEN);
-          if (toToken === 'CFX') path.push(CONFIG.WCFX);
-        }
-        
-        return path;
-      }
-
-      static async executeSwap() {
-        const fromAmount = document.getElementById('fromAmount').value;
-        const toAmount = document.getElementById('toAmount').value;
-        
-        if (!fromAmount || fromAmount === '0') {
-          Utils.showError(isChinese ? "请输入兑换数量" : "Please enter swap amount");
-          return;
-        }
-        
-        try {
-          const resetLoading = Utils.showLoading(
-            document.getElementById('swapBtn'),
-            isChinese ? '处理中...' : 'Processing...'
-          );
-          
-          const fromDecimals = fromToken === 'CFX' ? 18 : 18;
-          const toDecimals = toToken === 'LOM' ? 18 : 18;
-          
-          const amountIn = ethers.utils.parseUnits(fromAmount, fromDecimals);
-          const path = this.getSwapPath();
-          
-          const amounts = await routerContract.getAmountsOut(amountIn, path);
-          const minOut = amounts[amounts.length - 1].mul(1000 - slippage * 10).div(1000);
-          
-          const deadline = Math.floor(Date.now() / 1000) + 1200;
-          
-          let tx;
-          
-          if (fromToken === 'CFX') {
-            tx = await routerContract.swapExactETHForTokensSupportingFeeOnTransferTokens(
-              minOut, path, account, deadline, 
-              { value: amountIn }
-            );
-          } else {
-            // 先授权
-            const allowance = await lomTokenContract.allowance(account, CONFIG.ROUTER);
-            if (allowance.lt(amountIn)) {
-              const approveTx = await lomTokenContract.approve(CONFIG.ROUTER, ethers.constants.MaxUint256);
-              await approveTx.wait();
-            }
-            
-            tx = await routerContract.swapExactTokensForETHSupportingFeeOnTransferTokens(
-              amountIn, minOut, path, account, deadline
-            );
-          }
-          
-          await tx.wait();
-          
-          document.getElementById('fromAmount').value = '';
-          document.getElementById('toAmount').value = '';
-          
-          await DataManager.refreshAll();
-          
-          Utils.showError(isChinese ? '兑换成功！' : 'Swap successful!');
-          
-        } catch (error) {
-          console.error('兑换失败:', error);
-          const message = error.message || error.toString();
-          if (message.includes('user rejected')) {
-            Utils.showError(isChinese ? '用户取消了交易' : 'Transaction rejected by user');
-          } else if (message.includes('insufficient funds')) {
-            Utils.showError(isChinese ? '余额不足' : 'Insufficient balance');
-          } else {
-            Utils.showError(isChinese ? '兑换失败，请重试' : 'Swap failed, please try again');
-          }
-        } finally {
-          const swapBtn = document.getElementById('swapBtn');
-          swapBtn.disabled = false;
-          swapBtn.innerHTML = isChinese ? '立即兑换' : 'Swap Now';
-        }
-      }
-
-      static reverseTokens() {
-        const tempToken = fromToken;
-        fromToken = toToken;
-        toToken = tempToken;
-        
-        document.getElementById("fromTokenSymbol").textContent = fromToken;
-        document.getElementById("toTokenSymbol").textContent = toToken;
-        
-        const fromTokenLogo = fromToken === 'CFX' ? 
-          "url('https://i.imgur.com/70cXbUI.jpeg')" : 
-          "url('https://i.imgur.com/HddyTrv.jpeg')";
-        
-        const toTokenLogo = toToken === 'LOM' ? 
-          "url('https://i.imgur.com/HddyTrv.jpeg')" : 
-          "url('https://i.imgur.com/70cXbUI.jpeg')";
-        
-        document.getElementById("fromTokenLogo").style.backgroundImage = fromTokenLogo;
-        document.getElementById("toTokenLogo").style.backgroundImage = toTokenLogo;
-        
-        document.getElementById("fromAmount").value = "";
-        document.getElementById("toAmount").value = "";
-        
-        DataManager.updateAllBalances();
-        DataManager.updateSwapButtonState();
-        document.getElementById("price").textContent = `1 ${fromToken} = 0.000000 ${toToken}`;
-        document.getElementById("minReceived").textContent = `0.000000 ${toToken}`;
-      }
-
-      static handlePercentageClick(percent) {
-        if (!account) {
-          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
-          return;
-        }
-        
-        const balanceText = document.getElementById("fromBal").textContent;
-        const balance = parseFloat(balanceText);
-        
-        if (balance > 0) {
-          let amount;
-          
-          if (percent === 1) {
-            if (fromToken === 'CFX') {
-              amount = Math.max(0, balance - 0.1); // 留一点gas费
-            } else {
-              amount = balance;
-            }
-          } else {
-            amount = balance * percent;
-          }
-          
-          if (amount > 0) {
-            document.getElementById("fromAmount").value = Utils.formatNumber(amount);
-            this.updateOutputFromInput();
-          }
-        }
-      }
-    }
-
-    // ==================== 质押管理 ====================
-    class StakingManager {
+    // ==================== LP奖励管理 ====================
+    class RewardsManager {
       static async refreshData() {
         if (!account) return;
         
         try {
           await this.updateLPBalance();
-          await this.updateUserStakingData();
+          await this.updateUserRewardData();
           await this.updatePoolInfo();
           this.updateUI();
         } catch (error) {
-          console.error('刷新数据失败:', error);
+          console.error('刷新奖励数据失败:', error);
         }
       }
 
@@ -2605,25 +2002,19 @@
           document.getElementById('lpBalance').textContent = Utils.formatNumber(lpBalance);
           document.getElementById('myLPHolding').textContent = Utils.formatNumber(lpBalance);
           
-          // 更新当前LP余额显示
-          const currentLPBalanceEl = document.getElementById('currentLPBalance');
-          if (currentLPBalanceEl) {
-            currentLPBalanceEl.textContent = Utils.formatNumber(lpBalance) + ' LP';
-          }
-          
         } catch (error) {
           console.error('获取LP余额失败:', error);
         }
       }
 
-      static async updateUserStakingData() {
+      static async updateUserRewardData() {
         if (!account || !rewardContract) return;
         
         try {
           // 检查用户是否在黑名单
           const isBlacklisted = await rewardContract.blacklist(account);
           if (isBlacklisted) {
-            userStakingData = null;
+            userRewardData = null;
             return;
           }
           
@@ -2631,7 +2022,7 @@
           const userData = await rewardContract.users(account);
           
           if (userData.shares.gt(0)) {
-            userStakingData = {
+            userRewardData = {
               shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
               rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 18)),
               pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
@@ -2645,16 +2036,16 @@
             
             // 获取待领取奖励
             const pending = await rewardContract.pendingReward(account);
-            userStakingData.pendingReward = parseFloat(ethers.utils.formatUnits(pending, 18));
+            userRewardData.pendingReward = parseFloat(ethers.utils.formatUnits(pending, 18));
             
             // 更新冷却时间显示
             this.updateCooldownDisplay();
           } else {
-            userStakingData = null;
+            userRewardData = null;
           }
         } catch (error) {
-          console.error('获取用户数据失败:', error);
-          userStakingData = null;
+          console.error('获取用户奖励数据失败:', error);
+          userRewardData = null;
         }
       }
 
@@ -2669,36 +2060,29 @@
           document.getElementById('activeShares').textContent = Utils.formatNumber(totalSharesFormatted);
           
           // 更新我的数据
-          if (userStakingData) {
-            document.getElementById('pendingReward').textContent = Utils.formatNumber(userStakingData.pendingReward || 0);
-            document.getElementById('referralReward').textContent = Utils.formatNumber(userStakingData.pendingReferral || 0);
-            
-            document.getElementById('pendingRewardDetail').textContent = Utils.formatNumber(userStakingData.pendingReward || 0);
-            document.getElementById('pendingReferralDetail').textContent = Utils.formatNumber(userStakingData.pendingReferral || 0);
+          if (userRewardData) {
+            document.getElementById('pendingReward').textContent = Utils.formatNumber(userRewardData.pendingReward || 0);
+            document.getElementById('referralReward').textContent = Utils.formatNumber(userRewardData.pendingReferral || 0);
             
             // 计算激活时长
             const now = Math.floor(Date.now() / 1000);
-            const activeDuration = now - userStakingData.activeTime;
-            document.getElementById('activeDuration').textContent = Utils.formatDuration(activeDuration);
+            const activeDuration = now - userRewardData.activeTime;
             
             // 计算下次可领取时间
-            const nextClaimTime = userStakingData.lastClaimTime + (7 * 24 * 3600);
+            const nextClaimTime = userRewardData.lastClaimTime + (7 * 24 * 3600);
             if (nextClaimTime > now) {
               const remaining = nextClaimTime - now;
-              document.getElementById('nextClaimTime').textContent = Utils.formatDuration(remaining);
-            } else {
-              document.getElementById('nextClaimTime').textContent = '现在';
             }
             
             // 更新激活时间显示
-            document.getElementById('activationTime').textContent = Utils.formatTime(userStakingData.activeTime);
+            document.getElementById('activationTime').textContent = Utils.formatTime(userRewardData.activeTime);
             
             // 更新邀请人显示
-            if (userStakingData.referrer !== ethers.constants.AddressZero) {
-              document.getElementById('referrerContainer').style.display = 'block';
-              document.getElementById('referrerAddress').textContent = Utils.formatAddress(userStakingData.referrer);
+            if (userRewardData.referrer !== ethers.constants.AddressZero) {
+              document.getElementById('referrerDetails').style.display = 'block';
+              document.getElementById('referrerAddress').textContent = Utils.formatAddress(userRewardData.referrer);
             } else {
-              document.getElementById('referrerContainer').style.display = 'none';
+              document.getElementById('referrerDetails').style.display = 'none';
             }
             
             // 更新时间倍率
@@ -2710,14 +2094,14 @@
       }
 
       static updateTimeMultiplier() {
-        if (!userStakingData) {
+        if (!userRewardData) {
           document.getElementById('multiplierValue').textContent = '1.0x';
           document.getElementById('multiplierProgress').style.width = '0%';
           return;
         }
         
         const now = Math.floor(Date.now() / 1000);
-        const duration = now - userStakingData.activeTime;
+        const duration = now - userRewardData.activeTime;
         
         let multiplier = 1.0;
         let progress = 0;
@@ -2759,13 +2143,13 @@
       }
 
       static updateCooldownDisplay() {
-        if (!userStakingData) {
+        if (!userRewardData) {
           document.getElementById('cooldownTimer').style.display = 'none';
           return;
         }
         
         const now = Math.floor(Date.now() / 1000);
-        const cooldownEnd = userStakingData.lastReduceTime + (24 * 3600);
+        const cooldownEnd = userRewardData.lastReduceTime + (24 * 3600);
         
         if (now < cooldownEnd) {
           const remaining = cooldownEnd - now;
@@ -2777,83 +2161,80 @@
       }
 
       static updateUI() {
-        const activateSection = document.getElementById('activationButtons');
-        const activatedSection = document.getElementById('activatedSection');
-        const inviteSystem = document.getElementById('inviteSystem');
+        const activationSection = document.getElementById('activationSection');
+        const activatedStatus = document.getElementById('activatedStatus');
         const activateBtn = document.getElementById('activateBtn');
         const claimBtn = document.getElementById('claimBtn');
         const claimReferralBtn = document.getElementById('claimReferralBtn');
         
         if (!account) {
           // 未连接钱包
-          if (activatedSection) activatedSection.style.display = 'none';
-          if (inviteSystem) inviteSystem.style.display = 'block';
+          if (activatedStatus) activatedStatus.style.display = 'none';
+          if (activationSection) activationSection.style.display = 'block';
           if (activateBtn) {
             activateBtn.disabled = false;
-            activateBtn.textContent = isChinese ? '连接钱包' : 'Connect Wallet';
+            activateBtn.innerHTML = `<span>🚀</span><span>${isChinese ? '连接钱包' : 'Connect Wallet'}</span>`;
           }
           if (claimBtn) claimBtn.disabled = true;
           if (claimReferralBtn) claimReferralBtn.disabled = true;
           return;
         }
         
-        if (userStakingData) {
+        if (userRewardData) {
           // 已激活
-          if (activatedSection) activatedSection.style.display = 'block';
-          if (inviteSystem) inviteSystem.style.display = 'none';
-          if (activateSection) activateSection.style.display = 'none';
+          if (activatedStatus) activatedStatus.style.display = 'block';
+          if (activationSection) activationSection.style.display = 'none';
           
           // 更新按钮状态
           const now = Math.floor(Date.now() / 1000);
           
           // 领取奖励按钮
-          if (userStakingData.lastClaimTime + (7 * 24 * 3600) <= now && userStakingData.pendingReward > 0) {
+          if (userRewardData.lastClaimTime + (7 * 24 * 3600) <= now && userRewardData.pendingReward > 0) {
             if (claimBtn) {
               claimBtn.disabled = false;
-              claimBtn.textContent = isChinese ? '领取奖励' : 'Claim Rewards';
+              claimBtn.innerHTML = `<span>💰</span><span>${isChinese ? '领取奖励' : 'Claim Rewards'}</span>`;
             }
           } else {
             if (claimBtn) {
               claimBtn.disabled = true;
-              const nextClaim = userStakingData.lastClaimTime + (7 * 24 * 3600);
+              const nextClaim = userRewardData.lastClaimTime + (7 * 24 * 3600);
               if (nextClaim > now) {
                 const remaining = nextClaim - now;
-                claimBtn.textContent = `${Utils.formatDuration(remaining)}后`;
+                claimBtn.innerHTML = `<span>⏰</span><span>${Utils.formatDuration(remaining)}后</span>`;
               } else {
-                claimBtn.textContent = isChinese ? '暂无奖励' : 'No Rewards';
+                claimBtn.innerHTML = `<span>💰</span><span>${isChinese ? '暂无奖励' : 'No Rewards'}</span>`;
               }
             }
           }
           
           // 领取邀请奖励按钮
-          if (userStakingData.pendingReferral > 0 && now >= userStakingData.referralUnlockTime) {
+          if (userRewardData.pendingReferral > 0 && now >= userRewardData.referralUnlockTime) {
             if (claimReferralBtn) {
               claimReferralBtn.disabled = false;
-              claimReferralBtn.textContent = isChinese ? '领取邀请奖励' : 'Claim Referral';
+              claimReferralBtn.innerHTML = `<span>👥</span><span>${isChinese ? '领取邀请奖励' : 'Claim Referral'}</span>`;
             }
           } else {
             if (claimReferralBtn) {
               claimReferralBtn.disabled = true;
-              if (userStakingData.pendingReferral > 0) {
-                if (now < userStakingData.referralUnlockTime) {
-                  const remaining = userStakingData.referralUnlockTime - now;
-                  claimReferralBtn.textContent = `${Utils.formatDuration(remaining)}后解锁`;
+              if (userRewardData.pendingReferral > 0) {
+                if (now < userRewardData.referralUnlockTime) {
+                  const remaining = userRewardData.referralUnlockTime - now;
+                  claimReferralBtn.innerHTML = `<span>⏰</span><span>${Utils.formatDuration(remaining)}后解锁</span>`;
                 } else {
-                  claimReferralBtn.textContent = isChinese ? '领取邀请奖励' : 'Claim Referral';
+                  claimReferralBtn.innerHTML = `<span>👥</span><span>${isChinese ? '领取邀请奖励' : 'Claim Referral'}</span>`;
                 }
               } else {
-                claimReferralBtn.textContent = isChinese ? '暂无邀请奖励' : 'No Referral';
+                claimReferralBtn.innerHTML = `<span>👥</span><span>${isChinese ? '暂无邀请奖励' : 'No Referral'}</span>`;
               }
             }
           }
         } else {
           // 未激活
-          if (activatedSection) activatedSection.style.display = 'none';
-          if (inviteSystem) inviteSystem.style.display = 'block';
-          if (activateSection) activateSection.style.display = 'block';
+          if (activatedStatus) activatedStatus.style.display = 'none';
+          if (activationSection) activationSection.style.display = 'block';
           if (activateBtn) {
             activateBtn.disabled = false;
-            activateBtn.textContent = isChinese ? '激活奖励' : 'Activate Rewards';
+            activateBtn.innerHTML = `<span>🚀</span><span>${isChinese ? '激活奖励' : 'Activate Rewards'}</span>`;
           }
           if (claimBtn) claimBtn.disabled = true;
           if (claimReferralBtn) claimReferralBtn.disabled = true;
@@ -2861,14 +2242,12 @@
       }
 
       static resetData() {
-        userStakingData = null;
+        userRewardData = null;
         
         // 重置所有显示
         const resetElements = [
           'lpBalance', 'myLPHolding', 'activeShares', 'pendingReward',
-          'referralReward', 'pendingRewardDetail', 'pendingReferralDetail',
-          'nextClaimTime', 'activeDuration', 'activationTime', 'multiplierValue',
-          'currentLPBalance'
+          'referralReward', 'activationTime', 'multiplierValue'
         ];
         
         resetElements.forEach(id => {
@@ -2885,7 +2264,7 @@
         this.updateUI();
       }
 
-      static async activateStaking() {
+      static async activateRewards() {
         if (!account) {
           await WalletManager.connect();
           return;
@@ -2893,7 +2272,8 @@
         
         try {
           // 获取邀请地址
-          const inviteAddress = document.getElementById('inviteAddress').value.trim();
+          const inviteInput = document.getElementById('inviteAddress');
+          const inviteAddress = inviteInput ? inviteInput.value.trim() : '';
           let referrer = ethers.constants.AddressZero;
           
           if (inviteAddress) {
@@ -2912,10 +2292,11 @@
           
           // 检查LP余额
           const lpBalance = await lpTokenContract.balanceOf(account);
-          const minActivation = ethers.utils.parseUnits(CONFIG.MIN_ACTIVATION.toString(), 18);
+          const minActivation = await rewardContract.minActivation();
           
           if (lpBalance.lt(minActivation)) {
-            Utils.showError(isChinese ? `最低激活要求: ${CONFIG.MIN_ACTIVATION} LP` : `Min activation: ${CONFIG.MIN_ACTIVATION} LP`);
+            const minFormatted = parseFloat(ethers.utils.formatUnits(minActivation, 18));
+            Utils.showError(isChinese ? `最低激活要求: ${minFormatted} LP` : `Min activation: ${minFormatted} LP`);
             return;
           }
           
@@ -2923,64 +2304,78 @@
           const confirmed = await Utils.showConfirm(
             isChinese ? '激活LP奖励' : 'Activate LP Rewards',
             isChinese ? 
-              `确认激活LP持仓奖励?` + (referrer !== ethers.constants.AddressZero ? `<br>邀请人: ${Utils.formatAddress(referrer)}` : '') :
-              `Confirm to activate LP holding rewards?` + (referrer !== ethers.constants.AddressZero ? `<br>Referrer: ${Utils.formatAddress(referrer)}` : '')
+              `确认激活LP持仓奖励？` + (referrer !== ethers.constants.AddressZero ? `<br><br>邀请人: ${Utils.formatAddress(referrer)}` : '') +
+              `<br><br>激活后系统将基于您的LP持仓自动计算奖励。` :
+              `Confirm to activate LP holding rewards?` + (referrer !== ethers.constants.AddressZero ? `<br><br>Referrer: ${Utils.formatAddress(referrer)}` : '') +
+              `<br><br>After activation, system will calculate rewards based on your LP holding.`
           );
           
           if (!confirmed) return;
           
-          const resetLoading = Utils.showLoading(
-            document.getElementById('activateBtn'),
-            isChinese ? '激活中...' : 'Activating...'
-          );
+          // 执行激活交易
+          const activateBtn = document.getElementById('activateBtn');
+          const originalText = activateBtn.innerHTML;
+          activateBtn.innerHTML = `<div class="loading-spinner"></div> ${isChinese ? '激活中...' : 'Activating...'}`;
+          activateBtn.disabled = true;
           
           try {
+            // 重要：直接调用activate，不需要授权！
             const tx = await rewardContract.activate(referrer);
             await tx.wait();
             
             // 清空邀请输入框
-            document.getElementById('inviteAddress').value = '';
+            if (inviteInput) inviteInput.value = '';
             
             // 刷新数据
             await this.refreshData();
             
-            Utils.showError(isChinese ? '奖励激活成功！' : 'Rewards activated successfully!');
+            Utils.showError(isChinese ? '✅ 奖励激活成功！' : '✅ Rewards activated successfully!');
+            
           } finally {
-            resetLoading();
+            activateBtn.disabled = false;
+            activateBtn.innerHTML = originalText;
           }
           
         } catch (error) {
           console.error('激活奖励失败:', error);
           const message = error.message || error.toString();
+          
+          const activateBtn = document.getElementById('activateBtn');
+          if (activateBtn) {
+            activateBtn.disabled = false;
+            activateBtn.innerHTML = `<span>🚀</span><span>${isChinese ? '激活奖励' : 'Activate Rewards'}</span>`;
+          }
+          
           if (message.includes('user rejected')) {
-            Utils.showError(isChinese ? '用户取消了交易' : 'Transaction rejected by user');
+            Utils.showError(isChinese ? '❌ 用户取消了交易' : '❌ Transaction rejected by user');
           } else if (message.includes('Activated')) {
-            Utils.showError(isChinese ? '已经激活过奖励' : 'Already activated rewards');
+            Utils.showError(isChinese ? '❌ 已经激活过奖励' : '❌ Already activated rewards');
           } else if (message.includes('Below minimum')) {
-            Utils.showError(isChinese ? `最低激活要求: ${CONFIG.MIN_ACTIVATION} LP` : `Min activation: ${CONFIG.MIN_ACTIVATION} LP`);
+            Utils.showError(isChinese ? '❌ LP余额不足' : '❌ Insufficient LP balance');
           } else {
-            Utils.showError(isChinese ? '激活失败，请重试' : 'Activation failed, please try again');
+            Utils.showError(isChinese ? '❌ 激活失败，请重试' : '❌ Activation failed, please try again');
           }
         }
       }
 
       static async claimRewards() {
-        if (!account || !userStakingData) return;
+        if (!account || !userRewardData) return;
         
         try {
           const confirmed = await Utils.showConfirm(
             isChinese ? '领取奖励' : 'Claim Rewards',
             isChinese ? 
-              `确认领取 ${Utils.formatNumber(userStakingData.pendingReward)} LOM 奖励?` :
-              `Confirm to claim ${Utils.formatNumber(userStakingData.pendingReward)} LOM rewards?`
+              `确认领取 ${Utils.formatNumber(userRewardData.pendingReward)} LOM 奖励?` :
+              `Confirm to claim ${Utils.formatNumber(userRewardData.pendingReward)} LOM rewards?`
           );
           
           if (!confirmed) return;
           
-          const resetLoading = Utils.showLoading(
-            document.getElementById('claimBtn'),
-            isChinese ? '领取中...' : 'Claiming...'
-          );
+          // 执行领取交易
+          const claimBtn = document.getElementById('claimBtn');
+          const originalText = claimBtn.innerHTML;
+          claimBtn.innerHTML = `<div class="loading-spinner"></div> ${isChinese ? '领取中...' : 'Claiming...'}`;
+          claimBtn.disabled = true;
           
           try {
             const tx = await rewardContract.claimAll();
@@ -2989,41 +2384,51 @@
             // 刷新数据
             await this.refreshData();
             
-            Utils.showError(isChinese ? '奖励领取成功！' : 'Rewards claimed successfully!');
+            Utils.showError(isChinese ? '✅ 奖励领取成功！' : '✅ Rewards claimed successfully!');
+            
           } finally {
-            resetLoading();
+            claimBtn.disabled = false;
+            claimBtn.innerHTML = originalText;
           }
           
         } catch (error) {
           console.error('领取奖励失败:', error);
           const message = error.message || error.toString();
+          
+          const claimBtn = document.getElementById('claimBtn');
+          if (claimBtn) {
+            claimBtn.disabled = false;
+            claimBtn.innerHTML = `<span>💰</span><span>${isChinese ? '领取奖励' : 'Claim Rewards'}</span>`;
+          }
+          
           if (message.includes('user rejected')) {
-            Utils.showError(isChinese ? '用户取消了交易' : 'Transaction rejected by user');
+            Utils.showError(isChinese ? '❌ 用户取消了交易' : '❌ Transaction rejected by user');
           } else if (message.includes('Too soon')) {
-            Utils.showError(isChinese ? '领取间隔需要7天以上' : 'Claim interval must be 7 days or more');
+            Utils.showError(isChinese ? '❌ 领取间隔需要7天以上' : '❌ Claim interval must be 7 days or more');
           } else {
-            Utils.showError(isChinese ? '领取失败，请重试' : 'Claim failed, please try again');
+            Utils.showError(isChinese ? '❌ 领取失败，请重试' : '❌ Claim failed, please try again');
           }
         }
       }
 
       static async claimReferralRewards() {
-        if (!account || !userStakingData) return;
+        if (!account || !userRewardData) return;
         
         try {
           const confirmed = await Utils.showConfirm(
             isChinese ? '领取邀请奖励' : 'Claim Referral Rewards',
             isChinese ? 
-              `确认领取 ${Utils.formatNumber(userStakingData.pendingReferral)} LOM 邀请奖励?` :
-              `Confirm to claim ${Utils.formatNumber(userStakingData.pendingReferral)} LOM referral rewards?`
+              `确认领取 ${Utils.formatNumber(userRewardData.pendingReferral)} LOM 邀请奖励?` :
+              `Confirm to claim ${Utils.formatNumber(userRewardData.pendingReferral)} LOM referral rewards?`
           );
           
           if (!confirmed) return;
           
-          const resetLoading = Utils.showLoading(
-            document.getElementById('claimReferralBtn'),
-            isChinese ? '领取中...' : 'Claiming...'
-          );
+          // 执行领取交易
+          const claimReferralBtn = document.getElementById('claimReferralBtn');
+          const originalText = claimReferralBtn.innerHTML;
+          claimReferralBtn.innerHTML = `<div class="loading-spinner"></div> ${isChinese ? '领取中...' : 'Claiming...'}`;
+          claimReferralBtn.disabled = true;
           
           try {
             const tx = await rewardContract.claimReferral();
@@ -3032,27 +2437,117 @@
             // 刷新数据
             await this.refreshData();
             
-            Utils.showError(isChinese ? '邀请奖励领取成功！' : 'Referral rewards claimed successfully!');
+            Utils.showError(isChinese ? '✅ 邀请奖励领取成功！' : '✅ Referral rewards claimed successfully!');
+            
           } finally {
-            resetLoading();
+            claimReferralBtn.disabled = false;
+            claimReferralBtn.innerHTML = originalText;
           }
           
         } catch (error) {
           console.error('领取邀请奖励失败:', error);
           const message = error.message || error.toString();
+          
+          const claimReferralBtn = document.getElementById('claimReferralBtn');
+          if (claimReferralBtn) {
+            claimReferralBtn.disabled = false;
+            claimReferralBtn.innerHTML = `<span>👥</span><span>${isChinese ? '领取邀请奖励' : 'Claim Referral'}</span>`;
+          }
+          
           if (message.includes('user rejected')) {
-            Utils.showError(isChinese ? '用户取消了交易' : 'Transaction rejected by user');
+            Utils.showError(isChinese ? '❌ 用户取消了交易' : '❌ Transaction rejected by user');
           } else if (message.includes('Locked')) {
             const now = Math.floor(Date.now() / 1000);
-            const remaining = userStakingData.referralUnlockTime - now;
+            const remaining = userRewardData.referralUnlockTime - now;
             Utils.showError(isChinese ? 
-              `邀请奖励锁定中，${Utils.formatDuration(remaining)}后解锁` :
-              `Referral rewards locked, unlock in ${Utils.formatDuration(remaining)}`
+              `❌ 邀请奖励锁定中，${Utils.formatDuration(remaining)}后解锁` :
+              `❌ Referral rewards locked, unlock in ${Utils.formatDuration(remaining)}`
             );
           } else {
-            Utils.showError(isChinese ? '领取失败，请重试' : 'Claim failed, please try again');
+            Utils.showError(isChinese ? '❌ 领取失败，请重试' : '❌ Claim failed, please try again');
           }
         }
+      }
+    }
+
+    // ==================== 流动性管理 ====================
+    class LiquidityManager {
+      static async refreshData() {
+        if (!account) return;
+        
+        try {
+          await this.updatePoolInfo();
+        } catch (error) {
+          console.error('刷新流动性数据失败:', error);
+        }
+      }
+
+      static async updatePoolInfo() {
+        try {
+          if (!pairContract || !account) return;
+          
+          // 获取池子储备
+          const [r0, r1] = await pairContract.getReserves();
+          const t0 = await pairContract.token0();
+          
+          const reserveCfx = t0.toLowerCase() === CONFIG.WCFX.toLowerCase() ? r0 : r1;
+          const reserveLom = t0.toLowerCase() === CONFIG.WCFX.toLowerCase() ? r1 : r0;
+          
+          const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+          const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+          
+          // 获取总供应量
+          const totalSupply = await pairContract.totalSupply();
+          const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
+          
+          // 获取用户LP余额
+          const lpBal = await pairContract.balanceOf(account);
+          const lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+          
+          let share = 0;
+          let userCfx = 0;
+          let userLom = 0;
+          
+          if (totalSupplyNum > 0 && lpAmt > 0) {
+            share = (lpAmt / totalSupplyNum) * 100;
+            userCfx = cfxReserve * (share / 100);
+            userLom = lomReserve * (share / 100);
+          }
+          
+          // 更新显示
+          document.getElementById("cfxReserve").textContent = cfxReserve.toFixed(2);
+          document.getElementById("lomReserve").textContent = lomReserve.toFixed(2);
+          document.getElementById("userCfx").textContent = Utils.formatNumber(userCfx);
+          document.getElementById("userLom").textContent = Utils.formatNumber(userLom);
+          document.getElementById("userLp").textContent = Utils.formatNumber(lpAmt);
+          document.getElementById("userPoolShare").textContent = share.toFixed(4) + "%";
+          
+          const removeBtn = document.getElementById("removeBtn");
+          if (removeBtn) {
+            removeBtn.disabled = lpAmt <= 0;
+          }
+          
+        } catch (error) {
+          console.error("更新池子信息失败:", error);
+        }
+      }
+
+      static resetData() {
+        const elements = {
+          'cfxReserve': '0.00',
+          'lomReserve': '0.00',
+          'userCfx': '0.000000',
+          'userLom': '0.000000',
+          'userLp': '0.000000',
+          'userPoolShare': '0%'
+        };
+        
+        Object.keys(elements).forEach(id => {
+          const element = document.getElementById(id);
+          if (element) element.textContent = elements[id];
+        });
+        
+        document.getElementById("removeBtn").disabled = true;
       }
     }
 
@@ -3066,8 +2561,8 @@
         // 检查冷却时间
         if (cooldownInterval) clearInterval(cooldownInterval);
         cooldownInterval = setInterval(() => {
-          if (userStakingData) {
-            StakingManager.updateCooldownDisplay();
+          if (userRewardData) {
+            RewardsManager.updateCooldownDisplay();
           }
         }, 1000);
       }
@@ -3091,56 +2586,21 @@
           this.updateTexts();
         });
         
-        // 兑换页面事件
-        document.getElementById('fromAmount').addEventListener('input', () => {
-          SwapManager.updateOutputFromInput();
-        });
-        
-        document.getElementById('reverse').addEventListener('click', () => {
-          SwapManager.reverseTokens();
-        });
-        
-        document.getElementById('swapBtn').addEventListener('click', async () => {
-          if (!account) {
-            await WalletManager.connect();
-          } else {
-            await SwapManager.executeSwap();
-          }
-        });
-        
-        // 百分比按钮
-        document.querySelectorAll('.percent-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.percent-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            const percent = parseFloat(e.target.dataset.percent);
-            SwapManager.handlePercentageClick(percent);
-          });
-        });
-        
-        // 滑点按钮
-        document.querySelectorAll('.slippage-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.slippage-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            slippage = parseFloat(e.target.dataset.slip);
-            
-            // 重新计算输出
-            if (document.getElementById("fromAmount").value) {
-              SwapManager.updateOutputFromInput();
-            }
-          });
-        });
-        
-        // 邀请地址验证
-        document.getElementById('inviteAddress').addEventListener('input', (e) => {
-          const errorText = document.getElementById('inviteErrorText');
-          e.target.classList.remove('invite-input-error');
-          errorText.classList.remove('show');
-        });
-        
         // 标签页切换
         this.setupTabs();
+        
+        // 邀请地址验证
+        const inviteInput = document.getElementById('inviteAddress');
+        if (inviteInput) {
+          inviteInput.addEventListener('input', (e) => {
+            const value = e.target.value.trim();
+            if (value && !Utils.isValidAddress(value)) {
+              e.target.style.borderColor = 'var(--accent-red)';
+            } else {
+              e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+            }
+          });
+        }
         
         // 监听钱包事件
         if (window.ethereum) {
@@ -3174,10 +2634,10 @@
             
             // 切换到相关页面时刷新数据
             if (account) {
-              if (tabId === 'swap' || tabId === 'liquidity') {
-                DataManager.refreshAll();
-              } else if (tabId === 'staking') {
-                StakingManager.refreshData();
+              if (tabId === 'liquidity') {
+                LiquidityManager.refreshData();
+              } else if (tabId === 'lpRewards') {
+                RewardsManager.refreshData();
               }
             }
           });
@@ -3187,25 +2647,9 @@
       static updateTexts() {
         // 更新所有文本
         const texts = {
-          // 质押页面
-          'stakingTitle': isChinese ? 'LP持仓奖励农场' : 'LP Holding Rewards Farm',
-          'lpBalanceLabel': isChinese ? '我的LP持仓' : 'My LP Holding',
-          'activeSharesLabel': isChinese ? '活跃份额' : 'Active Shares',
-          'pendingRewardLabel': isChinese ? '待领取奖励' : 'Pending Rewards',
-          'referralRewardLabel': isChinese ? '邀请奖励' : 'Referral Rewards',
-          'multiplierLabel': isChinese ? '时间倍率:' : 'Time Multiplier:',
-          'activateTitle': isChinese ? '激活LP持仓奖励' : 'Activate LP Rewards',
-          'activationRequirements': isChinese ? '激活条件：钱包中需持有至少 100 LP 代币' : 'Activation: Need at least 100 LP tokens',
-          'inviteTitle': isChinese ? '邀请系统 (可选)' : 'Referral System (Optional)',
-          'inviteSubtitle': isChinese ? '绑定邀请人地址可获得额外5%奖励分成。邀请人可获得您收益的5%作为奖励。' : 
-                                      'Bind referrer to get extra 5% reward share. Referrer gets 5% of your rewards.',
-          'activatedTitle': isChinese ? '奖励已激活' : 'Rewards Activated',
+          // LP奖励页面
+          'rewardsTitle': isChinese ? 'LP持仓奖励' : 'LP Holding Rewards',
           'activateBtnText': isChinese ? '激活奖励' : 'Activate Rewards',
-          'rewardsTitle': isChinese ? '奖励管理' : 'Rewards Management',
-          'penaltyTitle': isChinese ? '减持惩罚警告' : 'Reduction Penalty Warning',
-          'penaltyContent': isChinese ? '⚠️ 激活后减持LP将面临50%的奖励惩罚！<br>⚠️ 30天内减持将失去邀请奖励资格<br>⚠️ 7天内最多减持30%，且需要1天冷却时间' :
-                                      '⚠️ Reducing LP incurs 50% penalty!<br>⚠️ Reduction within 30 days loses referral<br>⚠️ Max 30% reduction in 7 days, 1-day cooldown',
-          'cooldownLabel': isChinese ? '减持冷却时间' : 'Reduction Cooldown',
           'claimBtnText': isChinese ? '领取奖励' : 'Claim Rewards',
           'claimReferralBtnText': isChinese ? '领取邀请奖励' : 'Claim Referral',
           
@@ -3221,7 +2665,7 @@
           // 标签页
           'swap': isChinese ? '兑换' : 'Swap',
           'liquidity': isChinese ? '流动性' : 'Liquidity',
-          'staking': isChinese ? 'LP奖励' : 'LP Rewards'
+          'lpRewards': isChinese ? 'LP奖励' : 'LP Rewards'
         };
         
         Object.keys(texts).forEach(id => {
@@ -3235,43 +2679,35 @@
         const inviteInput = document.getElementById('inviteAddress');
         if (inviteInput) {
           inviteInput.placeholder = isChinese ? 
-            '请输入邀请人钱包地址 (0x开头)' : 
-            'Enter referrer wallet address (0x...)';
-        }
-        
-        // 更新邀请错误文本
-        const inviteError = document.getElementById('inviteErrorText');
-        if (inviteError) {
-          inviteError.textContent = isChinese ? 
-            '请输入有效的钱包地址 (0x开头，共42位)' : 
-            'Please enter valid wallet address (0x..., 42 chars)';
+            '输入邀请人地址 (可选)' : 
+            'Enter referrer address (optional)';
         }
       }
     }
 
     // ==================== 工具函数导出 ====================
-    function switchToStakingTab() {
+    function switchToRewardsTab() {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
-      document.querySelector('[data-tab="staking"]').classList.add('active');
-      document.getElementById('stakingTab').classList.add('active');
+      document.querySelector('[data-tab="lpRewards"]').classList.add('active');
+      document.getElementById('lpRewardsTab').classList.add('active');
       
       if (account) {
-        StakingManager.refreshData();
+        RewardsManager.refreshData();
       }
     }
 
-    async function activateStaking() {
-      await StakingManager.activateStaking();
+    async function activateRewards() {
+      await RewardsManager.activateRewards();
     }
 
     async function claimRewards() {
-      await StakingManager.claimRewards();
+      await RewardsManager.claimRewards();
     }
 
     async function claimReferralRewards() {
-      await StakingManager.claimReferralRewards();
+      await RewardsManager.claimReferralRewards();
     }
 
     // ==================== 初始化 ====================
