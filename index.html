@@ -3733,14 +3733,21 @@ const LPRewardManager = {
           this.userInfo.shares > 0 && 
           this.contractInfo.totalShares > 0) {
         
-        const dailyReward = this.contractInfo.rewardPerSecond * 
-                          this.userInfo.shares / this.contractInfo.totalShares * 
-                          86400 * this.currentRewards.multiplier;
-        dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
-      } else {
-        dailyRewardEl.textContent = '0 LOM';
-      }
+        const dailyRewardEl = document.getElementById('dailyReward');
+if (dailyRewardEl) {
+  if (this.currentRewards.pendingReward > 0 && this.userInfo.lastClaimTime > 0) {
+    // 用最近7天实际产出推算每日收益（最准！）
+    const secondsSinceClaim = Math.floor(Date.now() / 1000) - this.userInfo.lastClaimTime;
+    if (secondsSinceClaim > 0) {
+      const actualDaily = (this.currentRewards.pendingReward / secondsSinceClaim) * 86400;
+      dailyRewardEl.textContent = `${Utils.formatDisplay(actualDaily)} LOM`;
+    } else {
+      dailyRewardEl.textContent = '0 LOM';
     }
+  } else {
+    dailyRewardEl.textContent = '0 LOM';
+  }
+}
 
     const nextClaimTimeEl = document.getElementById('nextClaimTime');
     if (nextClaimTimeEl) {
@@ -3998,7 +4005,9 @@ const LPRewardManager = {
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">总质押</div>
-            <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatNumber(this.contractInfo.totalShares)} LPT</div>
+            <div style="color: var(--accent-yellow); font-weight: 600;">// 改成这样（每次都重新读）
+const total = await lpRewardContract.totalShares();
+${Utils.formatNumber(parseFloat(ethers.utils.formatUnits(total, 18)))} LPT</div>
           </div>
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">每秒奖励</div>
