@@ -3540,64 +3540,95 @@ const LPRewardManager = {
 
   // 获取合约信息
   async fetchContractInfo() {
+  try {
+    // 先调用 updateShares 确保数据同步
     try {
-      const [
-        minActivation,
-        totalShares,
-        rewardPerSecond,
-        pausedStatus,
-        rewardTokenAddr,
-        lpTokenAddr,
-        accRewardPerShare,
-        lastRewardTime
-      ] = await Promise.all([
-        lpRewardContract.minActivation(),
-        lpRewardContract.totalShares(),
-        lpRewardContract.rewardPerSecond(),
-        lpRewardContract.paused(),
-        lpRewardContract.rewardToken(),
-        lpRewardContract.lpToken(),
-        lpRewardContract.accRewardPerShare(),
-        lpRewardContract.lastRewardTime()
-      ]);
-
-      this.contractInfo = {
-        minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
-        totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
-        rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
-        paused: pausedStatus,
-        rewardTokenAddress: rewardTokenAddr,
-        lpTokenAddress: lpTokenAddr,
-        accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
-        lastRewardTime: lastRewardTime.toNumber()
-      };
+      // 这是一个只读调用
+      await lpRewardContract.updateShares();
     } catch (error) {
-      console.error('获取合约信息失败:', error);
-      throw error;
+      console.warn('更新总份额失败，可能合约未实现该方法:', error);
     }
-  },
+    
+    const [
+      minActivation,
+      totalShares,
+      rewardPerSecond,
+      pausedStatus,
+      rewardTokenAddr,
+      lpTokenAddr,
+      accRewardPerShare,
+      lastRewardTime
+    ] = await Promise.all([
+      lpRewardContract.minActivation(),
+      lpRewardContract.totalShares(),
+      lpRewardContract.rewardPerSecond(),
+      lpRewardContract.paused(),
+      lpRewardContract.rewardToken(),
+      lpRewardContract.lpToken(),
+      lpRewardContract.accRewardPerShare(),
+      lpRewardContract.lastRewardTime()
+    ]);
+
+    this.contractInfo = {
+      minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
+      totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
+      rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
+      paused: pausedStatus,
+      rewardTokenAddress: rewardTokenAddr,
+      lpTokenAddress: lpTokenAddr,
+      accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
+      lastRewardTime: lastRewardTime.toNumber()
+    };
+    
+    console.log('合约总份额更新:', this.contractInfo.totalShares);
+  } catch (error) {
+    console.error('获取合约信息失败:', error);
+    throw error;
+  }
+}
 
   // 获取用户信息
   async fetchUserInfo() {
+  try {
+    // 先调用合约的 updateSharesForUser 确保数据同步
     try {
-      const userData = await lpRewardContract.users(account);
-
-      this.userInfo = {
-        shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
-        rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 12)),
-        pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
-        lastClaimTime: userData.lastClaimTime.toNumber(),
-        activeTime: userData.activeTime.toNumber(),
-        lastReduceTime: userData.lastReduceTime.toNumber(),
-        referralUnlockTime: userData.referralUnlockTime.toNumber(),
-        referrer: userData.referrer,
-        cleanInFirst30Days: userData.cleanInFirst30Days
-      };
+      // 这是一个只读调用，不会消耗gas
+      await lpRewardContract.updateSharesForUser(account);
     } catch (error) {
-      console.error('获取用户信息失败:', error);
-      throw error;
+      console.warn('更新用户份额失败，可能合约未实现该方法:', error);
     }
-  },
+    
+    const userData = await lpRewardContract.users(account);
+
+    this.userInfo = {
+      shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
+      rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 12)),
+      pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
+      lastClaimTime: userData.lastClaimTime.toNumber(),
+      activeTime: userData.activeTime.toNumber(),
+      lastReduceTime: userData.lastReduceTime.toNumber(),
+      referralUnlockTime: userData.referralUnlockTime.toNumber(),
+      referrer: userData.referrer,
+      cleanInFirst30Days: userData.cleanInFirst30Days
+    };
+    
+    console.log('用户份额更新:', this.userInfo.shares);
+  } catch (error) {
+    console.error('获取用户信息失败:', error);
+    // 设置默认值避免出错
+    this.userInfo = {
+      shares: 0,
+      rewardDebt: 0,
+      pendingReferral: 0,
+      lastClaimTime: 0,
+      activeTime: 0,
+      lastReduceTime: 0,
+      referralUnlockTime: 0,
+      referrer: '0x0000000000000000000000000000000000000000',
+      cleanInFirst30Days: false
+    };
+  }
+}
 
   // 获取LP余额
   async fetchLPBalance() {
@@ -3722,32 +3753,27 @@ const LPRewardManager = {
 
   // 更新奖励信息
   updateRewardInfo() {
-    const pendingRewardEl = document.getElementById('pendingReward');
-    if (pendingRewardEl) {
-      pendingRewardEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`;
-    }
+  const pendingRewardEl = document.getElementById('pendingReward');
+  if (pendingRewardEl) {
+    pendingRewardEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`;
+  }
 
-    const dailyRewardEl = document.getElementById('dailyReward');
-    if (dailyRewardEl) {
-      if (this.currentState === this.REWARD_STATES.ACTIVATED && 
-          this.userInfo.shares > 0 && 
-          this.contractInfo.totalShares > 0) {
-        
-        const dailyRewardEl = document.getElementById('dailyReward');
-if (dailyRewardEl) {
-  if (this.currentRewards.pendingReward > 0 && this.userInfo.lastClaimTime > 0) {
-    // 用最近7天实际产出推算每日收益（最准！）
-    const secondsSinceClaim = Math.floor(Date.now() / 1000) - this.userInfo.lastClaimTime;
-    if (secondsSinceClaim > 0) {
-      const actualDaily = (this.currentRewards.pendingReward / secondsSinceClaim) * 86400;
-      dailyRewardEl.textContent = `${Utils.formatDisplay(actualDaily)} LOM`;
+  const dailyRewardEl = document.getElementById('dailyReward');
+  if (dailyRewardEl) {
+    // 使用实时数据计算每日收益
+    if (this.currentState === this.REWARD_STATES.ACTIVATED && 
+        this.userInfo && this.userInfo.shares > 0 && 
+        this.contractInfo.totalShares > 0) {
+      
+      // 直接从合约奖励速率和用户份额计算
+      const dailyReward = this.contractInfo.rewardPerSecond * 
+                        this.userInfo.shares / this.contractInfo.totalShares * 
+                        86400 * this.currentRewards.multiplier;
+      dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
     } else {
       dailyRewardEl.textContent = '0 LOM';
     }
-  } else {
-    dailyRewardEl.textContent = '0 LOM';
   }
-}
 
     const nextClaimTimeEl = document.getElementById('nextClaimTime');
     if (nextClaimTimeEl) {
@@ -4922,6 +4948,9 @@ const LiquidityModule = {
       );
       
       await tx.wait();
+      setTimeout(() => {
+    LPRewardManager.refreshAll();
+    }, 2000); // 等待2秒确保区块确认
       
       document.getElementById("removeModal").style.display = "none";
       
@@ -4941,6 +4970,7 @@ const LiquidityModule = {
       console.error('移除流动性失败:', error);
       Utils.showNotification(Utils.getErrorMessage(error), 'error');
     }
+    
   },
 
   async updateRemoveEstimate(percent) {
