@@ -3920,12 +3920,22 @@ const LPRewardManager = {
   },
 
   // 显示推荐统计
-  showReferralStats() {
-    const container = document.getElementById('referralStatsContainer');
-    if (!container) return;
+ // 在 LPRewardManager 对象中替换以下方法
+showReferralStats() {
+  const container = document.getElementById('referralStatsContainer');
+  if (!container) return;
+  
+  try {
+    // 重要：直接从合约数据中获取推荐人地址
+    const referrerAddress = this.userInfo.referrer || '';
+    const hasReferrer = referrerAddress && 
+                       referrerAddress !== '0x0000000000000000000000000000000000000000';
     
-    const hasReferrer = this.userInfo.referrer && 
-                       this.userInfo.referrer !== '0x0000000000000000000000000000000000000000';
+    console.log('📋 推荐人信息:', {
+      referrer: referrerAddress,
+      hasReferrer: hasReferrer,
+      pendingReferral: this.currentRewards.pendingReferral
+    });
     
     let statsHTML = '';
     
@@ -3938,7 +3948,7 @@ const LPRewardManager = {
               <span>推荐人</span>
             </div>
             <div class="referral-stat-value">
-              ${Utils.formatAddress(this.userInfo.referrer)}
+              ${Utils.formatAddress(referrerAddress)}
             </div>
           </div>
           <div class="referral-stat-row">
@@ -3953,19 +3963,23 @@ const LPRewardManager = {
           <div class="referral-stat-row">
             <div class="referral-stat-label">
               <span>🔓</span>
-              <span>解锁时间</span>
+              <span>奖励解锁时间</span>
             </div>
             <div class="referral-stat-value">
-              ${Utils.formatTimestamp(this.userInfo.referralUnlockTime)}
+              ${this.userInfo.referralUnlockTime > 0 
+                ? Utils.formatTimestamp(this.userInfo.referralUnlockTime)
+                : '--'}
             </div>
           </div>
           <div class="referral-stat-row">
             <div class="referral-stat-label">
               <span>⏰</span>
-              <span>激活时间</span>
+              <span>您激活的时间</span>
             </div>
             <div class="referral-stat-value">
-              ${Utils.formatTimestamp(this.userInfo.activeTime)}
+              ${this.userInfo.activeTime > 0 
+                ? Utils.formatTimestamp(this.userInfo.activeTime)
+                : '--'}
             </div>
           </div>
         </div>
@@ -3982,15 +3996,32 @@ const LPRewardManager = {
               无推荐人
             </div>
           </div>
-          <div style="text-align: center; padding: 10px; color: var(--text-secondary); font-size: 12px;">
-            激活时未设置推荐人
+          <div class="referral-stat-row">
+            <div class="referral-stat-label">
+              <span>💡</span>
+              <span>说明</span>
+            </div>
+            <div class="referral-stat-value" style="font-size: 11px; color: var(--text-secondary);">
+              激活时未设置推荐人
+            </div>
           </div>
         </div>
       `;
     }
     
     container.innerHTML = statsHTML;
-  },
+    
+  } catch (error) {
+    console.error('显示推荐统计失败:', error);
+    container.innerHTML = `
+      <div class="referral-stats-panel">
+        <div style="text-align: center; padding: 10px; color: var(--accent-red); font-size: 12px;">
+          加载推荐信息失败
+        </div>
+      </div>
+    `;
+  }
+}
 
   // 更新按钮状态
   updateButtonStates() {
@@ -4201,99 +4232,70 @@ const LPRewardManager = {
       return;
     }
     
-    // 获取推荐地址
-    const referrerInput = document.getElementById('referrerAddress');
-    let referrerAddress = referrerInput ? referrerInput.value.trim() : '';
-    
-    // 验证和处理推荐地址
-    if (referrerAddress) {
-      if (!Utils.isValidAddress(referrerAddress)) {
-        Utils.showError('推荐地址格式错误');
-        return;
-      }
-      
-      if (referrerAddress.toLowerCase() === account.toLowerCase()) {
-        Utils.showError('不能推荐自己');
-        return;
-      }
-      
-      // 检查推荐人状态
-      try {
-        const referrerData = await lpRewardContract.users(referrerAddress);
-        const referrerShares = parseFloat(ethers.utils.formatUnits(referrerData.shares, 18));
-        
-        if (referrerShares <= 0) {
-          Utils.showError('推荐人未激活LP奖励');
-          return;
-        }
-        
-        // 保存到本地存储
-        walletInviteMap[account.toLowerCase()] = referrerAddress;
-        localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
-        
-      } catch (error) {
-        console.warn('检查推荐人失败:', error);
-        Utils.showError('推荐人地址无效或未激活');
-        return;
-      }
-    } else {
-      referrerAddress = '0x0000000000000000000000000000000000000000';
+  // 在 LPRewardManager.activate() 方法中
+async activate() {
+  // ... 现有代码 ...
+  
+  // 获取推荐地址
+  const referrerInput = document.getElementById('referrerAddress');
+  let referrerAddress = referrerInput ? referrerInput.value.trim() : '';
+  
+  // 验证和处理推荐地址
+  if (referrerAddress) {
+    if (!Utils.isValidAddress(referrerAddress)) {
+      Utils.showError('推荐地址格式错误');
+      return;
     }
     
-    // 执行激活
+    if (referrerAddress.toLowerCase() === account.toLowerCase()) {
+      Utils.showError('不能推荐自己');
+      return;
+    }
+    
+    // 检查推荐人是否有效（修改这里的逻辑）
     try {
-      Utils.showNotification('激活LP奖励中...', 'info');
+      const referrerData = await lpRewardContract.users(referrerAddress);
+      const referrerShares = parseFloat(ethers.utils.formatUnits(referrerData.shares, 18));
       
-      const tx = await lpRewardContract.activate(referrerAddress);
-      await tx.wait();
-      
-      Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
-      
-      // 刷新所有数据
-      await this.refreshAll();
-      await DataManager.refreshAll();
-      
-      // 保存邀请记录
-      if (referrerAddress !== '0x0000000000000000000000000000000000000000') {
-        this.saveReferralRecord(referrerAddress);
+      if (referrerShares <= 0) {
+        Utils.showError('推荐人未激活LP奖励');
+        return;
       }
+      
+      // 保存到本地存储（仅用于未激活状态显示）
+      walletInviteMap[account.toLowerCase()] = referrerAddress;
+      localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
+      
+      console.log('✅ 设置推荐人:', referrerAddress);
       
     } catch (error) {
-      console.error('激活失败:', error);
-      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+      console.warn('检查推荐人失败:', error);
+      Utils.showError('推荐人地址无效或未激活');
+      return;
     }
-  },
-
-  // 保存推荐记录
-  saveReferralRecord(referrerAddress) {
-    try {
-      const key = account.toLowerCase();
-      const storedStats = localStorage.getItem('lomswap_referral_stats') || '{}';
-      const allStats = JSON.parse(storedStats);
-      
-      if (!allStats[key]) {
-        allStats[key] = {
-          totalReferrals: 0,
-          activeReferrals: 0,
-          referralHistory: []
-        };
-      }
-      
-      // 检查是否已存在
-      const existing = allStats[key].referralHistory.find(r => r.address === referrerAddress);
-      if (!existing) {
-        allStats[key].referralHistory.push({
-          address: referrerAddress,
-          timestamp: Date.now(),
-          status: 'active'
-        });
-        
-        localStorage.setItem('lomswap_referral_stats', JSON.stringify(allStats));
-      }
-    } catch (error) {
-      console.error('保存推荐记录失败:', error);
-    }
-  },
+  } else {
+    // 空地址表示没有推荐人
+    referrerAddress = '0x0000000000000000000000000000000000000000';
+  }
+  
+  // 执行激活
+  try {
+    Utils.showNotification('激活LP奖励中...', 'info');
+    
+    const tx = await lpRewardContract.activate(referrerAddress);
+    await tx.wait();
+    
+    Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
+    
+    // 刷新所有数据
+    await this.refreshAll();
+    await DataManager.refreshAll();
+    
+  } catch (error) {
+    console.error('激活失败:', error);
+    Utils.showNotification(Utils.getErrorMessage(error), 'error');
+  }
+}
 
   // 领取奖励
   async claimReward() {
