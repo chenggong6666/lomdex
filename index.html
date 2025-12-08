@@ -3517,125 +3517,132 @@ const LPRewardManager = {
   },
 
   refreshTimer: null,
+  lastUpdateTime: 0,
 
   // 刷新所有LP奖励信息
-  async refreshAll() {
+  async refreshAll(force = false) {
     if (!account || !lpRewardContract) {
       this.resetUI();
       return;
     }
 
     try {
-      await this.fetchContractInfo();
-      await this.fetchUserInfo();
-      await this.fetchLPBalance();
-      await this.fetchPendingRewards();
+      const now = Date.now();
+      // 避免频繁刷新，至少间隔5秒
+      if (!force && now - this.lastUpdateTime < 5000) {
+        return;
+      }
+      
+      this.lastUpdateTime = now;
+      
+      await Promise.all([
+        this.fetchContractInfo(),
+        this.fetchUserInfo(),
+        this.fetchLPBalance(),
+        this.fetchPendingRewards()
+      ]);
+      
       this.determineCurrentState();
       this.updateUI();
+      
+      console.log('✅ LP奖励数据刷新完成:', {
+        state: this.currentState,
+        lpBalance: this.currentLPBalance,
+        shares: this.userInfo?.shares || 0,
+        totalShares: this.contractInfo?.totalShares || 0,
+        pendingReward: this.currentRewards.pendingReward
+      });
+      
     } catch (error) {
       console.error('刷新LP奖励信息失败:', error);
-      this.resetUI();
+      // 出错时重置时间，允许重试
+      this.lastUpdateTime = 0;
     }
   },
 
   // 获取合约信息
   async fetchContractInfo() {
-  try {
-    // 先调用 updateShares 确保数据同步
     try {
-      // 这是一个只读调用
-      await lpRewardContract.updateShares();
-    } catch (error) {
-      console.warn('更新总份额失败，可能合约未实现该方法:', error);
-    }
-    
-    const [
-      minActivation,
-      totalShares,
-      rewardPerSecond,
-      pausedStatus,
-      rewardTokenAddr,
-      lpTokenAddr,
-      accRewardPerShare,
-      lastRewardTime
-    ] = await Promise.all([
-      lpRewardContract.minActivation(),
-      lpRewardContract.totalShares(),
-      lpRewardContract.rewardPerSecond(),
-      lpRewardContract.paused(),
-      lpRewardContract.rewardToken(),
-      lpRewardContract.lpToken(),
-      lpRewardContract.accRewardPerShare(),
-      lpRewardContract.lastRewardTime()
-    ]);
+      // 并行获取所有合约信息
+      const [
+        minActivation,
+        totalShares,
+        rewardPerSecond,
+        pausedStatus,
+        rewardTokenAddr,
+        lpTokenAddr,
+        accRewardPerShare,
+        lastRewardTime
+      ] = await Promise.all([
+        lpRewardContract.minActivation(),
+        lpRewardContract.totalShares(),
+        lpRewardContract.rewardPerSecond(),
+        lpRewardContract.paused(),
+        lpRewardContract.rewardToken(),
+        lpRewardContract.lpToken(),
+        lpRewardContract.accRewardPerShare(),
+        lpRewardContract.lastRewardTime()
+      ]);
 
-    this.contractInfo = {
-      minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
-      totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
-      rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
-      paused: pausedStatus,
-      rewardTokenAddress: rewardTokenAddr,
-      lpTokenAddress: lpTokenAddr,
-      accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
-      lastRewardTime: lastRewardTime.toNumber()
-    };
-    
-    console.log('合约总份额更新:', this.contractInfo.totalShares);
-  } catch (error) {
-    console.error('获取合约信息失败:', error);
-    throw error;
-  }
-}
+      this.contractInfo = {
+        minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
+        totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
+        rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
+        paused: pausedStatus,
+        rewardTokenAddress: rewardTokenAddr,
+        lpTokenAddress: lpTokenAddr,
+        accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
+        lastRewardTime: lastRewardTime.toNumber()
+      };
+      
+    } catch (error) {
+      console.error('获取合约信息失败:', error);
+      throw error;
+    }
+  },
 
   // 获取用户信息
   async fetchUserInfo() {
-  try {
-    // 先调用合约的 updateSharesForUser 确保数据同步
     try {
-      // 这是一个只读调用，不会消耗gas
-      await lpRewardContract.updateSharesForUser(account);
-    } catch (error) {
-      console.warn('更新用户份额失败，可能合约未实现该方法:', error);
-    }
-    
-    const userData = await lpRewardContract.users(account);
+      const userData = await lpRewardContract.users(account);
 
-    this.userInfo = {
-      shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
-      rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 12)),
-      pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
-      lastClaimTime: userData.lastClaimTime.toNumber(),
-      activeTime: userData.activeTime.toNumber(),
-      lastReduceTime: userData.lastReduceTime.toNumber(),
-      referralUnlockTime: userData.referralUnlockTime.toNumber(),
-      referrer: userData.referrer,
-      cleanInFirst30Days: userData.cleanInFirst30Days
-    };
-    
-    console.log('用户份额更新:', this.userInfo.shares);
-  } catch (error) {
-    console.error('获取用户信息失败:', error);
-    // 设置默认值避免出错
-    this.userInfo = {
-      shares: 0,
-      rewardDebt: 0,
-      pendingReferral: 0,
-      lastClaimTime: 0,
-      activeTime: 0,
-      lastReduceTime: 0,
-      referralUnlockTime: 0,
-      referrer: '0x0000000000000000000000000000000000000000',
-      cleanInFirst30Days: false
-    };
-  }
-}
+      this.userInfo = {
+        shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
+        rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 12)),
+        pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
+        lastClaimTime: userData.lastClaimTime.toNumber(),
+        activeTime: userData.activeTime.toNumber(),
+        lastReduceTime: userData.lastReduceTime.toNumber(),
+        referralUnlockTime: userData.referralUnlockTime.toNumber(),
+        referrer: userData.referrer,
+        cleanInFirst30Days: userData.cleanInFirst30Days
+      };
+      
+    } catch (error) {
+      console.error('获取用户信息失败:', error);
+      // 设置默认值避免出错
+      this.userInfo = {
+        shares: 0,
+        rewardDebt: 0,
+        pendingReferral: 0,
+        lastClaimTime: 0,
+        activeTime: 0,
+        lastReduceTime: 0,
+        referralUnlockTime: 0,
+        referrer: '0x0000000000000000000000000000000000000000',
+        cleanInFirst30Days: false
+      };
+    }
+  },
 
   // 获取LP余额
   async fetchLPBalance() {
     try {
-      if (pair) {
+      if (pair && account) {
         const lpBal = await pair.balanceOf(account);
         this.currentLPBalance = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+      } else {
+        this.currentLPBalance = 0;
       }
     } catch (error) {
       console.error('获取LP余额失败:', error);
@@ -3646,14 +3653,17 @@ const LPRewardManager = {
   // 获取待领取奖励
   async fetchPendingRewards() {
     try {
-      const pendingReward = await lpRewardContract.pendingReward(account);
+      const [pendingReward, pendingReferral] = await Promise.all([
+        lpRewardContract.pendingReward(account),
+        lpRewardContract.pendingReferral(account)
+      ]);
+
       this.currentRewards.pendingReward = parseFloat(ethers.utils.formatUnits(pendingReward, 18));
-
-      const pendingReferral = await lpRewardContract.pendingReferral(account);
       this.currentRewards.pendingReferral = parseFloat(ethers.utils.formatUnits(pendingReferral, 18));
-
+      
       // 计算倍率
       this.currentRewards.multiplier = this.calculateMultiplier();
+      
     } catch (error) {
       console.error('获取奖励数据失败:', error);
       this.currentRewards = {
@@ -3672,7 +3682,7 @@ const LPRewardManager = {
     const duration = now - this.userInfo.activeTime;
 
     // 如果合约暂停，使用基础倍率1.0
-    if (this.contractInfo.paused) return 1.0;
+    if (this.contractInfo?.paused) return 1.0;
     
     if (duration >= 360 * 24 * 60 * 60) return 3.0;
     if (duration >= 180 * 24 * 60 * 60) return 2.0;
@@ -3683,7 +3693,7 @@ const LPRewardManager = {
 
   // 确定当前状态
   determineCurrentState() {
-    if (this.contractInfo.paused) {
+    if (this.contractInfo?.paused) {
       this.currentState = this.REWARD_STATES.PAUSED;
       return;
     }
@@ -3753,27 +3763,27 @@ const LPRewardManager = {
 
   // 更新奖励信息
   updateRewardInfo() {
-  const pendingRewardEl = document.getElementById('pendingReward');
-  if (pendingRewardEl) {
-    pendingRewardEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`;
-  }
-
-  const dailyRewardEl = document.getElementById('dailyReward');
-  if (dailyRewardEl) {
-    // 使用实时数据计算每日收益
-    if (this.currentState === this.REWARD_STATES.ACTIVATED && 
-        this.userInfo && this.userInfo.shares > 0 && 
-        this.contractInfo.totalShares > 0) {
-      
-      // 直接从合约奖励速率和用户份额计算
-      const dailyReward = this.contractInfo.rewardPerSecond * 
-                        this.userInfo.shares / this.contractInfo.totalShares * 
-                        86400 * this.currentRewards.multiplier;
-      dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
-    } else {
-      dailyRewardEl.textContent = '0 LOM';
+    const pendingRewardEl = document.getElementById('pendingReward');
+    if (pendingRewardEl) {
+      pendingRewardEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`;
     }
-  }
+
+    const dailyRewardEl = document.getElementById('dailyReward');
+    if (dailyRewardEl) {
+      // 使用实时数据计算每日收益
+      if (this.currentState === this.REWARD_STATES.ACTIVATED && 
+          this.userInfo && this.userInfo.shares > 0 && 
+          this.contractInfo && this.contractInfo.totalShares > 0) {
+        
+        // 直接从合约奖励速率和用户份额计算
+        const dailyReward = this.contractInfo.rewardPerSecond * 
+                          this.userInfo.shares / this.contractInfo.totalShares * 
+                          86400 * this.currentRewards.multiplier;
+        dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
+      } else {
+        dailyRewardEl.textContent = '0 LOM';
+      }
+    }
 
     const nextClaimTimeEl = document.getElementById('nextClaimTime');
     if (nextClaimTimeEl) {
@@ -3861,7 +3871,7 @@ const LPRewardManager = {
 
     let statsHTML = '';
 
-    if (this.userInfo.referrer && this.userInfo.referrer !== '0x0000000000000000000000000000000000000000') {
+    if (this.userInfo?.referrer && this.userInfo.referrer !== '0x0000000000000000000000000000000000000000') {
       statsHTML = `
         <div class="referral-stats-panel">
           <div class="referral-stat-row">
@@ -3906,8 +3916,8 @@ const LPRewardManager = {
 
     switch (this.currentState) {
       case this.REWARD_STATES.NOT_ACTIVATED:
-        activateBtn.disabled = !this.canActivate() || this.contractInfo.paused;
-        activateBtn.innerHTML = this.contractInfo.paused ? 
+        activateBtn.disabled = !this.canActivate() || this.contractInfo?.paused;
+        activateBtn.innerHTML = this.contractInfo?.paused ? 
           '<span>⏸️</span><span>合约暂停</span>' : 
           (this.canActivate() ? 
             '<span>🚀</span><span>激活奖励</span>' : 
@@ -3928,12 +3938,12 @@ const LPRewardManager = {
         const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
         claimBtn.disabled = now < nextClaimTime || 
                           this.currentRewards.pendingReward <= 0 || 
-                          this.contractInfo.paused;
+                          this.contractInfo?.paused;
         claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
 
         const canClaimReferral = this.currentRewards.pendingReferral > 0 && 
                                now >= this.userInfo.referralUnlockTime;
-        claimReferralBtn.disabled = !canClaimReferral || this.contractInfo.paused;
+        claimReferralBtn.disabled = !canClaimReferral || this.contractInfo?.paused;
         claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
         break;
 
@@ -3941,10 +3951,10 @@ const LPRewardManager = {
         activateBtn.disabled = true;
         activateBtn.innerHTML = '<span>⏸️</span><span>LP不足</span>';
 
-        claimBtn.disabled = this.currentRewards.pendingReward <= 0 || this.contractInfo.paused;
+        claimBtn.disabled = this.currentRewards.pendingReward <= 0 || this.contractInfo?.paused;
         claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
 
-        claimReferralBtn.disabled = this.currentRewards.pendingReferral <= 0 || this.contractInfo.paused;
+        claimReferralBtn.disabled = this.currentRewards.pendingReferral <= 0 || this.contractInfo?.paused;
         claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
         break;
 
@@ -3963,7 +3973,7 @@ const LPRewardManager = {
 
   // 检查是否可以激活
   canActivate() {
-    return this.currentLPBalance >= this.contractInfo.minActivation;
+    return this.currentLPBalance >= this.contractInfo?.minActivation;
   },
 
   // 更新警告信息
@@ -4018,24 +4028,30 @@ const LPRewardManager = {
     if (!container) return;
 
     // 估算总奖励发放量
-    const totalSeconds = Date.now() / 1000 - this.contractInfo.lastRewardTime;
-    const estimatedDistributed = this.contractInfo.rewardPerSecond * totalSeconds;
-    const rewardPercentage = (estimatedDistributed / APP_CONFIG.TOTAL_REWARD_POOL * 100).toFixed(2);
-    const remainingReward = Math.max(0, APP_CONFIG.TOTAL_REWARD_POOL - estimatedDistributed);
+    let estimatedDistributed = 0;
+    let rewardPercentage = '0.00';
+    let remainingReward = APP_CONFIG.TOTAL_REWARD_POOL;
+    
+    if (this.contractInfo) {
+      const totalSeconds = Date.now() / 1000 - this.contractInfo.lastRewardTime;
+      estimatedDistributed = this.contractInfo.rewardPerSecond * totalSeconds;
+      rewardPercentage = (estimatedDistributed / APP_CONFIG.TOTAL_REWARD_POOL * 100).toFixed(2);
+      remainingReward = Math.max(0, APP_CONFIG.TOTAL_REWARD_POOL - estimatedDistributed);
+    }
 
     const statsHTML = `
       <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.05)); border-radius: 12px; padding: 16px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 20px;">
         <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">
-          📊 全局统计 ${this.contractInfo.paused ? '<span style="color: var(--accent-red);">(暂停)</span>' : ''}
+          📊 全局统计 ${this.contractInfo?.paused ? '<span style="color: var(--accent-red);">(暂停)</span>' : ''}
         </div>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">总质押</div>
-            <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatNumber(this.contractInfo.totalShares)} LPT</div>
+            <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatNumber(this.contractInfo?.totalShares || 0)} LPT</div>
           </div>
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">每秒奖励</div>
-            <div style="color: var(--primary-blue); font-weight: 600;">${Utils.formatDisplay(this.contractInfo.rewardPerSecond)} LOM</div>
+            <div style="color: var(--primary-blue); font-weight: 600;">${Utils.formatDisplay(this.contractInfo?.rewardPerSecond || 0)} LOM</div>
           </div>
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">总奖池</div>
@@ -4043,7 +4059,7 @@ const LPRewardManager = {
           </div>
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">最小激活</div>
-            <div style="color: var(--text-primary); font-weight: 600;">${Utils.formatNumber(this.contractInfo.minActivation)} LPT</div>
+            <div style="color: var(--text-primary); font-weight: 600;">${Utils.formatNumber(this.contractInfo?.minActivation || 0)} LPT</div>
           </div>
         </div>
         
@@ -4054,7 +4070,7 @@ const LPRewardManager = {
             <span style="font-size: 10px; color: var(--text-secondary);">剩余: ${Utils.formatNumber(remainingReward)} LOM</span>
           </div>
           <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
-            <div style="height: 100%; width: ${Math.min(rewardPercentage, 100)}%; background: linear-gradient(90deg, var(--success), var(--accent-yellow)); border-radius: 3px; transition: width 0.3s ease;"></div>
+            <div style="height: 100%; width: ${Math.min(parseFloat(rewardPercentage), 100)}%; background: linear-gradient(90deg, var(--success), var(--accent-yellow)); border-radius: 3px; transition: width 0.3s ease;"></div>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 4px;">
             <span style="font-size: 10px; color: var(--text-secondary);">已发: ${Utils.formatNumber(estimatedDistributed)} LOM</span>
@@ -4063,9 +4079,9 @@ const LPRewardManager = {
         </div>
         
         <!-- 合约状态 -->
-        <div style="margin-top: 12px; padding: 8px; background: ${this.contractInfo.paused ? 'rgba(255, 71, 87, 0.1)' : 'rgba(46, 160, 67, 0.1)'}; border-radius: 8px; text-align: center;">
-          <div style="font-size: 11px; color: ${this.contractInfo.paused ? 'var(--accent-red)' : 'var(--success)'}; font-weight: 600;">
-            ${this.contractInfo.paused ? '⏸️ 合约已暂停' : '✅ 合约运行中'}
+        <div style="margin-top: 12px; padding: 8px; background: ${this.contractInfo?.paused ? 'rgba(255, 71, 87, 0.1)' : 'rgba(46, 160, 67, 0.1)'}; border-radius: 8px; text-align: center;">
+          <div style="font-size: 11px; color: ${this.contractInfo?.paused ? 'var(--accent-red)' : 'var(--success)'}; font-weight: 600;">
+            ${this.contractInfo?.paused ? '⏸️ 合约已暂停' : '✅ 合约运行中'}
           </div>
         </div>
       </div>
@@ -4086,7 +4102,7 @@ const LPRewardManager = {
       return;
     }
 
-    if (this.contractInfo.paused) {
+    if (this.contractInfo?.paused) {
       Utils.showError('合约已暂停，无法激活');
       return;
     }
@@ -4120,9 +4136,8 @@ const LPRewardManager = {
         localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
       }
 
-      // 刷新所有数据
-      await this.refreshAll();
-      await DataManager.refreshAll();
+      // 强制刷新所有数据
+      await this.refreshAll(true);
 
     } catch (error) {
       console.error('激活失败:', error);
@@ -4137,7 +4152,7 @@ const LPRewardManager = {
       return;
     }
 
-    if (this.contractInfo.paused) {
+    if (this.contractInfo?.paused) {
       Utils.showError('合约已暂停，无法领取');
       return;
     }
@@ -4162,9 +4177,8 @@ const LPRewardManager = {
 
       Utils.showNotification(`奖励领取成功！获得 ${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`, 'success');
 
-      // 刷新数据
-      await this.refreshAll();
-      await DataManager.refreshAll();
+      // 强制刷新数据
+      await this.refreshAll(true);
 
     } catch (error) {
       console.error('领取奖励失败:', error);
@@ -4179,7 +4193,7 @@ const LPRewardManager = {
       return;
     }
 
-    if (this.contractInfo.paused) {
+    if (this.contractInfo?.paused) {
       Utils.showError('合约已暂停，无法领取');
       return;
     }
@@ -4203,8 +4217,8 @@ const LPRewardManager = {
 
       Utils.showNotification(`推荐奖励领取成功！获得 ${Utils.formatDisplay(this.currentRewards.pendingReferral)} LOM`, 'success');
 
-      // 刷新数据
-      await this.refreshAll();
+      // 强制刷新数据
+      await this.refreshAll(true);
 
     } catch (error) {
       console.error('领取推荐奖励失败:', error);
@@ -4212,27 +4226,17 @@ const LPRewardManager = {
     }
   },
 
-  // 更新份额
-  async updateShares() {
-    if (!account || !lpRewardContract) {
-      Utils.showError('请先连接钱包');
-      return;
-    }
-
-    try {
-      Utils.showNotification('更新份额中...', 'info');
-
-      const tx = await lpRewardContract.updateShares();
-      await tx.wait();
-
-      Utils.showNotification('份额更新成功！', 'success');
-
-      await this.refreshAll();
-
-    } catch (error) {
-      console.error('更新份额失败:', error);
-      Utils.showNotification(Utils.getErrorMessage(error), 'error');
-    }
+  // 手动同步数据（在流动性变化后调用）
+  async syncAfterLiquidityChange() {
+    console.log('🔄 流动性变化后同步数据...');
+    
+    // 等待2秒确保区块确认
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // 强制刷新所有数据
+    await this.refreshAll(true);
+    
+    console.log('✅ 数据同步完成');
   },
 
   // 重置UI
@@ -4298,8 +4302,15 @@ const LPRewardManager = {
       globalStatsContainer.innerHTML = '';
     }
 
-    document.getElementById('lpWarning').style.display = 'none';
-    document.getElementById('cooldownTimer').style.display = 'none';
+    const warningElement = document.getElementById('lpWarning');
+    if (warningElement) {
+      warningElement.style.display = 'none';
+    }
+    
+    const cooldownTimer = document.getElementById('cooldownTimer');
+    if (cooldownTimer) {
+      cooldownTimer.style.display = 'none';
+    }
 
     this.resetMultiplierHighlight();
   },
@@ -4377,7 +4388,7 @@ class AppCore {
       
       // 初始化数据
       await DataManager.refreshAll();
-      await LPRewardManager.refreshAll();
+      await LPRewardManager.refreshAll(true); // 强制刷新
       LPRewardManager.startAutoRefresh();
       
       return true;
@@ -4553,7 +4564,10 @@ const DataManager = {
       if (pair) {
         try {
           const lpBal = await pair.balanceOf(account);
-          document.getElementById("removeBtn").disabled = lpBal.isZero();
+          const removeBtn = document.getElementById("removeBtn");
+          if (removeBtn) {
+            removeBtn.disabled = lpBal.isZero();
+          }
         } catch (error) {
           console.error("获取LP余额失败:", error);
         }
@@ -4579,70 +4593,73 @@ const DataManager = {
   },
 
   async updatePoolInfo() {
-  try {
-    if (!pair || !account) return;
-    
-    const [r0, r1] = await pair.getReserves();
-    const t0 = await pair.token0();
-    const totalSupply = await pair.totalSupply();
-    
-    const reserveCfx = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r0 : r1;
-    const reserveLom = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r1 : r0;
-    
-    const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-    const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
-    
-    currentReserves.cfx = cfxReserve;
-    currentReserves.lom = lomReserve;
-    
-    const price = lomReserve / cfxReserve;
-    currentRatio = price;
-    
-    const priceFormatted = Utils.formatDisplay(price);
-    document.getElementById("price").textContent = `1 CFX = ${priceFormatted} LOM`;
-    document.getElementById("addRatio").textContent = `1 CFX = ${priceFormatted} LOM`;
+    try {
+      if (!pair || !account) return;
+      
+      const [r0, r1] = await pair.getReserves();
+      const t0 = await pair.token0();
+      const totalSupply = await pair.totalSupply();
+      
+      const reserveCfx = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r0 : r1;
+      const reserveLom = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r1 : r0;
+      
+      const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+      const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+      
+      currentReserves.cfx = cfxReserve;
+      currentReserves.lom = lomReserve;
+      
+      const price = lomReserve / cfxReserve;
+      currentRatio = price;
+      
+      const priceFormatted = Utils.formatDisplay(price);
+      const priceEl = document.getElementById("price");
+      const addRatioEl = document.getElementById("addRatio");
+      
+      if (priceEl) priceEl.textContent = `1 CFX = ${priceFormatted} LOM`;
+      if (addRatioEl) addRatioEl.textContent = `1 CFX = ${priceFormatted} LOM`;
 
-    const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
-    
-    let lpAmt = 0;
-    let share = 0;
-    let userCfx = 0;
-    let userLom = 0;
-    
-    const lpBal = await pair.balanceOf(account);
-    lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-    
-    if (totalSupplyNum > 0 && lpAmt > 0) {
-      share = (lpAmt / totalSupplyNum) * 100;
-      userCfx = cfxReserve * (share / 100);
-      userLom = lomReserve * (share / 100);
+      const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
+      
+      let lpAmt = 0;
+      let share = 0;
+      let userCfx = 0;
+      let userLom = 0;
+      
+      const lpBal = await pair.balanceOf(account);
+      lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+      
+      if (totalSupplyNum > 0 && lpAmt > 0) {
+        share = (lpAmt / totalSupplyNum) * 100;
+        userCfx = cfxReserve * (share / 100);
+        userLom = lomReserve * (share / 100);
+      }
+      
+      const cfxReserveEl = document.getElementById("cfxReserve");
+      const lomReserveEl = document.getElementById("lomReserve");
+      
+      if (cfxReserveEl) cfxReserveEl.textContent = cfxReserve.toFixed(2);
+      if (lomReserveEl) lomReserveEl.textContent = lomReserve.toFixed(2);
+      
+      const userCfxEl = document.getElementById("userCfx");
+      const userLomEl = document.getElementById("userLom");
+      const userLpEl = document.getElementById("userLp");
+      const userPoolShareEl = document.getElementById("userPoolShare");
+      
+      if (userCfxEl) userCfxEl.textContent = userCfx.toFixed(2);
+      if (userLomEl) userLomEl.textContent = userLom.toFixed(2);
+      if (userLpEl) userLpEl.textContent = lpAmt.toFixed(2);
+      if (userPoolShareEl) userPoolShareEl.textContent = share.toFixed(4) + "%";
+      
+      const removeBtn = document.getElementById("removeBtn");
+      if (removeBtn) {
+        removeBtn.disabled = lpAmt <= 0;
+      }
+      
+    } catch (error) {
+      console.error("更新池子信息失败:", error);
     }
-    
-    const cfxReserveEl = document.getElementById("cfxReserve");
-    const lomReserveEl = document.getElementById("lomReserve");
-    
-    if (cfxReserveEl) cfxReserveEl.textContent = cfxReserve.toFixed(2);
-    if (lomReserveEl) lomReserveEl.textContent = lomReserve.toFixed(2);
-    
-    const userCfxEl = document.getElementById("userCfx");
-    const userLomEl = document.getElementById("userLom");
-    const userLpEl = document.getElementById("userLp");
-    const userPoolShareEl = document.getElementById("userPoolShare");
-    
-    if (userCfxEl) userCfxEl.textContent = userCfx.toFixed(2);
-    if (userLomEl) userLomEl.textContent = userLom.toFixed(2);
-    if (userLpEl) userLpEl.textContent = lpAmt.toFixed(2);
-    if (userPoolShareEl) userPoolShareEl.textContent = share.toFixed(4) + "%";
-    
-    const removeBtn = document.getElementById("removeBtn");
-    if (removeBtn) {
-      removeBtn.disabled = lpAmt <= 0;
-    }
-    
-  } catch (error) {  // ✅ 修复：将try-catch配对
-    console.error("更新池子信息失败:", error);
-  }
-}
+  },
 
   updateSwapButtonState() {
     const swapBtn = document.getElementById("swapBtn");
@@ -4679,9 +4696,13 @@ const DataManager = {
       if (element) element.textContent = elements[id];
     });
     
-    document.getElementById("fromAmount").value = "";
-    document.getElementById("toAmount").value = "";
-    document.getElementById("removeBtn").disabled = true;
+    const fromAmount = document.getElementById("fromAmount");
+    const toAmount = document.getElementById("toAmount");
+    const removeBtn = document.getElementById("removeBtn");
+    
+    if (fromAmount) fromAmount.value = "";
+    if (toAmount) toAmount.value = "";
+    if (removeBtn) removeBtn.disabled = true;
   }
 };
 
@@ -4698,9 +4719,6 @@ const SwapModule = {
     
     try {
       Utils.showNotification(isChinese ? '处理兑换中...' : 'Processing swap...', 'info');
-      
-      const fromDecimals = TokenUtils.getTokenDecimals(fromToken);
-      const toDecimals = TokenUtils.getTokenDecimals(toToken);
       
       const amountIn = TokenUtils.parseTokenAmount(fromAmount, fromToken);
       const path = this.getSwapPath();
@@ -4758,8 +4776,9 @@ const SwapModule = {
         'success'
       );
       
+      // 交易成功后刷新所有数据
       await DataManager.refreshAll();
-      await LPRewardManager.refreshAll();
+      await LPRewardManager.syncAfterLiquidityChange();
       
     } catch (error) {
       console.error('兑换失败:', error);
@@ -4820,41 +4839,50 @@ const SwapModule = {
     const amount = document.getElementById('fromAmount').value;
     
     if (!amount || amount === '0' || amount === '' || !router) {
-      document.getElementById('toAmount').value = "";
-      document.getElementById('minReceived').textContent = `0 ${toToken}`;
+      const toAmountEl = document.getElementById('toAmount');
+      const minReceivedEl = document.getElementById('minReceived');
+      if (toAmountEl) toAmountEl.value = "";
+      if (minReceivedEl) minReceivedEl.textContent = `0 ${toToken}`;
       DataManager.updateSwapButtonState();
       return;
     }
     
     try {
-      const fromDecimals = TokenUtils.getTokenDecimals(fromToken);
-      const toDecimals = TokenUtils.getTokenDecimals(toToken);
-      
       const amountIn = TokenUtils.parseTokenAmount(amount, fromToken);
       const path = this.getSwapPath();
       
       const amounts = await router.getAmountsOut(amountIn, path);
       const out = TokenUtils.formatTokenAmount(amounts[amounts.length - 1], toToken);
       
-      document.getElementById('toAmount').value = out;
+      const toAmountEl = document.getElementById('toAmount');
+      if (toAmountEl) toAmountEl.value = out;
       
       const minOut = amounts[amounts.length - 1].mul(1000 - slippage * 10).div(1000);
       const minOutFormatted = TokenUtils.formatTokenAmount(minOut, toToken);
-      document.getElementById('minReceived').textContent = 
-        `${minOutFormatted} ${toToken}`;
+      
+      const minReceivedEl = document.getElementById('minReceived');
+      if (minReceivedEl) {
+        minReceivedEl.textContent = `${minOutFormatted} ${toToken}`;
+      }
       
       const price = parseFloat(out) / parseFloat(amount);
       const priceFormatted = Utils.formatDisplay(price);
-      document.getElementById('price').textContent = 
-        `1 ${fromToken} = ${priceFormatted} ${toToken}`;
+      const priceEl = document.getElementById('price');
+      if (priceEl) {
+        priceEl.textContent = `1 ${fromToken} = ${priceFormatted} ${toToken}`;
+      }
       
       DataManager.updateSwapButtonState();
       
     } catch (error) {
       console.error('计算输出失败:', error);
-      document.getElementById('toAmount').value = "";
-      document.getElementById('swapBtn').textContent = isChinese ? '计算失败' : 'Calculation Failed';
-      document.getElementById('swapBtn').disabled = true;
+      const toAmountEl = document.getElementById('toAmount');
+      if (toAmountEl) toAmountEl.value = "";
+      const swapBtn = document.getElementById('swapBtn');
+      if (swapBtn) {
+        swapBtn.textContent = isChinese ? '计算失败' : 'Calculation Failed';
+        swapBtn.disabled = true;
+      }
     }
   }
 };
@@ -4905,8 +4933,9 @@ const LiquidityModule = {
       
       Utils.showNotification(isChinese ? '添加流动性成功！' : 'Liquidity added successfully!', 'success');
       
+      // 流动性变化后同步所有数据
       await DataManager.refreshAll();
-      await LPRewardManager.refreshAll();
+      await LPRewardManager.syncAfterLiquidityChange();
       
     } catch (error) {
       console.error('添加流动性失败:', error);
@@ -4946,9 +4975,6 @@ const LiquidityModule = {
       );
       
       await tx.wait();
-      setTimeout(() => {
-    LPRewardManager.refreshAll();
-    }, 2000); // 等待2秒确保区块确认
       
       document.getElementById("removeModal").style.display = "none";
       
@@ -4961,14 +4987,14 @@ const LiquidityModule = {
         'success'
       );
       
+      // 流动性变化后同步所有数据
       await DataManager.refreshAll();
-      await LPRewardManager.refreshAll();
+      await LPRewardManager.syncAfterLiquidityChange();
       
     } catch (error) {
       console.error('移除流动性失败:', error);
       Utils.showNotification(Utils.getErrorMessage(error), 'error');
     }
-    
   },
 
   async updateRemoveEstimate(percent) {
@@ -5016,7 +5042,7 @@ const LiquidityModule = {
     const confirmButton = document.getElementById("confirmAddBtn");
     
     if (!cfxAmount || !lomAmount || cfxAmount === "" || lomAmount === "") {
-      confirmButton.disabled = true;
+      if (confirmButton) confirmButton.disabled = true;
       return;
     }
     
@@ -5024,27 +5050,27 @@ const LiquidityModule = {
     const lomNum = parseFloat(lomAmount);
     
     if (isNaN(cfxNum) || isNaN(lomNum) || cfxNum <= 0 || lomNum <= 0) {
-      confirmButton.disabled = true;
+      if (confirmButton) confirmButton.disabled = true;
       return;
     }
     
     if (cfxNum > cfxBalance) {
-      confirmButton.disabled = true;
+      if (confirmButton) confirmButton.disabled = true;
       return;
     }
     
     if (lomNum > lomBalance) {
-      confirmButton.disabled = true;
+      if (confirmButton) confirmButton.disabled = true;
       return;
     }
     
     const remainingCfx = cfxBalance - cfxNum;
     if (remainingCfx < 0.01) {
-      confirmButton.disabled = true;
+      if (confirmButton) confirmButton.disabled = true;
       return;
     }
     
-    confirmButton.disabled = false;
+    if (confirmButton) confirmButton.disabled = false;
   },
 
   async setMaxCfx() {
@@ -5151,7 +5177,10 @@ const EventHandlers = {
   },
 
   setupWalletEvents() {
-    document.getElementById("walletBtn").addEventListener("click", async () => {
+    const walletBtn = document.getElementById("walletBtn");
+    if (!walletBtn) return;
+    
+    walletBtn.addEventListener("click", async () => {
       if (account) {
         if (confirm(isChinese ? "确定要断开钱包连接吗？" : "Are you sure you want to disconnect wallet?")) {
           AppCore.disconnect();
@@ -5159,72 +5188,92 @@ const EventHandlers = {
         return;
       }
       
-      document.getElementById("walletBtn").disabled = true;
+      walletBtn.disabled = true;
       try {
         const success = await AppCore.connectWallet();
         if (success) {
           DataManager.refreshAll();
-          LPRewardManager.refreshAll();
+          LPRewardManager.refreshAll(true); // 强制刷新
           LPRewardManager.startAutoRefresh();
         }
       } finally {
-        document.getElementById("walletBtn").disabled = false;
+        walletBtn.disabled = false;
       }
     });
   },
 
   setupSwapEvents() {
+    const fromAmountInput = document.getElementById("fromAmount");
+    if (!fromAmountInput) return;
+    
     const debouncedFromInput = Utils.debounce(() => {
-      const amount = document.getElementById("fromAmount").value;
+      const amount = fromAmountInput.value;
       if (amount && amount !== "0") {
         lastInputWasFrom = true;
         SwapModule.updateOutputFromInput();
       } else {
-        document.getElementById("toAmount").value = "";
+        const toAmount = document.getElementById("toAmount");
+        if (toAmount) toAmount.value = "";
         DataManager.updateSwapButtonState();
-        document.getElementById("minReceived").textContent = `0.000000 ${toToken}`;
+        const minReceived = document.getElementById("minReceived");
+        if (minReceived) minReceived.textContent = `0.000000 ${toToken}`;
       }
     }, 300);
     
-    document.getElementById("fromAmount").addEventListener("input", debouncedFromInput);
+    fromAmountInput.addEventListener("input", debouncedFromInput);
     
-    document.getElementById("reverse").addEventListener("click", () => {
-      const tempToken = fromToken;
-      fromToken = toToken;
-      toToken = tempToken;
-      
-      document.getElementById("fromTokenSymbol").textContent = fromToken;
-      document.getElementById("toTokenSymbol").textContent = toToken;
-      
-      const fromTokenData = TokenUtils.getToken(fromToken);
-      const toTokenData = TokenUtils.getToken(toToken);
-      
-      if (fromTokenData) {
-        document.getElementById("fromTokenLogo").style.backgroundImage = `url('${fromTokenData.logo}')`;
-      }
-      
-      if (toTokenData) {
-        document.getElementById("toTokenLogo").style.backgroundImage = `url('${toTokenData.logo}')`;
-      }
-      
-      document.getElementById("fromAmount").value = "";
-      document.getElementById("toAmount").value = "";
-      
-      DataManager.updateAllBalances();
-      DataManager.updateSwapButtonState();
-      document.getElementById("price").textContent = `1 ${fromToken} = 0.000000 ${toToken}`;
-      document.getElementById("minReceived").textContent = `0.000000 ${toToken}`;
-      
-      lastInputWasFrom = true;
-    });
+    const reverseBtn = document.getElementById("reverse");
+    if (reverseBtn) {
+      reverseBtn.addEventListener("click", () => {
+        const tempToken = fromToken;
+        fromToken = toToken;
+        toToken = tempToken;
+        
+        const fromTokenSymbol = document.getElementById("fromTokenSymbol");
+        const toTokenSymbol = document.getElementById("toTokenSymbol");
+        
+        if (fromTokenSymbol) fromTokenSymbol.textContent = fromToken;
+        if (toTokenSymbol) toTokenSymbol.textContent = toToken;
+        
+        const fromTokenData = TokenUtils.getToken(fromToken);
+        const toTokenData = TokenUtils.getToken(toToken);
+        
+        if (fromTokenData) {
+          const fromTokenLogo = document.getElementById("fromTokenLogo");
+          if (fromTokenLogo) fromTokenLogo.style.backgroundImage = `url('${fromTokenData.logo}')`;
+        }
+        
+        if (toTokenData) {
+          const toTokenLogo = document.getElementById("toTokenLogo");
+          if (toTokenLogo) toTokenLogo.style.backgroundImage = `url('${toTokenData.logo}')`;
+        }
+        
+        const fromAmount = document.getElementById("fromAmount");
+        const toAmount = document.getElementById("toAmount");
+        if (fromAmount) fromAmount.value = "";
+        if (toAmount) toAmount.value = "";
+        
+        DataManager.updateAllBalances();
+        DataManager.updateSwapButtonState();
+        const priceEl = document.getElementById("price");
+        if (priceEl) priceEl.textContent = `1 ${fromToken} = 0.000000 ${toToken}`;
+        const minReceivedEl = document.getElementById("minReceived");
+        if (minReceivedEl) minReceivedEl.textContent = `0.000000 ${toToken}`;
+        
+        lastInputWasFrom = true;
+      });
+    }
     
-    document.getElementById("swapBtn").addEventListener("click", async () => {
-      if (!account) {
-        await AppCore.connectWallet();
-      } else {
-        await SwapModule.executeSwap();
-      }
-    });
+    const swapBtn = document.getElementById("swapBtn");
+    if (swapBtn) {
+      swapBtn.addEventListener("click", async () => {
+        if (!account) {
+          await AppCore.connectWallet();
+        } else {
+          await SwapModule.executeSwap();
+        }
+      });
+    }
     
     document.querySelectorAll('.percent-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -5237,19 +5286,25 @@ const EventHandlers = {
           return;
         }
         
-        let balance = parseFloat(document.getElementById("fromBal").textContent);
-        if (balance > 0) {
-          let amount;
-          if (percent === 1) {
-            amount = fromToken === 'CFX' ? Math.max(0, balance - 0.1) : balance * 0.9;
-          } else {
-            amount = balance * percent;
-          }
-          
-          if (amount > 0) {
-            document.getElementById("fromAmount").value = Utils.formatDisplay(amount);
-            lastInputWasFrom = true;
-            SwapModule.updateOutputFromInput();
+        const fromBal = document.getElementById("fromBal");
+        if (fromBal) {
+          let balance = parseFloat(fromBal.textContent);
+          if (balance > 0) {
+            let amount;
+            if (percent === 1) {
+              amount = fromToken === 'CFX' ? Math.max(0, balance - 0.1) : balance * 0.9;
+            } else {
+              amount = balance * percent;
+            }
+            
+            if (amount > 0) {
+              const fromAmount = document.getElementById("fromAmount");
+              if (fromAmount) {
+                fromAmount.value = Utils.formatDisplay(amount);
+                lastInputWasFrom = true;
+                SwapModule.updateOutputFromInput();
+              }
+            }
           }
         }
       });
@@ -5276,108 +5331,167 @@ const EventHandlers = {
       });
     });
     
-    document.getElementById("fromTokenSelector").addEventListener("click", () => this.openTokenSelector('from'));
-    document.getElementById("toTokenSelector").addEventListener("click", () => this.openTokenSelector('to'));
+    const fromTokenSelector = document.getElementById("fromTokenSelector");
+    const toTokenSelector = document.getElementById("toTokenSelector");
+    
+    if (fromTokenSelector) {
+      fromTokenSelector.addEventListener("click", () => this.openTokenSelector('from'));
+    }
+    
+    if (toTokenSelector) {
+      toTokenSelector.addEventListener("click", () => this.openTokenSelector('to'));
+    }
   },
 
   setupLiquidityEvents() {
-    document.getElementById("addBtn").addEventListener("click", () => {
-      if (!account) {
-        Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
-        return;
-      }
+    const addBtn = document.getElementById("addBtn");
+    if (addBtn) {
+      addBtn.addEventListener("click", () => {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        const addModal = document.getElementById("addModal");
+        if (addModal) addModal.style.display = "flex";
+        
+        const addCfx = document.getElementById("addCfx");
+        const addLom = document.getElementById("addLom");
+        const confirmAddBtn = document.getElementById("confirmAddBtn");
+        
+        if (addCfx) addCfx.value = "";
+        if (addLom) addLom.value = "";
+        if (confirmAddBtn) confirmAddBtn.disabled = true;
+        
+        if (currentRatio > 0) {
+          const addRatio = document.getElementById("addRatio");
+          if (addRatio) {
+            const ratioFormatted = Utils.formatDisplay(currentRatio);
+            addRatio.textContent = `1 CFX = ${ratioFormatted} LOM`;
+          }
+        }
+      });
+    }
+    
+    const removeBtn = document.getElementById("removeBtn");
+    if (removeBtn) {
+      removeBtn.addEventListener("click", () => {
+        if (!account) {
+          Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
+          return;
+        }
+        
+        const removeModal = document.getElementById("removeModal");
+        if (removeModal) removeModal.style.display = "flex";
+        LiquidityModule.updateRemoveEstimate(100);
+      });
+    }
+    
+    const addCfxInput = document.getElementById("addCfx");
+    const addLomInput = document.getElementById("addLom");
+    
+    if (addCfxInput && addLomInput) {
+      const debouncedCfxInput = Utils.debounce(() => {
+        const cfxAmount = addCfxInput.value;
+        if (!cfxAmount || cfxAmount === "" || parseFloat(cfxAmount) <= 0) {
+          addLomInput.value = "";
+          const confirmAddBtn = document.getElementById("confirmAddBtn");
+          if (confirmAddBtn) confirmAddBtn.disabled = true;
+          return;
+        }
+        
+        if (currentRatio > 0) {
+          const cfxNum = parseFloat(cfxAmount);
+          const lomAmount = cfxNum * currentRatio;
+          addLomInput.value = Utils.formatDisplay(lomAmount);
+        }
+        
+        LiquidityModule.updateAddButtonState();
+      }, 300);
       
-      document.getElementById("addModal").style.display = "flex";
-      document.getElementById("addCfx").value = "";
-      document.getElementById("addLom").value = "";
-      document.getElementById("confirmAddBtn").disabled = true;
+      const debouncedLomInput = Utils.debounce(() => {
+        const lomAmount = addLomInput.value;
+        if (!lomAmount || lomAmount === "" || parseFloat(lomAmount) <= 0) {
+          addCfxInput.value = "";
+          const confirmAddBtn = document.getElementById("confirmAddBtn");
+          if (confirmAddBtn) confirmAddBtn.disabled = true;
+          return;
+        }
+        
+        if (currentRatio > 0) {
+          const lomNum = parseFloat(lomAmount);
+          const cfxAmount = lomNum / currentRatio;
+          addCfxInput.value = Utils.formatDisplay(cfxAmount);
+        }
+        
+        LiquidityModule.updateAddButtonState();
+      }, 300);
       
-      if (currentRatio > 0) {
-        const ratioFormatted = Utils.formatDisplay(currentRatio);
-        document.getElementById("addRatio").textContent = `1 CFX = ${ratioFormatted} LOM`;
-      }
-    });
+      addCfxInput.addEventListener("input", debouncedCfxInput);
+      addLomInput.addEventListener("input", debouncedLomInput);
+    }
     
-    document.getElementById("removeBtn").addEventListener("click", () => {
-      if (!account) {
-        Utils.showError(isChinese ? "请先连接钱包" : "Please connect wallet first");
-        return;
-      }
-      
-      document.getElementById("removeModal").style.display = "flex";
-      LiquidityModule.updateRemoveEstimate(100);
-    });
+    const cfxMaxBtn = document.getElementById("cfxMaxBtn");
+    const lomMaxBtn = document.getElementById("lomMaxBtn");
     
-    const debouncedCfxInput = Utils.debounce(() => {
-      const cfxAmount = document.getElementById("addCfx").value;
-      if (!cfxAmount || cfxAmount === "" || parseFloat(cfxAmount) <= 0) {
-        document.getElementById("addLom").value = "";
-        document.getElementById("confirmAddBtn").disabled = true;
-        return;
-      }
-      
-      if (currentRatio > 0) {
-        const cfxNum = parseFloat(cfxAmount);
-        const lomAmount = cfxNum * currentRatio;
-        document.getElementById("addLom").value = Utils.formatDisplay(lomAmount);
-      }
-      
-      LiquidityModule.updateAddButtonState();
-    }, 300);
+    if (cfxMaxBtn) {
+      cfxMaxBtn.addEventListener("click", () => LiquidityModule.setMaxCfx());
+    }
     
-    const debouncedLomInput = Utils.debounce(() => {
-      const lomAmount = document.getElementById("addLom").value;
-      if (!lomAmount || lomAmount === "" || parseFloat(lomAmount) <= 0) {
-        document.getElementById("addCfx").value = "";
-        document.getElementById("confirmAddBtn").disabled = true;
-        return;
-      }
-      
-      if (currentRatio > 0) {
-        const lomNum = parseFloat(lomAmount);
-        const cfxAmount = lomNum / currentRatio;
-        document.getElementById("addCfx").value = Utils.formatDisplay(cfxAmount);
-      }
-      
-      LiquidityModule.updateAddButtonState();
-    }, 300);
+    if (lomMaxBtn) {
+      lomMaxBtn.addEventListener("click", () => LiquidityModule.setMaxLom());
+    }
     
-    document.getElementById("addCfx").addEventListener("input", debouncedCfxInput);
-    document.getElementById("addLom").addEventListener("input", debouncedLomInput);
+    const cancelAddBtn = document.getElementById("cancelAddBtn");
+    if (cancelAddBtn) {
+      cancelAddBtn.addEventListener("click", () => {
+        const addModal = document.getElementById("addModal");
+        if (addModal) addModal.style.display = "none";
+      });
+    }
     
-    document.getElementById("cfxMaxBtn").addEventListener("click", () => LiquidityModule.setMaxCfx());
-    document.getElementById("lomMaxBtn").addEventListener("click", () => LiquidityModule.setMaxLom());
+    const confirmAddBtn = document.getElementById("confirmAddBtn");
+    if (confirmAddBtn) {
+      confirmAddBtn.addEventListener("click", async () => {
+        await LiquidityModule.addLiquidity();
+      });
+    }
     
-    document.getElementById("cancelAddBtn").addEventListener("click", () => {
-      document.getElementById("addModal").style.display = "none";
-    });
-    
-    document.getElementById("confirmAddBtn").addEventListener("click", async () => {
-      await LiquidityModule.addLiquidity();
-    });
-    
-    document.getElementById("removeSlider").addEventListener("input", (e) => {
-      LiquidityModule.updateRemoveEstimate(e.target.value);
-    });
+    const removeSlider = document.getElementById("removeSlider");
+    if (removeSlider) {
+      removeSlider.addEventListener("input", (e) => {
+        LiquidityModule.updateRemoveEstimate(e.target.value);
+      });
+    }
     
     document.querySelectorAll('.percentage-option').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const percent = e.target.dataset.percent;
         document.querySelectorAll('.percentage-option').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
-        document.getElementById("removeSlider").value = percent;
-        document.getElementById("removePercent").textContent = percent + "%";
+        const removeSlider = document.getElementById("removeSlider");
+        const removePercent = document.getElementById("removePercent");
+        
+        if (removeSlider) removeSlider.value = percent;
+        if (removePercent) removePercent.textContent = percent + "%";
         LiquidityModule.updateRemoveEstimate(percent);
       });
     });
     
-    document.getElementById("cancelRemoveBtn").addEventListener("click", () => {
-      document.getElementById("removeModal").style.display = "none";
-    });
+    const cancelRemoveBtn = document.getElementById("cancelRemoveBtn");
+    if (cancelRemoveBtn) {
+      cancelRemoveBtn.addEventListener("click", () => {
+        const removeModal = document.getElementById("removeModal");
+        if (removeModal) removeModal.style.display = "none";
+      });
+    }
     
-    document.getElementById("confirmRemoveBtn").addEventListener("click", async () => {
-      await LiquidityModule.removeLiquidity();
-    });
+    const confirmRemoveBtn = document.getElementById("confirmRemoveBtn");
+    if (confirmRemoveBtn) {
+      confirmRemoveBtn.addEventListener("click", async () => {
+        await LiquidityModule.removeLiquidity();
+      });
+    }
   },
 
   setupModalEvents() {
@@ -5389,9 +5503,12 @@ const EventHandlers = {
       }
     });
     
-    document.getElementById('txStatusDoneBtn').addEventListener('click', () => {
-      Utils.hideNotification();
-    });
+    const txStatusDoneBtn = document.getElementById('txStatusDoneBtn');
+    if (txStatusDoneBtn) {
+      txStatusDoneBtn.addEventListener('click', () => {
+        Utils.hideNotification();
+      });
+    }
   },
 
   setupTabEvents() {
@@ -5406,12 +5523,13 @@ const EventHandlers = {
         tabContents.forEach(c => c.classList.remove('active'));
         
         btn.classList.add('active');
-        document.getElementById(tabId + 'Tab').classList.add('active');
+        const tabContent = document.getElementById(tabId + 'Tab');
+        if (tabContent) tabContent.classList.add('active');
         
         if (account) {
           DataManager.refreshAll();
           if (tabId === 'lpReward') {
-            LPRewardManager.refreshAll();
+            LPRewardManager.refreshAll(true); // 切换到LP奖励页面时强制刷新
           }
         }
       });
@@ -5419,85 +5537,116 @@ const EventHandlers = {
   },
 
   setupLanguageToggle() {
-    document.getElementById("langBtn").addEventListener("click", () => {
-      isChinese = !isChinese;
-      document.getElementById("langBtn").innerText = isChinese ? "EN" : "ZH";
-      this.updateAllTexts();
-    });
+    const langBtn = document.getElementById("langBtn");
+    if (langBtn) {
+      langBtn.addEventListener("click", () => {
+        isChinese = !isChinese;
+        langBtn.innerText = isChinese ? "EN" : "ZH";
+        this.updateAllTexts();
+      });
+    }
   },
 
   setupProjectIntro() {
     const logoContainer = document.getElementById("logoContainer");
     if (logoContainer) {
       logoContainer.addEventListener("click", () => {
-        document.getElementById("projectIntroOverlay").style.display = "flex";
+        const projectIntroOverlay = document.getElementById("projectIntroOverlay");
+        if (projectIntroOverlay) projectIntroOverlay.style.display = "flex";
       });
     }
     
     const closeBtn = document.getElementById("projectIntroCloseBtn");
     if (closeBtn) {
       closeBtn.addEventListener("click", () => {
-        document.getElementById("projectIntroOverlay").style.display = "none";
+        const projectIntroOverlay = document.getElementById("projectIntroOverlay");
+        if (projectIntroOverlay) projectIntroOverlay.style.display = "none";
       });
     }
   },
 
   updateAllTexts() {
     const walletBtn = document.getElementById("walletBtn");
-    if (account) {
+    if (account && walletBtn) {
       const displayAddress = Utils.formatAddress(account);
       walletBtn.textContent = displayAddress;
       walletBtn.classList.add('connected');
-    } else {
+    } else if (walletBtn) {
       walletBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
       walletBtn.classList.remove('connected');
     }
     
-    document.querySelector('[data-tab="swap"]').textContent = isChinese ? "兑换" : "Swap";
-    document.querySelector('[data-tab="liquidity"]').textContent = isChinese ? "流动性" : "Liquidity";
-    document.querySelector('[data-tab="lpReward"]').textContent = isChinese ? "LP奖励" : "LP Reward";
+    const swapTabBtn = document.querySelector('[data-tab="swap"]');
+    const liquidityTabBtn = document.querySelector('[data-tab="liquidity"]');
+    const lpRewardTabBtn = document.querySelector('[data-tab="lpReward"]');
+    
+    if (swapTabBtn) swapTabBtn.textContent = isChinese ? "兑换" : "Swap";
+    if (liquidityTabBtn) liquidityTabBtn.textContent = isChinese ? "流动性" : "Liquidity";
+    if (lpRewardTabBtn) lpRewardTabBtn.textContent = isChinese ? "LP奖励" : "LP Reward";
     
     const swapBtn = document.getElementById("swapBtn");
-    if (!account) {
-      swapBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
-      swapBtn.disabled = false;
-    } else if (document.getElementById("fromAmount").value && document.getElementById("fromAmount").value !== "0") {
-      swapBtn.textContent = isChinese ? "立即兑换" : "Swap Now";
-      swapBtn.disabled = false;
-    } else {
-      swapBtn.textContent = isChinese ? "请输入数量" : "Enter Amount";
-      swapBtn.disabled = true;
+    if (swapBtn) {
+      if (!account) {
+        swapBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
+        swapBtn.disabled = false;
+      } else if (document.getElementById("fromAmount")?.value && document.getElementById("fromAmount").value !== "0") {
+        swapBtn.textContent = isChinese ? "立即兑换" : "Swap Now";
+        swapBtn.disabled = false;
+      } else {
+        swapBtn.textContent = isChinese ? "请输入数量" : "Enter Amount";
+        swapBtn.disabled = true;
+      }
     }
     
-    document.getElementById("addBtn").textContent = isChinese ? "添加流动性" : "Add Liquidity";
-    document.getElementById("removeBtn").textContent = isChinese ? "移除流动性" : "Remove Liquidity";
+    const addBtn = document.getElementById("addBtn");
+    const removeBtn = document.getElementById("removeBtn");
     
-    document.getElementById("tokenSelectorTitle").textContent = isChinese ? "选择代币" : "Select Token";
-    document.getElementById("addTitle").textContent = isChinese ? "添加流动性" : "Add Liquidity";
-    document.getElementById("removeTitle").textContent = isChinese ? "移除流动性" : "Remove Liquidity";
-    document.getElementById("confirmAddBtn").textContent = isChinese ? "确认添加" : "Confirm Add";
-    document.getElementById("confirmRemoveBtn").textContent = isChinese ? "确认移除" : "Confirm Remove";
-    document.getElementById("cancelAddBtn").textContent = isChinese ? "取消" : "Cancel";
-    document.getElementById("cancelRemoveBtn").textContent = isChinese ? "取消" : "Cancel";
+    if (addBtn) addBtn.textContent = isChinese ? "添加流动性" : "Add Liquidity";
+    if (removeBtn) removeBtn.textContent = isChinese ? "移除流动性" : "Remove Liquidity";
     
-    document.getElementById("riskTitle").textContent = isChinese ? "风险提示" : "Risk Warning";
-    document.getElementById("riskText").textContent = isChinese ? 
+    const tokenSelectorTitle = document.getElementById("tokenSelectorTitle");
+    const addTitle = document.getElementById("addTitle");
+    const removeTitle = document.getElementById("removeTitle");
+    const confirmAddBtn = document.getElementById("confirmAddBtn");
+    const confirmRemoveBtn = document.getElementById("confirmRemoveBtn");
+    const cancelAddBtn = document.getElementById("cancelAddBtn");
+    const cancelRemoveBtn = document.getElementById("cancelRemoveBtn");
+    
+    if (tokenSelectorTitle) tokenSelectorTitle.textContent = isChinese ? "选择代币" : "Select Token";
+    if (addTitle) addTitle.textContent = isChinese ? "添加流动性" : "Add Liquidity";
+    if (removeTitle) removeTitle.textContent = isChinese ? "移除流动性" : "Remove Liquidity";
+    if (confirmAddBtn) confirmAddBtn.textContent = isChinese ? "确认添加" : "Confirm Add";
+    if (confirmRemoveBtn) confirmRemoveBtn.textContent = isChinese ? "确认移除" : "Confirm Remove";
+    if (cancelAddBtn) cancelAddBtn.textContent = isChinese ? "取消" : "Cancel";
+    if (cancelRemoveBtn) cancelRemoveBtn.textContent = isChinese ? "取消" : "Cancel";
+    
+    const riskTitle = document.getElementById("riskTitle");
+    const riskText = document.getElementById("riskText");
+    const footerText = document.getElementById("footerText");
+    
+    if (riskTitle) riskTitle.textContent = isChinese ? "风险提示" : "Risk Warning";
+    if (riskText) riskText.textContent = isChinese ? 
       "本应用仅作为技术演示，不构成任何投资建议。加密货币市场波动巨大，投资需谨慎，请理性对待数字资产交易。" :
       "This application is for technical demonstration only and does not constitute investment advice. The cryptocurrency market is highly volatile. Please invest cautiously and treat digital asset trading rationally.";
     
-    document.getElementById("footerText").textContent = isChinese ? "LOMswap · Conflux eSpace" : "LOMswap · Conflux eSpace";
+    if (footerText) footerText.textContent = isChinese ? "LOMswap · Conflux eSpace" : "LOMswap · Conflux eSpace";
   },
 
   openTokenSelector(type) {
     currentTokenSelector = type;
     const modal = document.getElementById("tokenSelectorModal");
-    modal.style.display = "flex";
-    document.getElementById("tokenSearch").value = "";
-    this.populateTokenList();
+    if (modal) {
+      modal.style.display = "flex";
+      const tokenSearch = document.getElementById("tokenSearch");
+      if (tokenSearch) tokenSearch.value = "";
+      this.populateTokenList();
+    }
   },
 
   async populateTokenList(searchTerm = "") {
     const tokenList = document.getElementById("tokenList");
+    if (!tokenList) return;
+    
     tokenList.innerHTML = "";
     
     const filteredTokens = TOKEN_LIST.filter(token => {
@@ -5546,19 +5695,20 @@ const EventHandlers = {
     }, 50);
     
     const searchInput = document.getElementById("tokenSearch");
-    const debouncedSearch = Utils.debounce((e) => {
-      this.populateTokenList(e.target.value);
-    }, 300);
-    
-    searchInput.removeEventListener('input', searchInput._debouncedHandler);
-  // 保存引用以便后续移除
-  searchInput._debouncedHandler = debouncedSearch;
-  searchInput.addEventListener('input', searchInput._debouncedHandler);
-    
-    setTimeout(() => searchInput.focus(), 100);
+    if (searchInput) {
+      const debouncedSearch = Utils.debounce((e) => {
+        this.populateTokenList(e.target.value);
+      }, 300);
+      
+      // 移除旧的事件监听器
+      searchInput.removeEventListener('input', searchInput._debouncedHandler);
+      // 保存引用以便后续移除
+      searchInput._debouncedHandler = debouncedSearch;
+      searchInput.addEventListener('input', searchInput._debouncedHandler);
+      
+      setTimeout(() => searchInput.focus(), 100);
+    }
   },
-
-  handleSearchInput: null,
 
   async updateTokenBalanceInSelector(symbol) {
     try {
@@ -5591,23 +5741,37 @@ const EventHandlers = {
   selectToken(token) {
     if (currentTokenSelector === 'from') {
       fromToken = token.symbol;
-      document.getElementById("fromTokenSymbol").textContent = token.symbol;
-      document.getElementById("fromTokenLogo").style.backgroundImage = `url('${token.logo}')`;
+      const fromTokenSymbol = document.getElementById("fromTokenSymbol");
+      const fromTokenLogo = document.getElementById("fromTokenLogo");
+      
+      if (fromTokenSymbol) fromTokenSymbol.textContent = token.symbol;
+      if (fromTokenLogo) fromTokenLogo.style.backgroundImage = `url('${token.logo}')`;
     } else if (currentTokenSelector === 'to') {
       toToken = token.symbol;
-      document.getElementById("toTokenSymbol").textContent = token.symbol;
-      document.getElementById("toTokenLogo").style.backgroundImage = `url('${token.logo}')`;
+      const toTokenSymbol = document.getElementById("toTokenSymbol");
+      const toTokenLogo = document.getElementById("toTokenLogo");
+      
+      if (toTokenSymbol) toTokenSymbol.textContent = token.symbol;
+      if (toTokenLogo) toTokenLogo.style.backgroundImage = `url('${token.logo}')`;
     }
     
-    document.getElementById("tokenSelectorModal").style.display = "none";
+    const tokenSelectorModal = document.getElementById("tokenSelectorModal");
+    if (tokenSelectorModal) tokenSelectorModal.style.display = "none";
+    
     DataManager.updateAllBalances();
     
-    document.getElementById("fromAmount").value = "";
-    document.getElementById("toAmount").value = "";
+    const fromAmount = document.getElementById("fromAmount");
+    const toAmount = document.getElementById("toAmount");
+    
+    if (fromAmount) fromAmount.value = "";
+    if (toAmount) toAmount.value = "";
     
     DataManager.updateSwapButtonState();
-    document.getElementById("price").textContent = `1 ${fromToken} = 0.000000 ${toToken}`;
-    document.getElementById("minReceived").textContent = `0.000000 ${toToken}`;
+    const priceEl = document.getElementById("price");
+    if (priceEl) priceEl.textContent = `1 ${fromToken} = 0.000000 ${toToken}`;
+    
+    const minReceivedEl = document.getElementById("minReceived");
+    if (minReceivedEl) minReceivedEl.textContent = `0.000000 ${toToken}`;
   }
 };
 
@@ -5630,12 +5794,14 @@ document.addEventListener('DOMContentLoaded', function() {
         AppCore.restoreInviteAddress();
         AppCore.updateUI();
         DataManager.refreshAll();
-        LPRewardManager.refreshAll();
+        LPRewardManager.refreshAll(true); // 强制刷新
         LPRewardManager.startAutoRefresh();
+        
         if (!refreshInterval) {
           refreshInterval = setInterval(() => {
             DataManager.refreshAll();
-            if (document.getElementById('lpRewardTab').classList.contains('active')) {
+            const lpRewardTab = document.getElementById('lpRewardTab');
+            if (lpRewardTab && lpRewardTab.classList.contains('active')) {
               LPRewardManager.refreshAll();
             }
           }, 10000);
@@ -5661,13 +5827,14 @@ document.addEventListener('DOMContentLoaded', function() {
         AppCore.restoreInviteAddress();
         AppCore.updateUI();
         DataManager.refreshAll();
-        LPRewardManager.refreshAll();
+        LPRewardManager.refreshAll(true); // 强制刷新
         LPRewardManager.startAutoRefresh();
         
         if (!refreshInterval) {
           refreshInterval = setInterval(() => {
             DataManager.refreshAll();
-            if (document.getElementById('lpRewardTab').classList.contains('active')) {
+            const lpRewardTab = document.getElementById('lpRewardTab');
+            if (lpRewardTab && lpRewardTab.classList.contains('active')) {
               LPRewardManager.refreshAll();
             }
           }, 10000);
@@ -5676,6 +5843,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }).catch(console.error);
   }
 });
+
+
 </script>
 </body>
 </html>
