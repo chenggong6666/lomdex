@@ -29,7 +29,8 @@
                  object-src 'none';">
   
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <style>
+ }
+}); <style>
     /* ========== 基础样式 ========== */
     :root {
       --primary-dark: #0d1117;
@@ -3288,7 +3289,10 @@ const LP_REWARD_ABI = [
   "function setRewardPerSecond(uint256 rps)",
   "function accRewardPerShare() view returns (uint256)",
   "function lastRewardTime() view returns (uint256)",
-  "function emergencyWithdraw(address token, uint256 amount)"
+  "function emergencyWithdraw(address token, uint256 amount)",
+  // 新增函数
+  "function getUserShares(address user) view returns (uint256)",
+  "function getRewardDebt(address user) view returns (uint256)"
 ];
 
 // ==================== 工具模块 ====================
@@ -3503,7 +3507,8 @@ const LPRewardManager = {
     NOT_ACTIVATED: 'not_activated',
     ACTIVATED: 'activated',
     NO_LP: 'no_lp',
-    PAUSED: 'paused'
+    PAUSED: 'paused',
+    INACTIVE: 'inactive'
   },
 
   currentState: null,
@@ -3518,6 +3523,7 @@ const LPRewardManager = {
 
   refreshTimer: null,
   lastUpdateTime: 0,
+  lastLPBalance: 0,
 
   // 刷新所有LP奖励信息
   async refreshAll(force = false) {
@@ -3535,28 +3541,84 @@ const LPRewardManager = {
       
       this.lastUpdateTime = now;
       
+      console.log('🔄 开始刷新LP奖励数据...');
+      
+      // 1. 先更新用户LP余额
+      await this.fetchLPBalance();
+      
+      // 2. 检查LP余额是否有变化，如果有变化需要更新合约份额
+      if (this.hasLPBalanceChanged()) {
+        console.log('📈 LP余额发生变化，需要更新合约份额');
+        await this.updateContractShares();
+      }
+      
+      // 3. 并行获取其他数据
       await Promise.all([
         this.fetchContractInfo(),
         this.fetchUserInfo(),
-        this.fetchLPBalance(),
         this.fetchPendingRewards()
       ]);
       
+      // 4. 确定当前状态
       this.determineCurrentState();
+      
+      // 5. 更新UI
       this.updateUI();
       
       console.log('✅ LP奖励数据刷新完成:', {
         state: this.currentState,
         lpBalance: this.currentLPBalance,
-        shares: this.userInfo?.shares || 0,
+        userShares: this.userInfo?.shares || 0,
         totalShares: this.contractInfo?.totalShares || 0,
         pendingReward: this.currentRewards.pendingReward
       });
       
     } catch (error) {
       console.error('刷新LP奖励信息失败:', error);
-      // 出错时重置时间，允许重试
       this.lastUpdateTime = 0;
+    }
+  },
+
+  // 检查LP余额是否有变化
+  hasLPBalanceChanged() {
+    return Math.abs(this.currentLPBalance - this.lastLPBalance) > 0.000001;
+  },
+
+  // 更新合约份额（关键！）
+  async updateContractShares() {
+    try {
+      console.log('🔄 正在更新合约份额...');
+      
+      // 1. 先更新总份额
+      try {
+        const updateSharesTx = await lpRewardContract.updateShares();
+        await updateSharesTx.wait();
+        console.log('✅ 总份额更新完成');
+      } catch (error) {
+        console.warn('更新总份额失败，可能是只读调用:', error);
+        // 如果失败，尝试直接调用（可能是只读的）
+        await lpRewardContract.updateShares();
+      }
+      
+      // 2. 更新用户份额
+      try {
+        const updateUserTx = await lpRewardContract.updateSharesForUser(account);
+        await updateUserTx.wait();
+        console.log('✅ 用户份额更新完成');
+      } catch (error) {
+        console.warn('更新用户份额失败，可能是只读调用:', error);
+        // 如果失败，尝试直接调用（可能是只读的）
+        await lpRewardContract.updateSharesForUser(account);
+      }
+      
+      // 3. 保存当前LP余额
+      this.lastLPBalance = this.currentLPBalance;
+      
+      console.log('🎯 合约份额更新成功');
+      
+    } catch (error) {
+      console.error('更新合约份额失败:', error);
+      // 即使失败也继续，因为可能是只读调用
     }
   },
 
@@ -3595,6 +3657,12 @@ const LPRewardManager = {
         lastRewardTime: lastRewardTime.toNumber()
       };
       
+      console.log('📊 合约信息:', {
+        totalShares: this.contractInfo.totalShares,
+        minActivation: this.contractInfo.minActivation,
+        paused: this.contractInfo.paused
+      });
+      
     } catch (error) {
       console.error('获取合约信息失败:', error);
       throw error;
@@ -3604,6 +3672,7 @@ const LPRewardManager = {
   // 获取用户信息
   async fetchUserInfo() {
     try {
+      // 直接获取用户信息，不调用updateSharesForUser（已在updateContractShares中调用）
       const userData = await lpRewardContract.users(account);
 
       this.userInfo = {
@@ -3617,6 +3686,12 @@ const LPRewardManager = {
         referrer: userData.referrer,
         cleanInFirst30Days: userData.cleanInFirst30Days
       };
+      
+      console.log('👤 用户信息:', {
+        shares: this.userInfo.shares,
+        activeTime: this.userInfo.activeTime,
+        lastClaimTime: this.userInfo.lastClaimTime
+      });
       
     } catch (error) {
       console.error('获取用户信息失败:', error);
@@ -3644,6 +3719,7 @@ const LPRewardManager = {
       } else {
         this.currentLPBalance = 0;
       }
+      console.log('💰 LP余额:', this.currentLPBalance);
     } catch (error) {
       console.error('获取LP余额失败:', error);
       this.currentLPBalance = 0;
@@ -3663,6 +3739,12 @@ const LPRewardManager = {
       
       // 计算倍率
       this.currentRewards.multiplier = this.calculateMultiplier();
+      
+      console.log('🎁 奖励信息:', {
+        pendingReward: this.currentRewards.pendingReward,
+        pendingReferral: this.currentRewards.pendingReferral,
+        multiplier: this.currentRewards.multiplier
+      });
       
     } catch (error) {
       console.error('获取奖励数据失败:', error);
@@ -3691,23 +3773,38 @@ const LPRewardManager = {
     return 0.8;
   },
 
-  // 确定当前状态
+  // 确定当前状态（关键逻辑修复）
   determineCurrentState() {
     if (this.contractInfo?.paused) {
       this.currentState = this.REWARD_STATES.PAUSED;
       return;
     }
 
-    if (!this.userInfo || this.userInfo.shares <= 0) {
+    // 检查用户是否有激活记录
+    if (!this.userInfo || this.userInfo.activeTime === 0) {
       this.currentState = this.REWARD_STATES.NOT_ACTIVATED;
       return;
     }
 
+    // 检查用户当前LP余额是否足够
     if (this.currentLPBalance >= this.contractInfo.minActivation) {
-      this.currentState = this.REWARD_STATES.ACTIVATED;
+      // 还需要检查合约中的用户份额是否大于0
+      if (this.userInfo.shares > 0) {
+        this.currentState = this.REWARD_STATES.ACTIVATED;
+      } else {
+        // 用户已激活但合约份额为0（可能因为LP余额变化未同步）
+        this.currentState = this.REWARD_STATES.NO_LP;
+      }
     } else {
-      this.currentState = this.REWARD_STATES.NO_LP;
+      // LP余额不足，但可能还有未领取的奖励
+      if (this.userInfo.shares > 0 || this.currentRewards.pendingReward > 0) {
+        this.currentState = this.REWARD_STATES.NO_LP;
+      } else {
+        this.currentState = this.REWARD_STATES.INACTIVE;
+      }
     }
+    
+    console.log('🎯 当前状态:', this.currentState);
   },
 
   // 更新UI
@@ -3743,11 +3840,21 @@ const LPRewardManager = {
         activationStatus.textContent = '已暂停';
         activationStatus.className = 'lp-reward-card-value warning';
         break;
+      case this.REWARD_STATES.INACTIVE:
+        activationStatus.textContent = '已失效';
+        activationStatus.className = 'lp-reward-card-value warning';
+        break;
     }
 
     const lpBalanceEl = document.getElementById('lpBalance');
     if (lpBalanceEl) {
       lpBalanceEl.textContent = `${Utils.formatDisplay(this.currentLPBalance)} LPT`;
+      // 如果LP余额不足，显示红色警告
+      if (this.currentState === this.REWARD_STATES.NO_LP) {
+        lpBalanceEl.className = 'lp-reward-card-value warning';
+      } else {
+        lpBalanceEl.className = 'lp-reward-card-value';
+      }
     }
 
     const daysHeldEl = document.getElementById('daysHeld');
@@ -3766,11 +3873,17 @@ const LPRewardManager = {
     const pendingRewardEl = document.getElementById('pendingReward');
     if (pendingRewardEl) {
       pendingRewardEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`;
+      // 如果奖励为0，显示普通颜色
+      if (this.currentRewards.pendingReward <= 0) {
+        pendingRewardEl.className = 'lp-reward-stat-value';
+      } else {
+        pendingRewardEl.className = 'lp-reward-stat-value success';
+      }
     }
 
     const dailyRewardEl = document.getElementById('dailyReward');
     if (dailyRewardEl) {
-      // 使用实时数据计算每日收益
+      // 只有在激活状态下才计算每日收益
       if (this.currentState === this.REWARD_STATES.ACTIVATED && 
           this.userInfo && this.userInfo.shares > 0 && 
           this.contractInfo && this.contractInfo.totalShares > 0) {
@@ -3780,8 +3893,10 @@ const LPRewardManager = {
                           this.userInfo.shares / this.contractInfo.totalShares * 
                           86400 * this.currentRewards.multiplier;
         dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
+        dailyRewardEl.className = 'lp-reward-stat-value success';
       } else {
         dailyRewardEl.textContent = '0 LOM';
+        dailyRewardEl.className = 'lp-reward-stat-value';
       }
     }
 
@@ -3793,20 +3908,28 @@ const LPRewardManager = {
 
         if (now >= nextClaimTime) {
           nextClaimTimeEl.textContent = '现在可以领取';
+          nextClaimTimeEl.className = 'lp-reward-stat-value success';
         } else {
           const timeLeft = nextClaimTime - now;
           const daysLeft = Math.floor(timeLeft / 86400);
           const hoursLeft = Math.floor((timeLeft % 86400) / 3600);
           nextClaimTimeEl.textContent = `${daysLeft}天${hoursLeft}小时后`;
+          nextClaimTimeEl.className = 'lp-reward-stat-value warning';
         }
       } else {
         nextClaimTimeEl.textContent = '--';
+        nextClaimTimeEl.className = 'lp-reward-stat-value';
       }
     }
 
     const pendingReferralEl = document.getElementById('pendingReferral');
     if (pendingReferralEl) {
       pendingReferralEl.textContent = `${Utils.formatDisplay(this.currentRewards.pendingReferral)} LOM`;
+      if (this.currentRewards.pendingReferral <= 0) {
+        pendingReferralEl.className = 'lp-reward-stat-value';
+      } else {
+        pendingReferralEl.className = 'lp-reward-stat-value success';
+      }
     }
   },
 
@@ -3815,7 +3938,11 @@ const LPRewardManager = {
     const multiplierEl = document.getElementById('rewardMultiplier');
     if (multiplierEl) {
       multiplierEl.textContent = `${this.currentRewards.multiplier.toFixed(1)}x`;
-      multiplierEl.className = 'lp-reward-card-value success';
+      if (this.currentRewards.multiplier >= 1.0) {
+        multiplierEl.className = 'lp-reward-card-value success';
+      } else {
+        multiplierEl.className = 'lp-reward-card-value warning';
+      }
     }
 
     this.updateMultiplierHighlight();
@@ -3958,6 +4085,17 @@ const LPRewardManager = {
         claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
         break;
 
+      case this.REWARD_STATES.INACTIVE:
+        activateBtn.disabled = true;
+        activateBtn.innerHTML = '<span>⏸️</span><span>已失效</span>';
+
+        claimBtn.disabled = this.currentRewards.pendingReward <= 0 || this.contractInfo?.paused;
+        claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
+
+        claimReferralBtn.disabled = this.currentRewards.pendingReferral <= 0 || this.contractInfo?.paused;
+        claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
+        break;
+
       case this.REWARD_STATES.PAUSED:
         activateBtn.disabled = true;
         activateBtn.innerHTML = '<span>⏸️</span><span>合约暂停</span>';
@@ -3994,6 +4132,17 @@ const LPRewardManager = {
           <div class="lp-reward-warning-text">
             LP代币余额不足，奖励已停止累积。
             <br><small>请添加流动性以继续获取奖励。您的激活状态仍然有效。</small>
+          </div>
+        `;
+        break;
+
+      case this.REWARD_STATES.INACTIVE:
+        warningElement.style.display = 'block';
+        warningElement.innerHTML = `
+          <div class="lp-reward-warning-icon">⏸️</div>
+          <div class="lp-reward-warning-text">
+            奖励系统已失效，所有奖励已停止累积。
+            <br><small>您仍有未领取的奖励，但不再产生新奖励。</small>
           </div>
         `;
         break;
@@ -4039,6 +4188,11 @@ const LPRewardManager = {
       remainingReward = Math.max(0, APP_CONFIG.TOTAL_REWARD_POOL - estimatedDistributed);
     }
 
+    // 计算合约中的真实用户质押比例
+    const userSharePercentage = this.contractInfo?.totalShares > 0 && this.userInfo?.shares > 0 
+      ? (this.userInfo.shares / this.contractInfo.totalShares * 100).toFixed(4)
+      : '0.0000';
+
     const statsHTML = `
       <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.05)); border-radius: 12px; padding: 16px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 20px;">
         <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">
@@ -4060,6 +4214,21 @@ const LPRewardManager = {
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">最小激活</div>
             <div style="color: var(--text-primary); font-weight: 600;">${Utils.formatNumber(this.contractInfo?.minActivation || 0)} LPT</div>
+          </div>
+        </div>
+        
+        <!-- 用户质押占比 -->
+        <div style="margin-top: 12px; padding: 8px; background: rgba(26, 115, 232, 0.1); border-radius: 8px; text-align: center;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">您的质押</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">占比: ${userSharePercentage}%</span>
+          </div>
+          <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+            <div style="height: 100%; width: ${Math.min(parseFloat(userSharePercentage), 100)}%; background: linear-gradient(90deg, var(--primary-blue), var(--accent-yellow)); border-radius: 3px;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">您的份额: ${Utils.formatDisplay(this.userInfo?.shares || 0)} LPT</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">总份额: ${Utils.formatNumber(this.contractInfo?.totalShares || 0)} LPT</span>
           </div>
         </div>
         
@@ -4136,7 +4305,7 @@ const LPRewardManager = {
         localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
       }
 
-      // 强制刷新所有数据
+      // 激活后立即同步数据
       await this.refreshAll(true);
 
     } catch (error) {
@@ -4177,7 +4346,7 @@ const LPRewardManager = {
 
       Utils.showNotification(`奖励领取成功！获得 ${Utils.formatDisplay(this.currentRewards.pendingReward)} LOM`, 'success');
 
-      // 强制刷新数据
+      // 领取后立即同步数据
       await this.refreshAll(true);
 
     } catch (error) {
@@ -4217,7 +4386,7 @@ const LPRewardManager = {
 
       Utils.showNotification(`推荐奖励领取成功！获得 ${Utils.formatDisplay(this.currentRewards.pendingReferral)} LOM`, 'success');
 
-      // 强制刷新数据
+      // 领取后立即同步数据
       await this.refreshAll(true);
 
     } catch (error) {
@@ -4226,17 +4395,30 @@ const LPRewardManager = {
     }
   },
 
-  // 手动同步数据（在流动性变化后调用）
+  // 手动同步数据（在流动性变化后调用）- 关键修复
   async syncAfterLiquidityChange() {
     console.log('🔄 流动性变化后同步数据...');
     
-    // 等待2秒确保区块确认
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // 强制刷新所有数据
-    await this.refreshAll(true);
-    
-    console.log('✅ 数据同步完成');
+    try {
+      // 1. 等待区块确认
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // 2. 获取最新的LP余额
+      await this.fetchLPBalance();
+      
+      // 3. 更新合约份额（关键！）
+      await this.updateContractShares();
+      
+      // 4. 强制刷新所有数据
+      await this.refreshAll(true);
+      
+      console.log('✅ 流动性变化同步完成');
+      
+    } catch (error) {
+      console.error('同步数据失败:', error);
+      // 即使失败也尝试刷新数据
+      await this.refreshAll(true);
+    }
   },
 
   // 重置UI
@@ -4245,6 +4427,7 @@ const LPRewardManager = {
     this.userInfo = null;
     this.contractInfo = null;
     this.currentLPBalance = 0;
+    this.lastLPBalance = 0;
     this.currentRewards = {
       pendingReward: 0,
       pendingReferral: 0,
@@ -4327,7 +4510,7 @@ const LPRewardManager = {
     if (this.refreshTimer) clearInterval(this.refreshTimer);
 
     this.refreshTimer = setInterval(() => {
-      if (account && document.getElementById('lpRewardTab').classList.contains('active')) {
+      if (account && document.getElementById('lpRewardTab')?.classList.contains('active')) {
         this.refreshAll();
       }
     }, 15000);
@@ -4376,7 +4559,8 @@ class AppCore {
       if (refreshInterval) clearInterval(refreshInterval);
       refreshInterval = setInterval(() => {
         DataManager.refreshAll();
-        if (document.getElementById('lpRewardTab').classList.contains('active')) {
+        const lpRewardTab = document.getElementById('lpRewardTab');
+        if (lpRewardTab && lpRewardTab.classList.contains('active')) {
           LPRewardManager.refreshAll();
         }
       }, 10000);
@@ -4558,8 +4742,10 @@ const DataManager = {
       const cfxBal = balances.find(b => b.symbol === 'CFX')?.balance || 0;
       const lomBal = balances.find(b => b.symbol === 'LOM')?.balance || 0;
       
-      document.getElementById("addCfxBal").textContent = Utils.formatDisplay(cfxBal);
-      document.getElementById("addLomBal").textContent = Utils.formatDisplay(lomBal);
+      const addCfxBal = document.getElementById("addCfxBal");
+      const addLomBal = document.getElementById("addLomBal");
+      if (addCfxBal) addCfxBal.textContent = Utils.formatDisplay(cfxBal);
+      if (addLomBal) addLomBal.textContent = Utils.formatDisplay(lomBal);
       
       if (pair) {
         try {
@@ -4933,7 +5119,7 @@ const LiquidityModule = {
       
       Utils.showNotification(isChinese ? '添加流动性成功！' : 'Liquidity added successfully!', 'success');
       
-      // 流动性变化后同步所有数据
+      // 流动性变化后同步所有数据（关键！）
       await DataManager.refreshAll();
       await LPRewardManager.syncAfterLiquidityChange();
       
@@ -4987,7 +5173,7 @@ const LiquidityModule = {
         'success'
       );
       
-      // 流动性变化后同步所有数据
+      // 流动性变化后同步所有数据（关键！）
       await DataManager.refreshAll();
       await LPRewardManager.syncAfterLiquidityChange();
       
@@ -5843,7 +6029,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }).catch(console.error);
   }
 });
-
 
 </script>
 </body>
