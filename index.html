@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://lom-dex.com">
   <meta name="twitter:card" content="summary_large_image">
   
-  <!-- 安全策略 (优化版本) -->
+  <!-- 安全策略 -->
   <meta http-equiv="Content-Security-Policy" 
         content="default-src 'self' https:;
                  script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval';
@@ -2577,7 +2577,7 @@
       <div class="project-intro-header">
         <div class="project-intro-logo"></div>
         <h1 class="project-intro-title">龙脉 LOM</h1>
-        <div class="project-intro-subtitle">Conflux.生态核心资产</div>
+        <div class="project-intro-subtitle">Conflux生态核心资产</div>
         <div class="project-intro-slogan">共识创造价值</div>
       </div>
       
@@ -2588,9 +2588,7 @@
             <span>关于龙脉LOM</span>
           </div>
           <div class="project-intro-section-content">
-            <p>龙脉LOM灵感源自中国传统文化中的"龙脉"概念，象征着财富、繁荣和能量的流动。是深度赋能中国唯一合规公链——树图（Conflux）的生态核心资产，更是链接公链价值、用户收益与生态繁荣的关键纽带，依托公链优势构建专属价值闭环，为参与者带来确定性回报。</p>
-            <p>作为树图公链的赋能载体，LOM深度绑定公链核心优势：这条由清华团队打造的"conflux数字龙脉"，以合规为根，串联40国节点与"一带一路"跨境场景，更兼容以太坊生态。从RWA资产上链到稳定币结算，它正以自主可控的技术底气，承接全球Web3.0爆发浪潮，让中国公链力量贯通数字未来。15000TPS超高性能、26秒极速确认的技术底座，以及5000+全球节点、2500万用户的成熟生态，让每一份LOM质押都能依托公链合规资质与真实应用场景，实现价值锚定与稳步增长。</p>
-            <p>其核心价值聚焦锁定质押+二代奖励的生态激励机制，精准匹配树图公链发展需求：用户通过锁定LOM参与质押，不仅能深度享受树图公链生态扩张、技术升级带来的长期质押收益，更能依托"赋能公链"的核心定位，通过邀请分享解锁丰厚二代奖励，让收益随生态辐射持续放大。这种模式既为树图公链注入稳定的生态动力，也让用户成为公链发展的直接受益者，实现"质押享红利，分享赚奖励"的双重价值。</p>
+            <p>龙脉LOM是深度赋能中国唯一合规公链——树图（Conflux）的生态核心资产，依托公链优势构建专属价值闭环，为参与者带来确定性回报。</p>
             
             <ul>
               <li><strong>总供应量</strong>：88888888枚（永不增发）</li>
@@ -2660,7 +2658,7 @@
     </div>
   </div>
 
-  <!-- 原有应用界面 -->
+  <!-- 主应用界面 -->
   <div class="app">
     <!-- 头部 -->
     <div class="header">
@@ -2942,11 +2940,9 @@
         </div>
 
         <!-- 全局统计容器 -->
-        <div class="global-stats" id="globalStatsContainer">
-          <!-- 全局统计将动态插入到这里 -->
-        </div>
+        <div class="global-stats" id="globalStatsContainer"></div>
 
-        <!-- 邀请系统 -->
+        <!-- 推荐系统 -->
         <div class="lp-reward-referral" id="referralSection">
           <div class="lp-reward-referral-header">
             <span class="lp-reward-referral-icon">👥</span>
@@ -2962,9 +2958,7 @@
         </div>
 
         <!-- 邀请统计容器 -->
-        <div class="referral-stats-container" id="referralStatsContainer">
-          <!-- 邀请统计将动态插入到这里 -->
-        </div>
+        <div class="referral-stats-container" id="referralStatsContainer"></div>
 
         <!-- 帮助信息 -->
         <div class="lp-reward-help">
@@ -3049,9 +3043,7 @@
     <div class="token-selector-card">
       <h3 class="modal-title" id="tokenSelectorTitle">选择代币</h3>
       <input type="text" class="token-search" id="tokenSearch" placeholder="搜索代币名称或地址">
-      <div class="token-list" id="tokenList">
-        <!-- 代币列表将通过JS动态生成 -->
-      </div>
+      <div class="token-list" id="tokenList"></div>
     </div>
   </div>
 
@@ -3149,13 +3141,14 @@
 
 <script>
 'use strict';
+
 // ==================== 统一配置 ====================
 const APP_CONFIG = {
   CONTRACTS: {
     ROUTER: "0x62b0873055bf896dd869e172119871ac24aea305",
     LOM: "0xb4ca1cb2651a822bf65c614c880a26fd124932a3",
     WCFX: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
-    PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85", // CFX-LOM LP Token
+    PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85",
     USDC: "0x6963efed0ab40f6c3d7bda44a05dcf1437c44372",
     AXCNH: "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E",
     USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
@@ -3172,7 +3165,7 @@ const APP_CONFIG = {
     CNHT0: "https://i.imgur.com/zObg9RY.jpeg"
   },
   CHAIN_ID: 1030,
-  TOTAL_REWARD_POOL: 25555555 // 总奖励池25555555 LOM
+  TOTAL_REWARD_POOL: 25555555
 };
 
 // ==================== 应用状态 ====================
@@ -3188,7 +3181,7 @@ let currentTokenSelector = null;
 let transactionLock = false;
 let currentReserves = { cfx: 0, lom: 0 };
 let lastInputWasFrom = true;
-let inviteAddress = localStorage.getItem('lomswap_invite_address') || '';
+let inviteAddress = '';
 let walletInviteMap = JSON.parse(localStorage.getItem('lomswap_wallet_invite_map') || '{}');
 
 // ==================== 核心代币列表 ====================
@@ -3269,7 +3262,7 @@ const PAIR_ABI = [
   "function allowance(address owner, address spender) view returns (uint256)"
 ];
 
-// LP奖励合约ABI（完整版本）
+// LP奖励合约ABI（V5.3版本）
 const LP_REWARD_ABI = [
   "function activate(address referrer)",
   "function claimAll()",
@@ -3284,7 +3277,6 @@ const LP_REWARD_ABI = [
   "function lpToken() view returns (address)",
   "function rewardToken() view returns (address)",
   "function getReferralUnlockTime(address user) view returns (uint256)",
-  "function emergencyWithdraw(address token, uint256 amount)",
   "function updateShares()",
   "function updateSharesForUser(address userAddr)",
   "function depositReward(uint256 amount)",
@@ -3295,7 +3287,8 @@ const LP_REWARD_ABI = [
   "function transferAdmin(address newAdmin)",
   "function setRewardPerSecond(uint256 rps)",
   "function accRewardPerShare() view returns (uint256)",
-  "function lastRewardTime() view returns (uint256)"
+  "function lastRewardTime() view returns (uint256)",
+  "function emergencyWithdraw(address token, uint256 amount)"
 ];
 
 // ==================== 工具模块 ====================
@@ -3432,7 +3425,11 @@ const Utils = {
       'Not enough liquidity': isChinese ? '流动性不足' : 'Insufficient liquidity',
       'execution reverted': isChinese ? '交易执行失败' : 'Transaction execution failed',
       'reverted': isChinese ? '交易失败' : 'Transaction failed',
-      'Already activated': isChinese ? '已经激活过了' : 'Already activated'
+      'Already activated': isChinese ? '已经激活过了' : 'Already activated',
+      'Below minimum': isChinese ? 'LP余额不足最小激活要求' : 'LP balance below minimum activation',
+      'Too soon': isChinese ? '领取间隔太短，请等待7天' : 'Claim interval too short, wait 7 days',
+      'Cooldown': isChinese ? '减持冷却中，请等待24小时' : 'Reduce cooldown, wait 24 hours',
+      'Blacklisted': isChinese ? '账户已被列入黑名单' : 'Account blacklisted'
     };
     
     for (const [key, value] of Object.entries(errorMap)) {
@@ -3499,7 +3496,7 @@ const TokenUtils = {
   }
 };
 
-// ==================== LP奖励状态管理器 ====================
+// ==================== LP奖励管理器 ====================
 const LPRewardManager = {
   // 状态定义
   REWARD_STATES: {
@@ -3518,6 +3515,8 @@ const LPRewardManager = {
     pendingReferral: 0,
     multiplier: 1.0
   },
+
+  refreshTimer: null,
 
   // 刷新所有LP奖励信息
   async refreshAll() {
@@ -3641,6 +3640,9 @@ const LPRewardManager = {
     const now = Math.floor(Date.now() / 1000);
     const duration = now - this.userInfo.activeTime;
 
+    // 如果合约暂停，使用基础倍率1.0
+    if (this.contractInfo.paused) return 1.0;
+    
     if (duration >= 360 * 24 * 60 * 60) return 3.0;
     if (duration >= 180 * 24 * 60 * 60) return 2.0;
     if (duration >= 90 * 24 * 60 * 60) return 1.5;
@@ -3669,25 +3671,12 @@ const LPRewardManager = {
 
   // 更新UI
   updateUI() {
-    // 更新激活状态
     this.updateActivationStatus();
-
-    // 更新奖励信息
     this.updateRewardInfo();
-
-    // 更新倍率显示
     this.updateMultiplierDisplay();
-
-    // 更新推荐系统
     this.updateReferralSystem();
-
-    // 更新按钮状态
     this.updateButtonStates();
-
-    // 更新警告信息
     this.updateWarnings();
-
-    // 更新全局统计
     this.updateGlobalStats();
   },
 
@@ -3715,13 +3704,11 @@ const LPRewardManager = {
         break;
     }
 
-    // 更新LP余额显示
     const lpBalanceEl = document.getElementById('lpBalance');
     if (lpBalanceEl) {
       lpBalanceEl.textContent = `${Utils.formatDisplay(this.currentLPBalance)} LPT`;
     }
 
-    // 更新持有时长
     const daysHeldEl = document.getElementById('daysHeld');
     if (daysHeldEl) {
       if (this.userInfo && this.userInfo.activeTime > 0) {
@@ -3788,7 +3775,6 @@ const LPRewardManager = {
       multiplierEl.className = 'lp-reward-card-value success';
     }
 
-    // 高亮当前倍率
     this.updateMultiplierHighlight();
   },
 
@@ -3808,7 +3794,6 @@ const LPRewardManager = {
     } else if (multiplier >= 1.0) {
       document.getElementById('multiplier30d')?.classList.add('active');
     } else {
-      // 小于1.0（即0.8）也高亮30天
       document.getElementById('multiplier30d')?.classList.add('active');
     }
   },
@@ -3821,7 +3806,6 @@ const LPRewardManager = {
     if (!referralSection || !referralStatsContainer) return;
 
     if (this.currentState === this.REWARD_STATES.NOT_ACTIVATED) {
-      // 未激活状态：显示输入框
       referralSection.style.display = 'block';
       referralStatsContainer.innerHTML = '';
 
@@ -3829,9 +3813,9 @@ const LPRewardManager = {
       if (referrerInput) {
         referrerInput.disabled = false;
         referrerInput.placeholder = '输入推荐人地址 (可选)';
+        referrerInput.value = walletInviteMap[account.toLowerCase()] || '';
       }
     } else {
-      // 已激活状态：隐藏输入框，显示统计
       referralSection.style.display = 'none';
       this.showReferralStats();
     }
@@ -3858,6 +3842,10 @@ const LPRewardManager = {
           <div class="referral-stat-row">
             <div class="referral-stat-label">推荐奖励解锁时间</div>
             <div class="referral-stat-value">${Utils.formatTimestamp(this.userInfo.referralUnlockTime)}</div>
+          </div>
+          <div class="referral-stat-row">
+            <div class="referral-stat-label">30天持仓状态</div>
+            <div class="referral-stat-value">${this.userInfo.cleanInFirst30Days ? '✅ 保持中' : '❌ 已失效'}</div>
           </div>
         </div>
       `;
@@ -3980,7 +3968,7 @@ const LPRewardManager = {
 
     // 检查冷却时间
     if (this.userInfo && this.userInfo.lastReduceTime > 0) {
-      const cooldownPeriod = 24 * 60 * 60; // 24小时
+      const cooldownPeriod = 24 * 60 * 60;
       const now = Math.floor(Date.now() / 1000);
       const timeLeft = this.userInfo.lastReduceTime + cooldownPeriod - now;
 
@@ -3996,9 +3984,11 @@ const LPRewardManager = {
     const container = document.getElementById('globalStatsContainer');
     if (!container) return;
 
-    const totalRewardDistributed = 0; // 需要从合约获取或计算
-    const rewardPercentage = (totalRewardDistributed / APP_CONFIG.TOTAL_REWARD_POOL * 100).toFixed(2);
-    const remainingReward = APP_CONFIG.TOTAL_REWARD_POOL - totalRewardDistributed;
+    // 估算总奖励发放量
+    const totalSeconds = Date.now() / 1000 - this.contractInfo.lastRewardTime;
+    const estimatedDistributed = this.contractInfo.rewardPerSecond * totalSeconds;
+    const rewardPercentage = (estimatedDistributed / APP_CONFIG.TOTAL_REWARD_POOL * 100).toFixed(2);
+    const remainingReward = Math.max(0, APP_CONFIG.TOTAL_REWARD_POOL - estimatedDistributed);
 
     const statsHTML = `
       <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.05)); border-radius: 12px; padding: 16px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 20px;">
@@ -4034,7 +4024,7 @@ const LPRewardManager = {
             <div style="height: 100%; width: ${Math.min(rewardPercentage, 100)}%; background: linear-gradient(90deg, var(--success), var(--accent-yellow)); border-radius: 3px; transition: width 0.3s ease;"></div>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-            <span style="font-size: 10px; color: var(--text-secondary);">已发: ${Utils.formatNumber(totalRewardDistributed)} LOM</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">已发: ${Utils.formatNumber(estimatedDistributed)} LOM</span>
             <span style="font-size: 10px; color: var(--text-secondary);">总池: ${Utils.formatNumber(APP_CONFIG.TOTAL_REWARD_POOL)} LOM</span>
           </div>
         </div>
@@ -4078,8 +4068,8 @@ const LPRewardManager = {
       return;
     }
 
-    // 如果推荐地址为空，设置为零地址
-    if (!referrerAddress) {
+    // 如果推荐地址为空或无效，设置为零地址
+    if (!referrerAddress || referrerAddress === account) {
       referrerAddress = '0x0000000000000000000000000000000000000000';
     }
 
@@ -4090,6 +4080,12 @@ const LPRewardManager = {
       await tx.wait();
 
       Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
+
+      // 保存推荐地址到本地存储
+      if (referrerAddress !== '0x0000000000000000000000000000000000000000') {
+        walletInviteMap[account.toLowerCase()] = referrerAddress;
+        localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
+      }
 
       // 刷新所有数据
       await this.refreshAll();
@@ -4183,6 +4179,29 @@ const LPRewardManager = {
     }
   },
 
+  // 更新份额
+  async updateShares() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
+
+    try {
+      Utils.showNotification('更新份额中...', 'info');
+
+      const tx = await lpRewardContract.updateShares();
+      await tx.wait();
+
+      Utils.showNotification('份额更新成功！', 'success');
+
+      await this.refreshAll();
+
+    } catch (error) {
+      console.error('更新份额失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+    }
+  },
+
   // 重置UI
   resetUI() {
     this.currentState = null;
@@ -4195,7 +4214,6 @@ const LPRewardManager = {
       multiplier: 1.0
     };
 
-    // 重置UI显示
     const elements = {
       'activationStatus': { text: '未激活', className: 'lp-reward-card-value warning' },
       'lpBalance': { text: '0 LPT', className: '' },
@@ -4215,7 +4233,6 @@ const LPRewardManager = {
       }
     });
 
-    // 重置按钮
     const activateBtn = document.getElementById('activateBtn');
     const claimBtn = document.getElementById('claimBtn');
     const claimReferralBtn = document.getElementById('claimReferralBtn');
@@ -4233,29 +4250,24 @@ const LPRewardManager = {
       claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
     }
 
-    // 显示推荐输入框
     const referralSection = document.getElementById('referralSection');
     if (referralSection) {
       referralSection.style.display = 'block';
     }
 
-    // 清空推荐统计
     const referralStatsContainer = document.getElementById('referralStatsContainer');
     if (referralStatsContainer) {
       referralStatsContainer.innerHTML = '';
     }
 
-    // 清空全局统计
     const globalStatsContainer = document.getElementById('globalStatsContainer');
     if (globalStatsContainer) {
       globalStatsContainer.innerHTML = '';
     }
 
-    // 隐藏警告
     document.getElementById('lpWarning').style.display = 'none';
     document.getElementById('cooldownTimer').style.display = 'none';
 
-    // 重置倍率高亮
     this.resetMultiplierHighlight();
   },
 
@@ -4274,7 +4286,7 @@ const LPRewardManager = {
       if (account && document.getElementById('lpRewardTab').classList.contains('active')) {
         this.refreshAll();
       }
-    }, 15000); // 每15秒刷新一次
+    }, 15000);
   },
 
   // 停止自动刷新
@@ -4286,7 +4298,7 @@ const LPRewardManager = {
   }
 };
 
-// ==================== 核心功能模块 ====================
+// ==================== 核心应用模块 ====================
 class AppCore {
   static async connectWallet() {
     try {
@@ -4499,21 +4511,16 @@ const DataManager = {
         this.updateBalanceUI(symbol, balance);
       });
       
-      // 更新流动性页面的余额显示
       const cfxBal = balances.find(b => b.symbol === 'CFX')?.balance || 0;
       const lomBal = balances.find(b => b.symbol === 'LOM')?.balance || 0;
       
       document.getElementById("addCfxBal").textContent = Utils.formatDisplay(cfxBal);
       document.getElementById("addLomBal").textContent = Utils.formatDisplay(lomBal);
       
-      // 检查LP代币余额
       if (pair) {
         try {
           const lpBal = await pair.balanceOf(account);
-          const lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-          
           document.getElementById("removeBtn").disabled = lpBal.isZero();
-          
         } catch (error) {
           console.error("获取LP余额失败:", error);
         }
@@ -4535,11 +4542,6 @@ const DataManager = {
     if (symbol === toToken) {
       const toBalEl = document.getElementById('toBal');
       if (toBalEl) toBalEl.textContent = formattedBalance;
-    }
-    
-    const selectorBalanceEl = document.getElementById(`selectorBalance-${symbol}`);
-    if (selectorBalanceEl) {
-      selectorBalanceEl.textContent = formattedBalance;
     }
   },
 
@@ -4724,6 +4726,7 @@ const SwapModule = {
       );
       
       await DataManager.refreshAll();
+      await LPRewardManager.refreshAll();
       
     } catch (error) {
       console.error('兑换失败:', error);
@@ -5074,18 +5077,13 @@ const EventHandlers = {
   },
 
   setupLPRewardEvents() {
-    console.log('🔧 设置LP奖励事件');
-    
-    // 激活按钮
     const activateBtn = document.getElementById("activateBtn");
     if (activateBtn) {
       activateBtn.addEventListener("click", async () => {
-        console.log('🎯 激活按钮被点击');
         await LPRewardManager.activate();
       });
     }
     
-    // 领取奖励按钮
     const claimBtn = document.getElementById("claimBtn");
     if (claimBtn) {
       claimBtn.addEventListener("click", () => {
@@ -5093,7 +5091,6 @@ const EventHandlers = {
       });
     }
     
-    // 领取推荐奖励按钮
     const claimReferralBtn = document.getElementById("claimReferralBtn");
     if (claimReferralBtn) {
       claimReferralBtn.addEventListener("click", () => {
@@ -5101,7 +5098,6 @@ const EventHandlers = {
       });
     }
     
-    // 推荐地址输入验证
     const referrerInput = document.getElementById("referrerAddress");
     if (referrerInput) {
       referrerInput.addEventListener("input", Utils.debounce(() => {
@@ -5193,7 +5189,6 @@ const EventHandlers = {
       }
     });
     
-    // 百分比按钮
     document.querySelectorAll('.percent-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const percent = parseFloat(e.target.dataset.percent);
@@ -5223,7 +5218,6 @@ const EventHandlers = {
       });
     });
     
-    // 滑点按钮
     document.querySelectorAll('.slippage-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const newSlippage = parseFloat(e.target.dataset.slip);
@@ -5245,7 +5239,6 @@ const EventHandlers = {
       });
     });
     
-    // 代币选择器
     document.getElementById("fromTokenSelector").addEventListener("click", () => this.openTokenSelector('from'));
     document.getElementById("toTokenSelector").addEventListener("click", () => this.openTokenSelector('to'));
   },
@@ -5278,7 +5271,6 @@ const EventHandlers = {
       LiquidityModule.updateRemoveEstimate(100);
     });
     
-    // 添加流动性输入处理
     const debouncedCfxInput = Utils.debounce(() => {
       const cfxAmount = document.getElementById("addCfx").value;
       if (!cfxAmount || cfxAmount === "" || parseFloat(cfxAmount) <= 0) {
@@ -5327,7 +5319,6 @@ const EventHandlers = {
       await LiquidityModule.addLiquidity();
     });
     
-    // 移除流动性处理
     document.getElementById("removeSlider").addEventListener("input", (e) => {
       LiquidityModule.updateRemoveEstimate(e.target.value);
     });
@@ -5622,7 +5613,7 @@ document.addEventListener('DOMContentLoaded', function() {
       AppCore.disconnect();
     });
     
-    // 检查是否已连接钱包（但不自动连接）
+    // 检查是否已连接钱包
     window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
       if (accounts.length > 0) {
         account = accounts[0];
