@@ -3142,17 +3142,17 @@ const APP_CONFIG = {
     WCFX: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
     PAIR: "0x063128f4e6BDFBC693d03649000B6E4dA00Bec85", // CFX-LOM LP Token
     USDC: "0x6963efed0ab40f6c3d7bda44a05dcf1437c44372",
-    AXCNH: "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E",
+    AxCNH: "0x70BFD7F7eADF9b9827541272589A6B2Bb760aE2E",
     USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
     CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda",
-    AXCNH_USDT0_PAIR: "0x50b095DF7a8f856C6fA07fF89bcBC2dF8491A8df",
+    AxCNH_USDT0_PAIR: "0x50b095DF7a8f856C6fA07fF89bcBC2dF8491A8df",
     LP_REWARD: "0x6Cbb8a3Eb043Bf7A04412F01096997609cc6D5a3" // 新的LP奖励合约地址
   },
   TOKEN_LOGOS: {
     CFX: "https://i.imgur.com/70cXbUI.jpeg",
     LOM: "https://i.imgur.com/HddyTrv.jpeg",
     USDC: "https://i.imgur.com/9UDXcUF.jpeg",
-    AXCNH: "https://i.imgur.com/x8317um.jpeg",
+    AxCNH: "https://i.imgur.com/x8317um.jpeg",
     USDT0: "https://i.imgur.com/KgnTsn1.jpeg",
     CNHT0: "https://i.imgur.com/zObg9RY.jpeg"
   },
@@ -3161,7 +3161,7 @@ const APP_CONFIG = {
 
 // ==================== 应用状态 ====================
 let provider, signer, account;
-let router, pair, lom, usdc, axcnh, usdt0, cnht0, axcnhUsdt0Pair, lpRewardContract;
+let router, pair, lom, usdc, AxCNH, usdt0, cnht0, AxCNHUsdt0Pair, lpRewardContract;
 let slippage = 0.1;
 let isChinese = true;
 let currentRatio = 0;
@@ -3200,10 +3200,10 @@ const TOKEN_LIST = [
     decimals: 18
   },
   {
-    symbol: "AXCNH",
+    symbol: "AxCNH",
     name: "AxCNH",
-    address: APP_CONFIG.CONTRACTS.AXCNH,
-    logo: APP_CONFIG.TOKEN_LOGOS.AXCNH,
+    address: APP_CONFIG.CONTRACTS.AxCNH,
+    logo: APP_CONFIG.TOKEN_LOGOS.AxCNH,
     decimals: 6
   },
   {
@@ -3421,7 +3421,7 @@ const TokenUtils = {
     const tokenContracts = {
       "LOM": lom,
       "USDC": usdc,
-      "AXCNH": axcnh,
+      "AxCNH": AxCNH,
       "USDT0": usdt0,
       "CNHT0": cnht0
     };
@@ -4372,10 +4372,10 @@ class AppCore {
     pair = new ethers.Contract(APP_CONFIG.CONTRACTS.PAIR, PAIR_ABI, signer);
     lom = new ethers.Contract(APP_CONFIG.CONTRACTS.LOM, ERC20_ABI, signer);
     usdc = new ethers.Contract(APP_CONFIG.CONTRACTS.USDC, ERC20_ABI, signer);
-    axcnh = new ethers.Contract(APP_CONFIG.CONTRACTS.AXCNH, ERC20_ABI, signer);
+    AxCNH = new ethers.Contract(APP_CONFIG.CONTRACTS.AxCNH, ERC20_ABI, signer);
     usdt0 = new ethers.Contract(APP_CONFIG.CONTRACTS.USDT0, ERC20_ABI, signer);
     cnht0 = new ethers.Contract(APP_CONFIG.CONTRACTS.CNHT0, ERC20_ABI, signer);
-    axcnhUsdt0Pair = new ethers.Contract(APP_CONFIG.CONTRACTS.AXCNH_USDT0_PAIR, PAIR_ABI, signer);
+    AxCNHUsdt0Pair = new ethers.Contract(APP_CONFIG.CONTRACTS.AxCNH_USDT0_PAIR, PAIR_ABI, signer);
     
     // 初始化LP奖励合约
     if (APP_CONFIG.CONTRACTS.LP_REWARD) {
@@ -4431,10 +4431,10 @@ class AppCore {
     pair = null;
     lom = null;
     usdc = null;
-    axcnh = null;
+    AxCNH = null;
     usdt0 = null;
     cnht0 = null;
-    axcnhUsdt0Pair = null;
+    AxCNHUsdt0Pair = null;
     lpRewardContract = null;
     
     if (refreshInterval) {
@@ -4745,15 +4745,15 @@ const SwapModule = {
   getSwapPath() {
     let path = [];
     
-    if ((fromToken === 'AXCNH' && toToken === 'USDT0') || 
-        (fromToken === 'USDT0' && toToken === 'AXCNH')) {
+    if ((fromToken === 'AxCNH' && toToken === 'USDT0') || 
+        (fromToken === 'USDT0' && toToken === 'AxCNH')) {
       
-      if (fromToken === 'AXCNH') {
-        path.push(APP_CONFIG.CONTRACTS.AXCNH);
+      if (fromToken === 'AxCNH') {
+        path.push(APP_CONFIG.CONTRACTS.AxCNH);
         path.push(APP_CONFIG.CONTRACTS.USDT0);
       } else {
         path.push(APP_CONFIG.CONTRACTS.USDT0);
-        path.push(APP_CONFIG.CONTRACTS.AXCNH);
+        path.push(APP_CONFIG.CONTRACTS.AxCNH);
       }
       return path;
     }
@@ -4762,20 +4762,20 @@ const SwapModule = {
       path.push(APP_CONFIG.CONTRACTS.WCFX);
       if (toToken === 'LOM') path.push(APP_CONFIG.CONTRACTS.LOM);
       else if (toToken === 'USDC') path.push(APP_CONFIG.CONTRACTS.USDC);
-      else if (toToken === 'AXCNH') path.push(APP_CONFIG.CONTRACTS.AXCNH);
+      else if (toToken === 'AxCNH') path.push(APP_CONFIG.CONTRACTS.AxCNH);
       else if (toToken === 'USDT0') path.push(APP_CONFIG.CONTRACTS.USDT0);
       else if (toToken === 'CNHT0') path.push(APP_CONFIG.CONTRACTS.CNHT0);
     } else if (toToken === 'CFX') {
       if (fromToken === 'LOM') path.push(APP_CONFIG.CONTRACTS.LOM);
       else if (fromToken === 'USDC') path.push(APP_CONFIG.CONTRACTS.USDC);
-      else if (fromToken === 'AXCNH') path.push(APP_CONFIG.CONTRACTS.AXCNH);
+      else if (fromToken === 'AxCNH') path.push(APP_CONFIG.CONTRACTS.AxCNH);
       else if (fromToken === 'USDT0') path.push(APP_CONFIG.CONTRACTS.USDT0);
       else if (fromToken === 'CNHT0') path.push(APP_CONFIG.CONTRACTS.CNHT0);
       path.push(APP_CONFIG.CONTRACTS.WCFX);
     } else {
       if (fromToken === 'LOM') path.push(APP_CONFIG.CONTRACTS.LOM);
       else if (fromToken === 'USDC') path.push(APP_CONFIG.CONTRACTS.USDC);
-      else if (fromToken === 'AXCNH') path.push(APP_CONFIG.CONTRACTS.AXCNH);
+      else if (fromToken === 'AxCNH') path.push(APP_CONFIG.CONTRACTS.AxCNH);
       else if (fromToken === 'USDT0') path.push(APP_CONFIG.CONTRACTS.USDT0);
       else if (fromToken === 'CNHT0') path.push(APP_CONFIG.CONTRACTS.CNHT0);
       
@@ -4783,7 +4783,7 @@ const SwapModule = {
       
       if (toToken === 'LOM') path.push(APP_CONFIG.CONTRACTS.LOM);
       else if (toToken === 'USDC') path.push(APP_CONFIG.CONTRACTS.USDC);
-      else if (toToken === 'AXCNH') path.push(APP_CONFIG.CONTRACTS.AXCNH);
+      else if (toToken === 'AxCNH') path.push(APP_CONFIG.CONTRACTS.AxCNH);
       else if (toToken === 'USDT0') path.push(APP_CONFIG.CONTRACTS.USDT0);
       else if (toToken === 'CNHT0') path.push(APP_CONFIG.CONTRACTS.CNHT0);
     }
@@ -5075,19 +5075,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   EventHandlers.init();
   
-  // 简化调试功能
-  const debugInfo = document.createElement('div');
-  debugInfo.style.position = 'fixed';
-  debugInfo.style.bottom = '20px';
-  debugInfo.style.right = '20px';
-  debugInfo.style.zIndex = '9999';
-  debugInfo.style.padding = '8px 12px';
-  debugInfo.style.background = 'rgba(0,0,0,0.7)';
-  debugInfo.style.color = '#fff';
-  debugInfo.style.borderRadius = '8px';
-  debugInfo.style.fontSize = '10px';
-  debugInfo.style.display = 'none';
-  document.body.appendChild(debugInfo);
   
   // 监听钱包事件
   if (window.ethereum) {
@@ -5148,17 +5135,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }).catch(console.error);
   }
   
-  // 开发环境显示调试信息
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    debugInfo.style.display = 'block';
-    setInterval(() => {
-      debugInfo.innerHTML = `
-        <div>账号: ${account ? Utils.formatAddress(account) : '未连接'}</div>
-        <div>LP奖励合约: ${lpRewardContract ? '已连接' : '未连接'}</div>
-        <div>LP余额: ${LPRewardManager.lpBalance}</div>
-      `;
-    }, 5000);
-  }
 });
   </script>
 </body>
