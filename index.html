@@ -5148,6 +5148,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }).catch(console.error);
   }
   
+  // 开发环境显示调试信息
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    debugInfo.style.display = 'block';
+    setInterval(() => {
+      debugInfo.innerHTML = `
+        <div>账号: ${account ? Utils.formatAddress(account) : '未连接'}</div>
+        <div>LP奖励合约: ${lpRewardContract ? '已连接' : '未连接'}</div>
+        <div>LP余额: ${LPRewardManager.lpBalance}</div>
+      `;
+    }, 5000);
+  }
 });
   </script>
 </body>
