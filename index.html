@@ -4031,9 +4031,7 @@ const LPRewardManager = {
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">总质押</div>
-            <div style="color: var(--accent-yellow); font-weight: 600;">// 改成这样（每次都重新读）
-const total = await lpRewardContract.totalShares();
-${Utils.formatNumber(parseFloat(ethers.utils.formatUnits(total, 18)))} LPT</div>
+            <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatNumber(this.contractInfo.totalShares)} LPT</div>
           </div>
           <div style="text-align: center;">
             <div style="color: var(--text-secondary);">每秒奖励</div>
@@ -4581,70 +4579,70 @@ const DataManager = {
   },
 
   async updatePoolInfo() {
-    try {
-      if (!pair || !account) return;
-      
-      const [r0, r1] = await pair.getReserves();
-      const t0 = await pair.token0();
-      const totalSupply = await pair.totalSupply();
-      
-      const reserveCfx = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r0 : r1;
-      const reserveLom = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r1 : r0;
-      
-      const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
-      const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
-      
-      currentReserves.cfx = cfxReserve;
-      currentReserves.lom = lomReserve;
-      
-      const price = lomReserve / cfxReserve;
-      currentRatio = price;
-      
-      const priceFormatted = Utils.formatDisplay(price);
-      document.getElementById("price").textContent = `1 CFX = ${priceFormatted} LOM`;
-      document.getElementById("addRatio").textContent = `1 CFX = ${priceFormatted} LOM`;
+  try {
+    if (!pair || !account) return;
+    
+    const [r0, r1] = await pair.getReserves();
+    const t0 = await pair.token0();
+    const totalSupply = await pair.totalSupply();
+    
+    const reserveCfx = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r0 : r1;
+    const reserveLom = t0.toLowerCase() === APP_CONFIG.CONTRACTS.WCFX.toLowerCase() ? r1 : r0;
+    
+    const cfxReserve = parseFloat(ethers.utils.formatEther(reserveCfx));
+    const lomReserve = parseFloat(ethers.utils.formatUnits(reserveLom, 18));
+    
+    currentReserves.cfx = cfxReserve;
+    currentReserves.lom = lomReserve;
+    
+    const price = lomReserve / cfxReserve;
+    currentRatio = price;
+    
+    const priceFormatted = Utils.formatDisplay(price);
+    document.getElementById("price").textContent = `1 CFX = ${priceFormatted} LOM`;
+    document.getElementById("addRatio").textContent = `1 CFX = ${priceFormatted} LOM`;
 
-      const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
-      
-      let lpAmt = 0;
-      let share = 0;
-      let userCfx = 0;
-      let userLom = 0;
-      
-      const lpBal = await pair.balanceOf(account);
-      lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-      
-      if (totalSupplyNum > 0 && lpAmt > 0) {
-        share = (lpAmt / totalSupplyNum) * 100;
-        userCfx = cfxReserve * (share / 100);
-        userLom = lomReserve * (share / 100);
-      }
-      
-      const cfxReserveEl = document.getElementById("cfxReserve");
-      const lomReserveEl = document.getElementById("lomReserve");
-      
-      if (cfxReserveEl) cfxReserveEl.textContent = cfxReserve.toFixed(2);
-      if (lomReserveEl) lomReserveEl.textContent = lomReserve.toFixed(2);
-      
-      const userCfxEl = document.getElementById("userCfx");
-      const userLomEl = document.getElementById("userLom");
-      const userLpEl = document.getElementById("userLp");
-      const userPoolShareEl = document.getElementById("userPoolShare");
-      
-      if (userCfxEl) userCfxEl.textContent = userCfx.toFixed(2);
-      if (userLomEl) userLomEl.textContent = userLom.toFixed(2);
-      if (userLpEl) userLpEl.textContent = lpAmt.toFixed(2);
-      if (userPoolShareEl) userPoolShareEl.textContent = share.toFixed(4) + "%";
-      
-      const removeBtn = document.getElementById("removeBtn");
-      if (removeBtn) {
-        removeBtn.disabled = lpAmt <= 0;
-      }
-      
-    } catch (error) {
-      console.error("更新池子信息失败:", error);
+    const totalSupplyNum = parseFloat(ethers.utils.formatUnits(totalSupply, 18));
+    
+    let lpAmt = 0;
+    let share = 0;
+    let userCfx = 0;
+    let userLom = 0;
+    
+    const lpBal = await pair.balanceOf(account);
+    lpAmt = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+    
+    if (totalSupplyNum > 0 && lpAmt > 0) {
+      share = (lpAmt / totalSupplyNum) * 100;
+      userCfx = cfxReserve * (share / 100);
+      userLom = lomReserve * (share / 100);
     }
-  },
+    
+    const cfxReserveEl = document.getElementById("cfxReserve");
+    const lomReserveEl = document.getElementById("lomReserve");
+    
+    if (cfxReserveEl) cfxReserveEl.textContent = cfxReserve.toFixed(2);
+    if (lomReserveEl) lomReserveEl.textContent = lomReserve.toFixed(2);
+    
+    const userCfxEl = document.getElementById("userCfx");
+    const userLomEl = document.getElementById("userLom");
+    const userLpEl = document.getElementById("userLp");
+    const userPoolShareEl = document.getElementById("userPoolShare");
+    
+    if (userCfxEl) userCfxEl.textContent = userCfx.toFixed(2);
+    if (userLomEl) userLomEl.textContent = userLom.toFixed(2);
+    if (userLpEl) userLpEl.textContent = lpAmt.toFixed(2);
+    if (userPoolShareEl) userPoolShareEl.textContent = share.toFixed(4) + "%";
+    
+    const removeBtn = document.getElementById("removeBtn");
+    if (removeBtn) {
+      removeBtn.disabled = lpAmt <= 0;
+    }
+    
+  } catch (error) {  // ✅ 修复：将try-catch配对
+    console.error("更新池子信息失败:", error);
+  }
+}
 
   updateSwapButtonState() {
     const swapBtn = document.getElementById("swapBtn");
@@ -5552,9 +5550,10 @@ const EventHandlers = {
       this.populateTokenList(e.target.value);
     }, 300);
     
-    searchInput.removeEventListener('input', this.handleSearchInput);
-    this.handleSearchInput = debouncedSearch;
-    searchInput.addEventListener('input', this.handleSearchInput);
+    searchInput.removeEventListener('input', searchInput._debouncedHandler);
+  // 保存引用以便后续移除
+  searchInput._debouncedHandler = debouncedSearch;
+  searchInput.addEventListener('input', searchInput._debouncedHandler);
     
     setTimeout(() => searchInput.focus(), 100);
   },
