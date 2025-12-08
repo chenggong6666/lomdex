@@ -3174,10 +3174,6 @@ let currentReserves = { cfx: 0, lom: 0 };
 let lastInputWasFrom = true;
 let inviteAddress = localStorage.getItem('lomswap_invite_address') || '';
 let walletInviteMap = JSON.parse(localStorage.getItem('lomswap_wallet_invite_map') || '{}');
-let lpRewardUserInfo = null;
-let lpRewardContractInfo = null;
-let lpBalance = 0;
-let cooldownInterval = null;
 
 // ==================== 核心代币列表 ====================
 const TOKEN_LIST = [
@@ -3257,52 +3253,21 @@ const PAIR_ABI = [
   "function allowance(address owner, address spender) view returns (uint256)"
 ];
 
-// LP奖励合约ABI（根据提供的ABI）
+// LP奖励合约ABI（简化版本）
 const LP_REWARD_ABI = [
-  "constructor(address _lpToken, address _rewardToken, uint256 _rewardPerSecond)",
-  "event Activated(address indexed user, uint256 amount, address referrer)",
-  "event EmergencyWithdraw(address indexed admin, address token, uint256 amount)",
-  "event Increased(address indexed user, uint256 oldShares, uint256 newShares)",
-  "event Paused(address indexed by)",
-  "event Reduced(address indexed user, uint256 oldShares, uint256 newShares, uint256 penalty)",
-  "event ReferralClaimed(address indexed user, uint256 amount)",
-  "event RewardClaimed(address indexed user, uint256 amount)",
-  "event RewardDeposited(address indexed depositor, uint256 amount)",
-  "event Unpaused(address indexed by)",
-  "function FIRST_30_DAYS() view returns (uint256)",
-  "function MIN_CLAIM_INTERVAL() view returns (uint256)",
-  "function MIN_REWARD_RESERVE() view returns (uint256)",
-  "function PENALTY_RATE() view returns (uint256)",
-  "function PRECISION() view returns (uint256)",
-  "function REDUCE_COOLDOWN() view returns (uint256)",
-  "function REFERRAL_RATE() view returns (uint256)",
-  "function accRewardPerShare() view returns (uint256)",
   "function activate(address referrer)",
-  "function admin() view returns (address)",
-  "function blacklist(address) view returns (bool)",
   "function claimAll()",
   "function claimReferral()",
-  "function depositReward(uint256 amount)",
-  "function depositRewardAsAdmin(uint256 amount)",
-  "function emergencyWithdraw(address token, uint256 amount)",
-  "function getReferralUnlockTime(address userAddr) view returns (uint256)",
-  "function lastRewardTime() view returns (uint256)",
-  "function lpToken() view returns (address)",
+  "function pendingReward(address user) view returns (uint256)",
+  "function pendingReferral(address user) view returns (uint256)",
+  "function users(address) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingReferral, uint256 lastClaimTime, uint256 activeTime, uint256 lastReduceTime, uint256 referralUnlockTime, address referrer, bool cleanInFirst30Days)",
   "function minActivation() view returns (uint256)",
-  "function paused() view returns (bool)",
-  "function pendingReferral(address userAddr) view returns (uint256)",
-  "function pendingReward(address userAddr) view returns (uint256)",
-  "function rewardPerSecond() view returns (uint256)",
-  "function rewardToken() view returns (address)",
-  "function setBlacklist(address user, bool status)",
-  "function setMinActivation(uint256 amount)",
-  "function setPaused(bool _paused)",
-  "function setRewardPerSecond(uint256 rps)",
   "function totalShares() view returns (uint256)",
-  "function transferAdmin(address newAdmin)",
-  "function updateShares()",
-  "function updateSharesForUser(address userAddr)",
-  "function users(address) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingReferral, uint256 lastClaimTime, uint256 activeTime, uint256 lastReduceTime, uint256 referralUnlockTime, address referrer, bool cleanInFirst30Days)"
+  "function rewardPerSecond() view returns (uint256)",
+  "function paused() view returns (bool)",
+  "function lpToken() view returns (address)",
+  "function rewardToken() view returns (address)",
+  "function getReferralUnlockTime(address user) view returns (uint256)"
 ];
 
 // ==================== 工具模块 ====================
@@ -3422,12 +3387,7 @@ const Utils = {
       'deadline': isChinese ? '交易超时，请重试' : 'Transaction expired, please try again',
       'Not enough liquidity': isChinese ? '流动性不足' : 'Insufficient liquidity',
       'execution reverted': isChinese ? '交易执行失败' : 'Transaction execution failed',
-      'reverted': isChinese ? '交易失败' : 'Transaction failed',
-      'Below minimum': isChinese ? 'LP余额不足，最小激活要求100 LPT' : 'LP balance insufficient, min 100 LPT required',
-      'Activated': isChinese ? '您已经激活了LP奖励' : 'You have already activated LP rewards',
-      'Not activated': isChinese ? '请先激活LP奖励' : 'Please activate LP rewards first',
-      'Blacklisted': isChinese ? '账户已被列入黑名单' : 'Account is blacklisted',
-      'Paused': isChinese ? '合约已暂停' : 'Contract is paused'
+      'reverted': isChinese ? '交易失败' : 'Transaction failed'
     };
     
     for (const [key, value] of Object.entries(errorMap)) {
@@ -3488,219 +3448,123 @@ const TokenUtils = {
   }
 };
 
-// ==================== LP奖励管理器 - 根据新合约优化 ====================
+// ==================== LP奖励管理器 ====================
 const LPRewardManager = {
-  // 用户信息
   userInfo: null,
-  contractInfo: null,
   lpBalance: 0,
-  lpTokenContract: null,
-  rewardTokenContract: null,
-  totalRewardPool: 25555555, // 总奖池25555555 LOM
+  refreshTimer: null,
 
-  // 初始化
-  async init() {
+  // 刷新LP奖励信息
+  async refreshInfo() {
     if (!account || !lpRewardContract) return;
     
     try {
-      // 初始化LP Token合约
-      const lpTokenAddress = await lpRewardContract.lpToken();
-      this.lpTokenContract = new ethers.Contract(
-        lpTokenAddress,
-        ERC20_ABI,
-        provider || signer
-      );
-      
-      // 初始化奖励代币合约
-      const rewardTokenAddress = await lpRewardContract.rewardToken();
-      this.rewardTokenContract = new ethers.Contract(
-        rewardTokenAddress,
-        ERC20_ABI,
-        provider || signer
-      );
-      
-      console.log('LP Token地址:', lpTokenAddress);
-      console.log('奖励代币地址:', rewardTokenAddress);
-      
-    } catch (error) {
-      console.error('初始化LP奖励合约失败:', error);
-    }
-  },
-
-  // 刷新用户信息
-  async refreshUserInfo() {
-    if (!account || !lpRewardContract) {
-      this.resetUserInfo();
-      return;
-    }
-    
-    try {
       // 获取用户信息
-      const userInfo = await lpRewardContract.users(account);
+      const userData = await lpRewardContract.users(account);
       
       this.userInfo = {
-        shares: parseFloat(ethers.utils.formatUnits(userInfo.shares, 18)),
-        rewardDebt: parseFloat(ethers.utils.formatUnits(userInfo.rewardDebt, 18)),
-        pendingReferral: parseFloat(ethers.utils.formatUnits(userInfo.pendingReferral, 18)),
-        lastClaimTime: userInfo.lastClaimTime.toNumber(),
-        activeTime: userInfo.activeTime.toNumber(),
-        lastReduceTime: userInfo.lastReduceTime.toNumber(),
-        referralUnlockTime: userInfo.referralUnlockTime.toNumber(),
-        referrer: userInfo.referrer,
-        cleanInFirst30Days: userInfo.cleanInFirst30Days
+        shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
+        activeTime: userData.activeTime.toNumber(),
+        lastClaimTime: userData.lastClaimTime.toNumber(),
+        pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
+        referrer: userData.referrer,
+        referralUnlockTime: userData.referralUnlockTime.toNumber()
       };
       
-      // 获取合约信息
-      const [
-        minActivation,
-        totalShares,
-        rewardPerSecond,
-        lastRewardTime,
-        accRewardPerShare,
-        pausedStatus,
-        rewardTokenAddr,
-        lpTokenAddr
-      ] = await Promise.all([
-        lpRewardContract.minActivation(),
-        lpRewardContract.totalShares(),
-        lpRewardContract.rewardPerSecond(),
-        lpRewardContract.lastRewardTime(),
-        lpRewardContract.accRewardPerShare(),
-        lpRewardContract.paused(),
-        lpRewardContract.rewardToken(),
-        lpRewardContract.lpToken()
-      ]);
-      
-      this.contractInfo = {
-        minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
-        totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
-        rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
-        lastRewardTime: lastRewardTime.toNumber(),
-        accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
-        paused: pausedStatus,
-        rewardTokenAddress: rewardTokenAddr,
-        lpTokenAddress: lpTokenAddr
-      };
-      
-      // 获取LP余额（从LP Token合约）
-      if (this.lpTokenContract) {
-        const lpBal = await this.lpTokenContract.balanceOf(account);
+      // 获取LP余额（从pair合约）
+      if (pair) {
+        const lpBal = await pair.balanceOf(account);
         this.lpBalance = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-        lpBalance = this.lpBalance;
       }
       
       // 获取待领取奖励
-      try {
-        const pendingReward = await lpRewardContract.pendingReward(account);
-        this.contractInfo.pendingReward = parseFloat(ethers.utils.formatUnits(pendingReward, 18));
-      } catch (error) {
-        console.warn('获取待领取奖励失败:', error);
-        this.contractInfo.pendingReward = 0;
-      }
+      const pendingReward = await lpRewardContract.pendingReward(account);
+      const pendingRewardAmount = parseFloat(ethers.utils.formatUnits(pendingReward, 18));
       
-      // 获取待领取推荐奖励
-      try {
-        const pendingReferral = await lpRewardContract.pendingReferral(account);
-        this.contractInfo.pendingReferral = parseFloat(ethers.utils.formatUnits(pendingReferral, 18));
-      } catch (error) {
-        console.warn('获取待领取推荐奖励失败:', error);
-        this.contractInfo.pendingReferral = 0;
-      }
+      // 获取合约信息
+      const minActivation = await lpRewardContract.minActivation();
+      const totalShares = await lpRewardContract.totalShares();
+      const rewardPerSecond = await lpRewardContract.rewardPerSecond();
+      const pausedStatus = await lpRewardContract.paused();
       
-      // 获取推荐解锁时间
-      try {
-        const referralUnlockTime = await lpRewardContract.getReferralUnlockTime(account);
-        this.contractInfo.referralUnlockTime = referralUnlockTime.toNumber();
-      } catch (error) {
-        console.warn('获取推荐解锁时间失败:', error);
-        this.contractInfo.referralUnlockTime = 0;
-      }
-      
-      this.updateUI();
-      this.updateTimer();
+      // 更新UI
+      this.updateUI(pendingRewardAmount, minActivation, totalShares, rewardPerSecond, pausedStatus);
       
     } catch (error) {
       console.error('刷新LP奖励信息失败:', error);
-      this.resetUserInfo();
+      this.resetUI();
     }
   },
 
-  // 重置用户信息
-  resetUserInfo() {
-    this.userInfo = null;
-    this.contractInfo = null;
-    this.lpBalance = 0;
-    lpBalance = 0;
-    this.updateUI();
-  },
-
-  // 更新UI
-  updateUI() {
-    console.log('🔄 更新LP奖励UI，LP余额:', this.lpBalance);
-    
+  // 更新UI显示
+  updateUI(pendingReward, minActivation, totalShares, rewardPerSecond, paused) {
     const isActivated = this.userInfo && this.userInfo.shares > 0;
-    const isPaused = this.contractInfo?.paused || false;
-    const activateBtn = document.getElementById('activateBtn');
-    const claimBtn = document.getElementById('claimBtn');
-    const claimReferralBtn = document.getElementById('claimReferralBtn');
     
     // 更新激活状态
     document.getElementById('activationStatus').textContent = isActivated ? 
-      (isPaused ? '已激活(暂停)' : '已激活') : '未激活';
+      (paused ? '已激活(暂停)' : '已激活') : '未激活';
     document.getElementById('activationStatus').className = isActivated ? 
-      (isPaused ? 'lp-reward-card-value warning' : 'lp-reward-card-value success') : 
+      (paused ? 'lp-reward-card-value warning' : 'lp-reward-card-value success') : 
       'lp-reward-card-value warning';
     
     // 更新LP余额
     document.getElementById('lpBalance').textContent = `${Utils.formatDisplay(this.lpBalance)} LPT`;
     
     if (isActivated) {
-      // 已激活状态
+      // 计算持有时长
       const daysHeld = Math.floor((Date.now() / 1000 - this.userInfo.activeTime) / 86400);
       document.getElementById('daysHeld').textContent = `${daysHeld} 天`;
       
-      // 计算奖励倍率（根据新合约逻辑：30天内80%，30-90天100%，90-180天150%，180-360天200%，360天以上300%）
-      const multiplier = this.calculateMultiplier(daysHeld);
-      document.getElementById('rewardMultiplier').textContent = isPaused ? '1.0x' : `${(multiplier/1000).toFixed(1)}x`;
+      // 计算奖励倍率
+      let multiplier = 0.8;
+      if (daysHeld >= 360) multiplier = 3.0;
+      else if (daysHeld >= 180) multiplier = 2.0;
+      else if (daysHeld >= 90) multiplier = 1.5;
+      else if (daysHeld >= 30) multiplier = 1.0;
+      
+      document.getElementById('rewardMultiplier').textContent = `${multiplier.toFixed(1)}x`;
       
       // 高亮显示当前倍率
-      this.highlightMultiplier(daysHeld);
+      this.updateMultiplierHighlight(daysHeld);
       
       // 更新奖励信息
-      this.updateRewardInfo();
+      document.getElementById('pendingReward').textContent = `${Utils.formatDisplay(pendingReward)} LOM`;
       
-      // 激活按钮状态
+      // 计算每日收益
+      if (this.userInfo.shares > 0 && totalShares > 0) {
+        const dailyReward = parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)) * 
+                          this.userInfo.shares / parseFloat(ethers.utils.formatUnits(totalShares, 18)) * 
+                          86400 * multiplier;
+        document.getElementById('dailyReward').textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
+      }
+      
+      // 下次领取时间
+      const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (now >= nextClaimTime) {
+        document.getElementById('nextClaimTime').textContent = '现在可以领取';
+      } else {
+        const timeLeft = nextClaimTime - now;
+        const daysLeft = Math.floor(timeLeft / 86400);
+        const hoursLeft = Math.floor((timeLeft % 86400) / 3600);
+        document.getElementById('nextClaimTime').textContent = `${daysLeft}天${hoursLeft}小时后`;
+      }
+      
+      // 推荐奖励
+      document.getElementById('pendingReferral').textContent = 
+        `${Utils.formatDisplay(this.userInfo.pendingReferral)} LOM`;
+      
+      // 更新按钮状态
+      const claimBtn = document.getElementById('claimBtn');
+      const claimReferralBtn = document.getElementById('claimReferralBtn');
+      const activateBtn = document.getElementById('activateBtn');
+      
+      if (claimBtn) claimBtn.disabled = now < nextClaimTime || paused;
+      if (claimReferralBtn) claimReferralBtn.disabled = this.userInfo.pendingReferral <= 0 || paused;
       if (activateBtn) {
         activateBtn.disabled = true;
-        activateBtn.innerHTML = '<span>✅</span><span>已激活</span>';
-      }
-      
-      // 领取奖励按钮状态
-      const canClaim = this.canClaimReward();
-      if (claimBtn) {
-        claimBtn.disabled = !canClaim || isPaused;
-        claimBtn.innerHTML = isPaused ? 
-          '<span>⏸️</span><span>合约暂停</span>' : 
-          (canClaim ? '<span>💰</span><span>领取奖励</span>' : '<span>⏳</span><span>等待中</span>');
-      }
-      
-      // 领取推荐奖励按钮状态
-      const canClaimReferral = this.canClaimReferral();
-      if (claimReferralBtn) {
-        claimReferralBtn.disabled = !canClaimReferral || isPaused;
-        claimReferralBtn.innerHTML = isPaused ? 
-          '<span>⏸️</span><span>合约暂停</span>' : 
-          (canClaimReferral ? '<span>🎁</span><span>领取推荐</span>' : '<span>🔒</span><span>锁定中</span>');
-      }
-      
-      // 检查LP警告
-      this.checkLPWarning();
-      
-      // 禁用推荐地址输入框
-      const referrerInput = document.getElementById('referrerAddress');
-      if (referrerInput) {
-        referrerInput.disabled = true;
-        referrerInput.placeholder = '已激活，不可更改';
+        activateBtn.textContent = '已激活';
       }
       
     } else {
@@ -3711,341 +3575,31 @@ const LPRewardManager = {
       // 重置倍率高亮
       this.resetMultiplierHighlight();
       
-      // 检查激活条件
-      const canActivate = this.canActivate();
-      console.log('是否可以激活检查:', {
-        canActivate: canActivate,
-        lpBalance: this.lpBalance,
-        minActivation: this.contractInfo?.minActivation || 100,
-        hasAccount: !!account,
-        hasContract: !!lpRewardContract
-      });
+      // 更新按钮状态
+      const activateBtn = document.getElementById('activateBtn');
+      const claimBtn = document.getElementById('claimBtn');
+      const claimReferralBtn = document.getElementById('claimReferralBtn');
+      
+      const minActivationAmount = parseFloat(ethers.utils.formatUnits(minActivation, 18));
+      const canActivate = this.lpBalance >= minActivationAmount;
       
       if (activateBtn) {
-        activateBtn.disabled = !canActivate || isPaused;
-        activateBtn.innerHTML = isPaused ? 
-          '<span>⏸️</span><span>合约暂停</span>' : 
-          (canActivate ? '<span>🚀</span><span>激活奖励</span>' : '<span>⏳</span><span>条件不符</span>');
+        activateBtn.disabled = !canActivate || paused;
+        activateBtn.textContent = canActivate ? '激活奖励' : 'LP不足';
       }
-      
-      // 禁用领取按钮
       if (claimBtn) claimBtn.disabled = true;
       if (claimReferralBtn) claimReferralBtn.disabled = true;
-      
-      // 隐藏警告和计时器
-      document.getElementById('lpWarning').style.display = 'none';
-      document.getElementById('cooldownTimer').style.display = 'none';
-      
-      // 启用推荐地址输入框
-      const referrerInput = document.getElementById('referrerAddress');
-      if (referrerInput) {
-        referrerInput.disabled = isPaused;
-        referrerInput.placeholder = isPaused ? '合约暂停' : '输入推荐人地址 (可选)';
-        
-        // 如果有保存的邀请地址，设置到输入框
-        if (inviteAddress) {
-          referrerInput.value = inviteAddress;
-          referrerInput.disabled = true;
-        }
-      }
     }
     
-    // 显示全局统计信息
-    this.displayGlobalStats();
+    // 隐藏警告和计时器（简化版本）
+    document.getElementById('lpWarning').style.display = 'none';
+    document.getElementById('cooldownTimer').style.display = 'none';
   },
 
-  // 显示激活确认弹窗
-  async showActivateConfirmation() {
-    console.log('🔍 显示激活确认弹窗');
-    
-    if (!account || !lpRewardContract) {
-      Utils.showError(isChinese ? '请先连接钱包' : 'Please connect wallet first');
-      return;
-    }
-    
-    try {
-      // 获取推荐人地址
-      const referrerInput = document.getElementById('referrerAddress');
-      const referrerAddress = referrerInput ? referrerInput.value.trim() : '';
-      
-      // 检查激活条件
-      if (!this.canActivate()) {
-        Utils.showError(isChinese ? '不满足激活条件' : 'Activation conditions not met');
-        return;
-      }
-      
-      // 简化弹窗显示
-      this.showSimpleActivationConfirm(referrerAddress);
-      
-    } catch (error) {
-      console.error('显示激活确认失败:', error);
-      Utils.showError(isChinese ? '获取激活信息失败' : 'Failed to get activation info');
-    }
-  },
-
-  // 显示简化激活确认弹窗
-  async showSimpleActivationConfirm(referrerAddress) {
-    const modal = document.getElementById('simpleConfirmModal');
-    if (!modal) return;
-    
-    try {
-      // 获取最新数据
-      await this.refreshUserInfo();
-      
-      // 验证推荐人地址
-      let finalReferrer = '0x0000000000000000000000000000000000000000';
-      if (referrerAddress && Utils.isValidAddress(referrerAddress)) {
-        if (referrerAddress.toLowerCase() === account.toLowerCase()) {
-          Utils.showError(isChinese ? '不能推荐自己' : 'Cannot refer yourself');
-          return;
-        }
-        
-        // 检查推荐人是否已激活
-        try {
-          const referrerInfo = await lpRewardContract.users(referrerAddress);
-          const refShares = parseFloat(ethers.utils.formatUnits(referrerInfo.shares, 18));
-          if (refShares > 0) {
-            finalReferrer = referrerAddress;
-          } else {
-            Utils.showError(isChinese ? '推荐人未激活LP奖励' : 'Referrer not activated');
-            return;
-          }
-        } catch (error) {
-          console.warn('检查推荐人失败:', error);
-          // 非致命错误，继续使用空推荐人
-        }
-      }
-      
-      // 更新弹窗内容
-      document.getElementById('simpleConfirmIcon').textContent = '🚀';
-      document.getElementById('simpleConfirmAction').textContent = '激活LP奖励';
-      
-      const amountsHTML = `
-        <div class="confirm-amount-row">
-          <div class="confirm-amount-logo" style="background-image: url('${APP_CONFIG.TOKEN_LOGOS.LOM}')"></div>
-          <div class="confirm-amount-text">${Utils.formatDisplay(this.lpBalance)} LPT</div>
-        </div>
-      `;
-      
-      document.getElementById('simpleConfirmAmounts').innerHTML = amountsHTML;
-      
-      const detailsHTML = `
-        <div class="confirm-detail-item">
-          <div class="confirm-detail-label">最小要求</div>
-          <div class="confirm-detail-value">${Utils.formatDisplay(this.contractInfo?.minActivation || 100)} LPT</div>
-        </div>
-        <div class="confirm-detail-item">
-          <div class="confirm-detail-label">推荐人</div>
-          <div class="confirm-detail-value">${finalReferrer === '0x0000000000000000000000000000000000000000' ? '无' : Utils.formatAddress(finalReferrer)}</div>
-        </div>
-        <div class="confirm-detail-item">
-          <div class="confirm-detail-label">初始倍率</div>
-          <div class="confirm-detail-value">0.8x</div>
-        </div>
-        <div class="confirm-detail-item">
-          <div class="confirm-detail-label">锁定期</div>
-          <div class="confirm-detail-value">30天</div>
-        </div>
-      `;
-      
-      document.getElementById('simpleConfirmDetails').innerHTML = detailsHTML;
-      
-      // 绑定确认按钮
-      const confirmBtn = document.getElementById('simpleConfirmBtn');
-      const cancelBtn = document.getElementById('simpleCancelBtn');
-      
-      const confirmHandler = async () => {
-        try {
-          Utils.showNotification('激活LP奖励中...', 'info');
-          
-          const tx = await lpRewardContract.activate(finalReferrer);
-          await tx.wait();
-          
-          Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
-          modal.style.display = 'none';
-          
-          // 保存邀请地址
-          if (finalReferrer !== '0x0000000000000000000000000000000000000000') {
-            walletInviteMap[account.toLowerCase()] = finalReferrer;
-            localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
-            inviteAddress = finalReferrer;
-          }
-          
-          // 刷新数据
-          await this.refreshUserInfo();
-          await DataManager.refreshAll();
-          
-        } catch (error) {
-          console.error('激活失败:', error);
-          Utils.showNotification(Utils.getErrorMessage(error), 'error');
-        }
-      };
-      
-      const cancelHandler = () => {
-        modal.style.display = 'none';
-      };
-      
-      // 移除旧的事件监听器，添加新的
-      confirmBtn.replaceWith(confirmBtn.cloneNode(true));
-      cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-      
-      const newConfirmBtn = document.getElementById('simpleConfirmBtn');
-      const newCancelBtn = document.getElementById('simpleCancelBtn');
-      
-      newConfirmBtn.addEventListener('click', confirmHandler);
-      newCancelBtn.addEventListener('click', cancelHandler);
-      
-      // 显示弹窗
-      modal.style.display = 'flex';
-      
-    } catch (error) {
-      console.error('准备激活确认失败:', error);
-      Utils.showError(isChinese ? '准备激活失败' : 'Failed to prepare activation');
-    }
-  },
-
-  // 执行激活
-  async executeActivation(referrerAddress) {
-    try {
-      Utils.showNotification(isChinese ? '激活奖励系统中...' : 'Activating reward system...', 'info');
-      
-      // 调用智能合约的activate函数
-      const tx = await lpRewardContract.activate(referrerAddress);
-      await tx.wait();
-      
-      Utils.showNotification(isChinese ? '激活成功！7天后可以开始领取奖励' : 'Activation successful! You can claim rewards after 7 days', 'success');
-      
-      // 保存邀请地址
-      if (referrerAddress && referrerAddress !== '0x0000000000000000000000000000000000000000') {
-        walletInviteMap[account.toLowerCase()] = referrerAddress;
-        localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
-        inviteAddress = referrerAddress;
-      }
-      
-      // 刷新数据
-      await this.refreshUserInfo();
-      
-    } catch (error) {
-      console.error('激活失败:', error);
-      Utils.showNotification(Utils.getErrorMessage(error), 'error');
-    }
-  },
-
-  // 领取奖励
-  async claimReward() {
-    if (!this.userInfo || !this.canClaimReward()) {
-      Utils.showError(isChinese ? '还未到领取时间或未激活' : 'Not time to claim yet or not activated');
-      return;
-    }
-    
-    try {
-      Utils.showNotification(isChinese ? '领取奖励中...' : 'Claiming reward...', 'info');
-      
-      // 调用智能合约的claimAll函数
-      const tx = await lpRewardContract.claimAll();
-      await tx.wait();
-      
-      Utils.showNotification(isChinese ? '奖励领取成功！' : 'Reward claimed successfully!', 'success');
-      
-      // 刷新数据
-      await this.refreshUserInfo();
-      
-    } catch (error) {
-      console.error('领取奖励失败:', error);
-      Utils.showNotification(Utils.getErrorMessage(error), 'error');
-    }
-  },
-
-  // 领取推荐奖励
-  async claimReferralReward() {
-    if (!this.userInfo || this.userInfo.pendingReferral <= 0) {
-      Utils.showError(isChinese ? '没有可领取的推荐奖励' : 'No referral reward to claim');
-      return;
-    }
-    
-    const now = Math.floor(Date.now() / 1000);
-    if (now < this.userInfo.referralUnlockTime) {
-      Utils.showError(isChinese ? '推荐奖励还未解锁' : 'Referral reward not unlocked yet');
-      return;
-    }
-    
-    try {
-      Utils.showNotification(isChinese ? '领取推荐奖励中...' : 'Claiming referral reward...', 'info');
-      
-      // 调用智能合约的claimReferral函数
-      const tx = await lpRewardContract.claimReferral();
-      await tx.wait();
-      
-      Utils.showNotification(isChinese ? '推荐奖励领取成功！' : 'Referral reward claimed successfully!', 'success');
-      
-      // 刷新数据
-      await this.refreshUserInfo();
-      
-    } catch (error) {
-      console.error('领取推荐奖励失败:', error);
-      Utils.showNotification(Utils.getErrorMessage(error), 'error');
-    }
-  },
-
-  // 检查是否可以领取奖励
-  canClaimReward() {
-    if (!this.userInfo || this.userInfo.shares <= 0) return false;
-    const now = Math.floor(Date.now() / 1000);
-    const timeSinceLastClaim = now - this.userInfo.lastClaimTime;
-    return timeSinceLastClaim >= 7 * 24 * 60 * 60; // 7天
-  },
-
-  // 检查是否可以领取推荐奖励
-  canClaimReferral() {
-    if (!this.userInfo || this.userInfo.pendingReferral <= 0) return false;
-    const now = Math.floor(Date.now() / 1000);
-    return now >= this.userInfo.referralUnlockTime;
-  },
-
-  // 检查是否可以激活 - 简化版本
-  canActivate() {
-    if (!account || !lpRewardContract || !this.lpTokenContract) {
-      console.log('激活条件不满足: 缺少必要组件');
-      return false;
-    }
-    
-    // 检查合约是否暂停
-    if (this.contractInfo?.paused) {
-      console.log('激活条件不满足: 合约已暂停');
-      return false;
-    }
-    
-    // 检查是否已激活
-    if (this.userInfo && this.userInfo.shares > 0) {
-      console.log('激活条件不满足: 已激活');
-      return false;
-    }
-    
-    // 检查LP余额是否足够
-    const minActivation = this.contractInfo?.minActivation || 100; // 默认100 LPT
-    const canActivate = this.lpBalance >= minActivation;
-    
-    console.log('激活条件检查:', {
-      lpBalance: this.lpBalance,
-      minActivation: minActivation,
-      canActivate: canActivate
-    });
-    
-    return canActivate;
-  },
-
-  // 计算奖励倍率（根据新合约逻辑）
-  calculateMultiplier(daysHeld) {
-    if (daysHeld >= 360) return 3000;  // 300%
-    if (daysHeld >= 180) return 2000;  // 200%
-    if (daysHeld >= 90) return 1500;   // 150%
-    if (daysHeld >= 30) return 1000;   // 100%
-    return 800;  // 30天内 80%
-  },
-
-  // 高亮显示当前倍率
-  highlightMultiplier(daysHeld) {
+  // 更新倍率高亮
+  updateMultiplierHighlight(daysHeld) {
     this.resetMultiplierHighlight();
+    
     if (daysHeld >= 360) {
       document.getElementById('multiplier360d').classList.add('active');
     } else if (daysHeld >= 180) {
@@ -4063,195 +3617,163 @@ const LPRewardManager = {
     items.forEach(item => item.classList.remove('active'));
   },
 
-  // 更新奖励信息
-  async updateRewardInfo() {
-    if (!lpRewardContract || !this.userInfo) return;
+  // 重置UI
+  resetUI() {
+    this.userInfo = null;
+    this.lpBalance = 0;
+    
+    document.getElementById('activationStatus').textContent = '未激活';
+    document.getElementById('activationStatus').className = 'lp-reward-card-value warning';
+    document.getElementById('lpBalance').textContent = '0 LPT';
+    document.getElementById('daysHeld').textContent = '0 天';
+    document.getElementById('rewardMultiplier').textContent = '1.0x';
+    document.getElementById('pendingReward').textContent = '0 LOM';
+    document.getElementById('dailyReward').textContent = '0 LOM';
+    document.getElementById('nextClaimTime').textContent = '--';
+    document.getElementById('pendingReferral').textContent = '0 LOM';
+    
+    this.resetMultiplierHighlight();
+    
+    const activateBtn = document.getElementById('activateBtn');
+    const claimBtn = document.getElementById('claimBtn');
+    const claimReferralBtn = document.getElementById('claimReferralBtn');
+    
+    if (activateBtn) {
+      activateBtn.disabled = true;
+      activateBtn.textContent = '连接钱包';
+    }
+    if (claimBtn) claimBtn.disabled = true;
+    if (claimReferralBtn) claimReferralBtn.disabled = true;
+  },
+
+  // 激活奖励
+  async activate() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
     
     try {
-      // 获取待领取奖励
-      const pendingReward = await lpRewardContract.pendingReward(account);
-      const pendingRewardAmount = parseFloat(ethers.utils.formatUnits(pendingReward, 18));
+      // 获取推荐地址
+      const referrerInput = document.getElementById('referrerAddress');
+      let referrerAddress = referrerInput ? referrerInput.value.trim() : '';
       
-      document.getElementById('pendingReward').textContent = `${Utils.formatDisplay(pendingRewardAmount)} LOM`;
-      
-      // 计算每日预估收益
-      const daysHeld = Math.floor((Date.now() / 1000 - this.userInfo.activeTime) / 86400);
-      const multiplier = this.calculateMultiplier(daysHeld) / 1000; // 转换为小数
-      
-      let dailyReward = 0;
-      if (this.userInfo.shares > 0 && this.contractInfo.totalShares > 0) {
-        dailyReward = (this.contractInfo.rewardPerSecond || 0) * 
-                     this.userInfo.shares / 
-                     this.contractInfo.totalShares * 
-                     86400 * 
-                     multiplier;
+      // 验证推荐地址
+      if (referrerAddress && !Utils.isValidAddress(referrerAddress)) {
+        Utils.showError('推荐地址格式错误');
+        return;
       }
       
-      document.getElementById('dailyReward').textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
-      
-      // 计算下次领取时间
-      const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
-      const now = Math.floor(Date.now() / 1000);
-      
-      if (now >= nextClaimTime) {
-        document.getElementById('nextClaimTime').textContent = '现在可以领取';
-      } else {
-        const timeLeft = nextClaimTime - now;
-        const daysLeft = Math.floor(timeLeft / 86400);
-        const hoursLeft = Math.floor((timeLeft % 86400) / 3600);
-        document.getElementById('nextClaimTime').textContent = `${daysLeft}天${hoursLeft}小时后`;
+      // 如果为空地址，设为0地址
+      if (!referrerAddress) {
+        referrerAddress = '0x0000000000000000000000000000000000000000';
       }
       
-      // 显示推荐奖励（使用合约的pendingReferral函数）
-      try {
-        const pendingReferral = await lpRewardContract.pendingReferral(account);
-        const pendingReferralAmount = parseFloat(ethers.utils.formatUnits(pendingReferral, 18));
-        document.getElementById('pendingReferral').textContent = `${Utils.formatDisplay(pendingReferralAmount)} LOM`;
-      } catch (error) {
-        console.warn('获取推荐奖励失败:', error);
-        document.getElementById('pendingReferral').textContent = `${Utils.formatDisplay(this.userInfo.pendingReferral)} LOM`;
+      // 检查是否推荐自己
+      if (referrerAddress.toLowerCase() === account.toLowerCase()) {
+        Utils.showError('不能推荐自己');
+        return;
       }
+      
+      Utils.showNotification('激活LP奖励中...', 'info');
+      
+      const tx = await lpRewardContract.activate(referrerAddress);
+      await tx.wait();
+      
+      Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
+      
+      // 刷新数据
+      await this.refreshInfo();
+      await DataManager.refreshAll();
       
     } catch (error) {
-      console.error('更新奖励信息失败:', error);
+      console.error('激活失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
     }
   },
 
-  // 显示全局统计信息
-  displayGlobalStats() {
-    // 获取统计信息元素
-    let statsElement = document.querySelector('.global-stats');
-    
-    if (!statsElement) {
-      statsElement = document.createElement('div');
-      statsElement.className = 'global-stats';
-      statsElement.style.marginTop = '15px';
-      statsElement.style.padding = '12px';
-      statsElement.style.background = 'rgba(255, 215, 0, 0.05)';
-      statsElement.style.borderRadius = '10px';
-      statsElement.style.border = '1px solid rgba(255, 215, 0, 0.2)';
-      
-      // 添加到奖励信息面板后
-      const rewardStats = document.querySelector('.lp-reward-stats');
-      if (rewardStats && rewardStats.parentNode) {
-        rewardStats.parentNode.insertBefore(statsElement, rewardStats.nextSibling);
-      }
+  // 领取奖励
+  async claimReward() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
     }
     
-    const isPaused = this.contractInfo?.paused || false;
-    const totalShares = this.contractInfo?.totalShares || 0;
-    const rewardPerSecond = this.contractInfo?.rewardPerSecond || 0;
-    
-    statsElement.innerHTML = `
-      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">
-        📊 全局统计 ${isPaused ? '<span style="color: var(--accent-red);">(暂停)</span>' : ''}
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
-        <div style="text-align: center;">
-          <div style="color: var(--text-secondary);">总质押</div>
-          <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatDisplay(totalShares)} LPT</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="color: var(--text-secondary);">每秒奖励</div>
-          <div style="color: var(--primary-blue); font-weight: 600;">${Utils.formatDisplay(rewardPerSecond)} LOM</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="color: var(--text-secondary);">总奖池</div>
-          <div style="color: var(--success); font-weight: 600;">${Utils.formatDisplay(this.totalRewardPool)} LOM</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="color: var(--text-secondary);">合约状态</div>
-          <div style="color: ${isPaused ? 'var(--accent-red)' : 'var(--success)'}; font-weight: 600;">${isPaused ? '已暂停' : '运行中'}</div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 检查LP警告
-  checkLPWarning() {
-    if (!this.userInfo || !this.lpTokenContract || !account) return;
-    
-    const warningPanel = document.getElementById('lpWarning');
-    const timerPanel = document.getElementById('cooldownTimer');
-    
-    // 检查是否在前30天内
-    const now = Math.floor(Date.now() / 1000);
-    const timeSinceActivation = now - this.userInfo.activeTime;
-    const isInFirst30Days = timeSinceActivation < 30 * 24 * 60 * 60;
-    
-    // 检查LP减持
-    const currentLP = this.lpBalance;
-    const userShares = this.userInfo.shares;
-    
-    if (currentLP < userShares) {
-      const reduction = userShares - currentLP;
-      const reductionPercent = (reduction / userShares * 100).toFixed(2);
+    try {
+      Utils.showNotification('领取奖励中...', 'info');
       
-      let warningText = `检测到LP减持 ${reductionPercent}%`;
-      warningText += '，下次领取将有50%惩罚';
+      const tx = await lpRewardContract.claimAll();
+      await tx.wait();
       
-      if (isInFirst30Days && this.userInfo.cleanInFirst30Days) {
-        warningText += '，且会失去推荐资格';
-      }
+      Utils.showNotification('奖励领取成功！', 'success');
       
-      document.getElementById('lpWarningText').textContent = warningText;
-      warningPanel.style.display = 'flex';
+      // 刷新数据
+      await this.refreshInfo();
+      await DataManager.refreshAll();
       
-      // 检查减持冷却时间
-      const timeSinceLastReduce = now - this.userInfo.lastReduceTime;
-      const cooldownRemaining = 24 * 60 * 60 - timeSinceLastReduce;
-      
-      if (cooldownRemaining > 0) {
-        document.getElementById('cooldownTime').textContent = Utils.formatTime(cooldownRemaining);
-        timerPanel.style.display = 'block';
-      } else {
-        timerPanel.style.display = 'none';
-      }
-      
-    } else {
-      warningPanel.style.display = 'none';
-      timerPanel.style.display = 'none';
+    } catch (error) {
+      console.error('领取奖励失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
     }
   },
 
-  // 更新计时器
-  updateTimer() {
-    if (cooldownInterval) clearInterval(cooldownInterval);
+  // 领取推荐奖励
+  async claimReferralReward() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
     
-    cooldownInterval = setInterval(() => {
-      if (!this.userInfo) return;
-      
+    try {
       const now = Math.floor(Date.now() / 1000);
-      
-      // 更新减持冷却时间
-      const timeSinceLastReduce = now - this.userInfo.lastReduceTime;
-      if (timeSinceLastReduce < 24 * 60 * 60) {
-        const cooldownRemaining = 24 * 60 * 60 - timeSinceLastReduce;
-        const timeElement = document.getElementById('cooldownTime');
-        if (timeElement) {
-          timeElement.textContent = Utils.formatTime(cooldownRemaining);
-        }
-        const timerPanel = document.getElementById('cooldownTimer');
-        if (timerPanel) {
-          timerPanel.style.display = 'block';
-        }
-      } else {
-        const timerPanel = document.getElementById('cooldownTimer');
-        if (timerPanel) {
-          timerPanel.style.display = 'none';
-        }
+      if (now < this.userInfo.referralUnlockTime) {
+        Utils.showError('推荐奖励还未解锁');
+        return;
       }
       
-      // 每30秒刷新一次奖励信息
-      if (now % 30 === 0) {
-        this.updateRewardInfo();
+      if (this.userInfo.pendingReferral <= 0) {
+        Utils.showError('没有可领取的推荐奖励');
+        return;
       }
       
-    }, 1000);
+      Utils.showNotification('领取推荐奖励中...', 'info');
+      
+      const tx = await lpRewardContract.claimReferral();
+      await tx.wait();
+      
+      Utils.showNotification('推荐奖励领取成功！', 'success');
+      
+      // 刷新数据
+      await this.refreshInfo();
+      await DataManager.refreshAll();
+      
+    } catch (error) {
+      console.error('领取推荐奖励失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+    }
+  },
+
+  // 开始自动刷新
+  startAutoRefresh() {
+    if (this.refreshTimer) clearInterval(this.refreshTimer);
+    
+    this.refreshTimer = setInterval(() => {
+      if (account && document.getElementById('lpRewardTab').classList.contains('active')) {
+        this.refreshInfo();
+      }
+    }, 10000); // 每10秒刷新一次
+  },
+
+  // 停止自动刷新
+  stopAutoRefresh() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 };
 
-// ==================== UI事件处理器 - 修复事件绑定 ====================
+// ==================== UI事件处理器 ====================
 const EventHandlers = {
   init() {
     this.setupWalletEvents();
@@ -4270,25 +3792,9 @@ const EventHandlers = {
     // 激活按钮
     const activateBtn = document.getElementById("activateBtn");
     if (activateBtn) {
-      // 移除旧的事件监听器
-      activateBtn.replaceWith(activateBtn.cloneNode(true));
-      const newActivateBtn = document.getElementById("activateBtn");
-      
-      newActivateBtn.addEventListener("click", async () => {
+      activateBtn.addEventListener("click", async () => {
         console.log('🎯 激活按钮被点击');
-        
-        if (!account) {
-          Utils.showError('请先连接钱包');
-          return;
-        }
-        
-        if (!lpRewardContract) {
-          Utils.showError('LP奖励合约未初始化');
-          return;
-        }
-        
-        // 直接显示激活确认
-        await LPRewardManager.showActivateConfirmation();
+        await LPRewardManager.activate();
       });
     }
     
@@ -4336,7 +3842,8 @@ const EventHandlers = {
         const success = await AppCore.connectWallet();
         if (success) {
           DataManager.refreshAll();
-          LPRewardManager.refreshUserInfo();
+          LPRewardManager.refreshInfo();
+          LPRewardManager.startAutoRefresh();
         }
       } finally {
         document.getElementById("walletBtn").disabled = false;
@@ -4587,7 +4094,7 @@ const EventHandlers = {
         if (account) {
           DataManager.refreshAll();
           if (tabId === 'lpReward') {
-            LPRewardManager.refreshUserInfo();
+            LPRewardManager.refreshInfo();
           }
         }
       });
@@ -4820,7 +4327,7 @@ class AppCore {
       refreshInterval = setInterval(() => {
         DataManager.refreshAll();
         if (document.getElementById('lpRewardTab').classList.contains('active')) {
-          LPRewardManager.refreshUserInfo();
+          LPRewardManager.refreshInfo();
         }
       }, 10000);
       
@@ -4881,15 +4388,16 @@ class AppCore {
       );
       
       console.log('LP奖励合约初始化成功，地址:', APP_CONFIG.CONTRACTS.LP_REWARD);
-      
-      // 初始化LP奖励管理器
-      LPRewardManager.init();
     }
   }
 
   static restoreInviteAddress() {
     if (account && walletInviteMap[account.toLowerCase()]) {
       inviteAddress = walletInviteMap[account.toLowerCase()];
+      const referrerInput = document.getElementById('referrerAddress');
+      if (referrerInput) {
+        referrerInput.value = inviteAddress;
+      }
     } else {
       inviteAddress = '';
     }
@@ -4934,14 +4442,11 @@ class AppCore {
       refreshInterval = null;
     }
     
-    if (cooldownInterval) {
-      clearInterval(cooldownInterval);
-      cooldownInterval = null;
-    }
+    LPRewardManager.stopAutoRefresh();
     
     this.updateUI();
     DataManager.resetAllData();
-    LPRewardManager.resetUserInfo();
+    LPRewardManager.resetUI();
     
     Utils.showNotification(
       isChinese ? "钱包已断开连接" : "Wallet disconnected",
@@ -5013,11 +4518,6 @@ const DataManager = {
         } catch (error) {
           console.error("获取LP余额失败:", error);
         }
-      }
-      
-      // 刷新LP奖励信息
-      if (document.getElementById('lpRewardTab').classList.contains('active')) {
-        LPRewardManager.refreshUserInfo();
       }
       
     } catch (error) {
@@ -5575,58 +5075,21 @@ document.addEventListener('DOMContentLoaded', function() {
   
   EventHandlers.init();
   
-  // 添加调试按钮
-  const debugButton = document.createElement('button');
-  debugButton.textContent = '🔧 调试LP激活';
-  debugButton.style.position = 'fixed';
-  debugButton.style.bottom = '80px';
-  debugButton.style.right = '20px';
-  debugButton.style.zIndex = '9999';
-  debugButton.style.padding = '8px 12px';
-  debugButton.style.background = 'var(--gradient-yellow)';
-  debugButton.style.color = '#000';
-  debugButton.style.border = 'none';
-  debugButton.style.borderRadius = '8px';
-  debugButton.style.fontWeight = 'bold';
-  debugButton.style.cursor = 'pointer';
-  debugButton.style.display = 'none';
+  // 简化调试功能
+  const debugInfo = document.createElement('div');
+  debugInfo.style.position = 'fixed';
+  debugInfo.style.bottom = '20px';
+  debugInfo.style.right = '20px';
+  debugInfo.style.zIndex = '9999';
+  debugInfo.style.padding = '8px 12px';
+  debugInfo.style.background = 'rgba(0,0,0,0.7)';
+  debugInfo.style.color = '#fff';
+  debugInfo.style.borderRadius = '8px';
+  debugInfo.style.fontSize = '10px';
+  debugInfo.style.display = 'none';
+  document.body.appendChild(debugInfo);
   
-  debugButton.addEventListener('click', async () => {
-    console.log('=== LP激活调试 ===');
-    console.log('账户:', account);
-    console.log('LP奖励合约:', lpRewardContract);
-    console.log('LP余额:', LPRewardManager.lpBalance);
-    console.log('用户信息:', LPRewardManager.userInfo);
-    console.log('合约信息:', LPRewardManager.contractInfo);
-    
-    if (account && lpRewardContract) {
-      try {
-        const minActivation = await lpRewardContract.minActivation();
-        console.log('最小激活要求:', ethers.utils.formatUnits(minActivation, 18), 'LPT');
-        
-        const userInfo = await lpRewardContract.users(account);
-        console.log('用户激活状态:', {
-          shares: ethers.utils.formatUnits(userInfo.shares, 18),
-          activeTime: new Date(userInfo.activeTime * 1000).toLocaleString()
-        });
-        
-        const lpTokenAddress = await lpRewardContract.lpToken();
-        console.log('LP Token地址:', lpTokenAddress);
-        
-        const rewardTokenAddress = await lpRewardContract.rewardToken();
-        console.log('奖励代币地址:', rewardTokenAddress);
-        
-        const pausedStatus = await lpRewardContract.paused();
-        console.log('合约暂停状态:', pausedStatus);
-        
-      } catch (error) {
-        console.error('调试失败:', error);
-      }
-    }
-  });
-  
-  document.body.appendChild(debugButton);
-  
+  // 监听钱包事件
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length === 0) {
@@ -5639,12 +5102,13 @@ document.addEventListener('DOMContentLoaded', function() {
         AppCore.restoreInviteAddress();
         AppCore.updateUI();
         DataManager.refreshAll();
-        LPRewardManager.refreshUserInfo();
+        LPRewardManager.refreshInfo();
+        LPRewardManager.startAutoRefresh();
         if (!refreshInterval) {
           refreshInterval = setInterval(() => {
             DataManager.refreshAll();
             if (document.getElementById('lpRewardTab').classList.contains('active')) {
-              LPRewardManager.refreshUserInfo();
+              LPRewardManager.refreshInfo();
             }
           }, 10000);
         }
@@ -5659,7 +5123,7 @@ document.addEventListener('DOMContentLoaded', function() {
       AppCore.disconnect();
     });
     
-    // 检查是否已连接钱包
+    // 检查是否已连接钱包（但不自动连接）
     window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
       if (accounts.length > 0) {
         account = accounts[0];
@@ -5669,24 +5133,21 @@ document.addEventListener('DOMContentLoaded', function() {
         AppCore.restoreInviteAddress();
         AppCore.updateUI();
         DataManager.refreshAll();
-        LPRewardManager.refreshUserInfo();
+        LPRewardManager.refreshInfo();
+        LPRewardManager.startAutoRefresh();
         
         if (!refreshInterval) {
           refreshInterval = setInterval(() => {
             DataManager.refreshAll();
             if (document.getElementById('lpRewardTab').classList.contains('active')) {
-              LPRewardManager.refreshUserInfo();
+              LPRewardManager.refreshInfo();
             }
           }, 10000);
         }
       }
-    });
+    }).catch(console.error);
   }
   
-  // 显示调试按钮（开发环境）
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    debugButton.style.display = 'block';
-  }
 });
   </script>
 </body>
