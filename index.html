@@ -4826,8 +4826,10 @@ const DataManager = {
   }
 };
 
-// ==================== 交换模块 ====================
+// ==================== 交换模块 - 修复滑点切换问题 ====================
 const SwapModule = {
+  slippageUpdateInProgress: false,
+  
   async executeSwap() {
     const fromAmount = document.getElementById('fromAmount').value;
     
@@ -4993,10 +4995,43 @@ const SwapModule = {
         swapBtn.disabled = true;
       }
     }
+  },
+
+  async updateSlippage(newSlippage) {
+    if (this.slippageUpdateInProgress) return;
+    
+    this.slippageUpdateInProgress = true;
+    
+    try {
+      // 检查LOM交易的特殊滑点要求
+      if (fromToken === 'LOM' && newSlippage < 5) {
+        // 显示警告但不阻止用户选择
+        Utils.showNotification(
+          isChinese ? '⚠️ LOM交易建议使用5%以上滑点以避免交易失败' : 
+                    '⚠️ LOM transactions recommend 5%+ slippage to avoid failure',
+          'warning'
+        );
+      }
+      
+      slippage = newSlippage;
+      
+      // 如果当前有输入金额，重新计算输出
+      const fromAmount = document.getElementById('fromAmount');
+      if (fromAmount && fromAmount.value && fromAmount.value !== '0') {
+        await this.updateOutputFromInput();
+      }
+      
+    } catch (error) {
+      console.error('更新滑点失败:', error);
+    } finally {
+      setTimeout(() => {
+        this.slippageUpdateInProgress = false;
+      }, 100);
+    }
   }
 };
 
-// ==================== 流动性模块 - 修复版本，添加自动同步功能 ====================
+// ==================== 流动性模块 - 修复自动同步功能 ====================
 const LiquidityModule = {
   async addLiquidity() {
     const cfxAmount = document.getElementById("addCfx").value;
@@ -5445,24 +5480,19 @@ const EventHandlers = {
       });
     });
     
+    // 修复滑点切换卡顿问题
     document.querySelectorAll('.slippage-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const newSlippage = parseFloat(e.target.dataset.slip);
-        if (fromToken === 'LOM' && newSlippage < 5) {
-          Utils.showNotification(
-            isChinese ? 'LOM交易需要5%以上滑点以避免交易失败' : 
-                      'LOM transactions require 5%+ slippage to avoid failure',
-            'warning'
-          );
-        }
         
-        slippage = newSlippage;
+        // 更新UI状态
         document.querySelectorAll('.slippage-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
         
-        if (lastInputWasFrom && fromAmount && fromAmount.value) {
-          SwapModule.updateOutputFromInput();
-        }
+        // 异步更新滑点，避免阻塞UI
+        setTimeout(async () => {
+          await SwapModule.updateSlippage(newSlippage);
+        }, 10);
       });
     });
     
