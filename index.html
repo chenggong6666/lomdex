@@ -3269,7 +3269,6 @@ const LP_REWARD_ABI = [
   "function lpToken() view returns (address)",
   "function rewardToken() view returns (address)",
   "function getReferralUnlockTime(address user) view returns (uint256)",
-  "function updateShares()",
   "function updateSharesForUser(address userAddr)",
   "function depositReward(uint256 amount)",
   "function depositRewardAsAdmin(uint256 amount)",
@@ -3495,7 +3494,7 @@ const TokenUtils = {
   }
 };
 
-// ==================== LP奖励管理器 - 修复自动同步功能 ====================
+// ==================== LP奖励管理器 - 优化版本 ====================
 const LPRewardManager = {
   // 状态定义
   REWARD_STATES: {
@@ -3514,7 +3513,6 @@ const LPRewardManager = {
   contractShares: 0,
   needsSync: false,
   lastSyncTime: 0,
-  syncInProgress: false,
   
   // 自动刷新计时器
   refreshTimer: null,
@@ -3588,50 +3586,31 @@ const LPRewardManager = {
     }
   },
   
-  // 同步合约份额 - 自动调用（添加/移除流动性后）
-  async syncContractShares(auto = false) {
-    if (!account || !lpRewardContract || this.syncInProgress) {
+  // 同步合约份额 - 添加/移除流动性后调用
+  async syncContractShares() {
+    if (!account || !lpRewardContract) {
       return false;
     }
-    
-    this.syncInProgress = true;
     
     try {
       console.log('🔄 开始同步合约份额...');
       
-      if (!auto) {
-        Utils.showNotification('同步持仓数据中...', 'info');
-      }
-      
-      // 调用合约的updateSharesForUser函数（优化版，只更新当前用户）
+      // 调用合约的updateSharesForUser函数
       const tx = await lpRewardContract.updateSharesForUser(account);
       await tx.wait();
       
       console.log('✅ 合约份额同步成功');
       
-      if (!auto) {
-        Utils.showNotification('持仓数据同步成功', 'success');
-      }
-      
       this.lastSyncTime = Date.now();
       this.needsSync = false;
       
-      // 等待区块确认后刷新数据
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 刷新数据
       await this.refreshAll();
       
       return true;
     } catch (error) {
       console.error('合约份额同步失败:', error);
-      
-      // 如果自动同步失败，不显示错误通知，避免干扰用户
-      if (!auto) {
-        Utils.showNotification('同步失败: ' + Utils.getErrorMessage(error), 'error');
-      }
-      
       return false;
-    } finally {
-      this.syncInProgress = false;
     }
   },
   
@@ -3840,46 +3819,35 @@ const LPRewardManager = {
       }
     }
     
-    // 更新合约份额显示
-    this.updateSharesDisplay();
-  },
-  
-  // 更新份额显示
-  updateSharesDisplay() {
-    // 查找或创建份额显示卡片
-    let sharesCard = document.querySelector('.shares-card');
-    
-    if (!sharesCard) {
-      // 创建新的份额卡片
-      const panel = document.querySelector('.lp-reward-panel');
-      if (panel) {
-        const sharesHTML = `
-          <div class="lp-reward-card shares-card">
-            <div class="lp-reward-card-title">
-              <span>📊</span>
-              <span>合约份额</span>
-            </div>
-            <div class="lp-reward-card-value" id="contractShares">${Utils.formatDisplay(this.contractShares)} LPT</div>
-          </div>
-        `;
-        panel.insertAdjacentHTML('beforeend', sharesHTML);
-        sharesCard = document.querySelector('.shares-card');
-      }
+    // 更新奖励倍率
+    const multiplierEl = document.getElementById('rewardMultiplier');
+    if (multiplierEl) {
+      const multiplier = this.calculateMultiplier();
+      multiplierEl.textContent = `${multiplier.toFixed(1)}x`;
+      multiplierEl.className = 'lp-reward-card-value success';
     }
     
-    // 更新份额值
-    const sharesEl = document.getElementById('contractShares');
-    if (sharesEl) {
-      sharesEl.textContent = `${Utils.formatDisplay(this.contractShares)} LPT`;
-      
-      // 如果需要同步，高亮显示
-      if (this.needsSync) {
-        sharesEl.classList.add('warning');
-        sharesEl.classList.remove('success');
-      } else {
-        sharesEl.classList.remove('warning');
-        sharesEl.classList.add('success');
-      }
+    // 更新倍率高亮
+    this.updateMultiplierHighlight();
+  },
+  
+  // 更新倍率高亮
+  updateMultiplierHighlight() {
+    document.querySelectorAll('.lp-reward-multiplier-item').forEach(item => {
+      item.classList.remove('active');
+    });
+
+    const multiplier = this.calculateMultiplier();
+    if (multiplier >= 3.0) {
+      document.getElementById('multiplier360d')?.classList.add('active');
+    } else if (multiplier >= 2.0) {
+      document.getElementById('multiplier180d')?.classList.add('active');
+    } else if (multiplier >= 1.5) {
+      document.getElementById('multiplier90d')?.classList.add('active');
+    } else if (multiplier >= 1.0) {
+      document.getElementById('multiplier30d')?.classList.add('active');
+    } else {
+      document.getElementById('multiplier30d')?.classList.add('active');
     }
   },
   
@@ -3932,39 +3900,6 @@ const LPRewardManager = {
     const pendingReferralEl = document.getElementById('pendingReferral');
     if (pendingReferralEl) {
       pendingReferralEl.textContent = `${Utils.formatDisplay(this.userInfo?.pendingReferral || 0)} LOM`;
-    }
-  },
-  
-  // 更新倍率显示
-  updateMultiplierDisplay() {
-    const multiplierEl = document.getElementById('rewardMultiplier');
-    if (multiplierEl) {
-      const multiplier = this.calculateMultiplier();
-      multiplierEl.textContent = `${multiplier.toFixed(1)}x`;
-      multiplierEl.className = 'lp-reward-card-value success';
-    }
-    
-    // 更新倍率高亮
-    this.updateMultiplierHighlight();
-  },
-  
-  // 更新倍率高亮
-  updateMultiplierHighlight() {
-    document.querySelectorAll('.lp-reward-multiplier-item').forEach(item => {
-      item.classList.remove('active');
-    });
-
-    const multiplier = this.calculateMultiplier();
-    if (multiplier >= 3.0) {
-      document.getElementById('multiplier360d')?.classList.add('active');
-    } else if (multiplier >= 2.0) {
-      document.getElementById('multiplier180d')?.classList.add('active');
-    } else if (multiplier >= 1.5) {
-      document.getElementById('multiplier90d')?.classList.add('active');
-    } else if (multiplier >= 1.0) {
-      document.getElementById('multiplier30d')?.classList.add('active');
-    } else {
-      document.getElementById('multiplier30d')?.classList.add('active');
     }
   },
   
@@ -4089,12 +4024,12 @@ const LPRewardManager = {
     }
   },
   
-  // 更新同步区域（现在只显示状态，不显示手动同步按钮）
+  // 更新同步区域
   updateSyncSection() {
     let syncSection = document.getElementById('syncSection');
     
     if (!syncSection) {
-      // 创建同步区域（仅显示状态）
+      // 创建同步区域
       const rewardStats = document.querySelector('.lp-reward-stats');
       if (rewardStats) {
         const syncHTML = `
@@ -4102,8 +4037,8 @@ const LPRewardManager = {
             <div class="lp-reward-warning" id="syncWarning" style="display: none;">
               <div class="lp-reward-warning-icon">🔄</div>
               <div class="lp-reward-warning-text">
-                <div>持仓数据已自动同步</div>
-                <small>添加或移除流动性后，奖励数据会自动更新</small>
+                <div>持仓数据需要同步</div>
+                <small>请等待或手动刷新页面</small>
               </div>
             </div>
           </div>
@@ -4115,12 +4050,9 @@ const LPRewardManager = {
     
     const syncWarning = document.getElementById('syncWarning');
     if (syncWarning) {
-      // 如果当前需要同步，显示提示（3秒后自动隐藏）
+      // 如果当前需要同步，显示提示
       if (this.currentState === this.REWARD_STATES.NEEDS_SYNC) {
         syncWarning.style.display = 'flex';
-        setTimeout(() => {
-          syncWarning.style.display = 'none';
-        }, 3000);
       } else {
         syncWarning.style.display = 'none';
       }
@@ -4352,7 +4284,6 @@ const LPRewardManager = {
     this.lpBalance = 0;
     this.contractShares = 0;
     this.needsSync = false;
-    this.syncInProgress = false;
 
     const elements = {
       'activationStatus': { text: '未激活', className: 'lp-reward-card-value warning' },
@@ -4372,13 +4303,6 @@ const LPRewardManager = {
         if (data.className) element.className = data.className;
       }
     });
-
-    // 更新份额显示
-    const sharesEl = document.getElementById('contractShares');
-    if (sharesEl) {
-      sharesEl.textContent = '0 LPT';
-      sharesEl.className = 'lp-reward-card-value';
-    }
 
     const activateBtn = document.getElementById('activateBtn');
     const claimBtn = document.getElementById('claimBtn');
@@ -4400,11 +4324,6 @@ const LPRewardManager = {
     const referralSection = document.getElementById('referralSection');
     if (referralSection) {
       referralSection.style.display = 'block';
-    }
-
-    const referralStatsContainer = document.getElementById('referralStatsContainer');
-    if (referralStatsContainer) {
-      referralStatsContainer.innerHTML = '';
     }
 
     const globalStatsContainer = document.getElementById('globalStatsContainer');
@@ -4826,10 +4745,8 @@ const DataManager = {
   }
 };
 
-// ==================== 交换模块 - 修复滑点切换问题 ====================
+// ==================== 交换模块 - 修复滑点问题 ====================
 const SwapModule = {
-  slippageUpdateInProgress: false,
-  
   async executeSwap() {
     const fromAmount = document.getElementById('fromAmount').value;
     
@@ -4998,21 +4915,8 @@ const SwapModule = {
   },
 
   async updateSlippage(newSlippage) {
-    if (this.slippageUpdateInProgress) return;
-    
-    this.slippageUpdateInProgress = true;
-    
     try {
-      // 检查LOM交易的特殊滑点要求
-      if (fromToken === 'LOM' && newSlippage < 5) {
-        // 显示警告但不阻止用户选择
-        Utils.showNotification(
-          isChinese ? '⚠️ LOM交易建议使用5%以上滑点以避免交易失败' : 
-                    '⚠️ LOM transactions recommend 5%+ slippage to avoid failure',
-          'warning'
-        );
-      }
-      
+      // 更新滑点
       slippage = newSlippage;
       
       // 如果当前有输入金额，重新计算输出
@@ -5023,15 +4927,11 @@ const SwapModule = {
       
     } catch (error) {
       console.error('更新滑点失败:', error);
-    } finally {
-      setTimeout(() => {
-        this.slippageUpdateInProgress = false;
-      }, 100);
     }
   }
 };
 
-// ==================== 流动性模块 - 修复自动同步功能 ====================
+// ==================== 流动性模块 - 添加自动同步功能 ====================
 const LiquidityModule = {
   async addLiquidity() {
     const cfxAmount = document.getElementById("addCfx").value;
@@ -5075,18 +4975,18 @@ const LiquidityModule = {
       document.getElementById("addCfx").value = "";
       document.getElementById("addLom").value = "";
       
-      Utils.showNotification(isChinese ? '添加流动性成功！自动同步奖励数据...' : 'Liquidity added successfully! Auto-syncing reward data...', 'success');
+      Utils.showNotification(isChinese ? '添加流动性成功！正在同步奖励数据...' : 'Liquidity added successfully! Syncing reward data...', 'success');
       
       // 等待区块确认
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 自动同步LP奖励合约份额
       try {
-        await LPRewardManager.syncContractShares(true);
+        await LPRewardManager.syncContractShares();
         Utils.showNotification('奖励数据同步完成！', 'success');
       } catch (syncError) {
         console.error('自动同步失败:', syncError);
-        // 不显示错误，避免干扰用户
+        Utils.showNotification('同步失败，请手动刷新页面查看最新状态', 'error');
       }
       
       // 刷新数据
@@ -5138,21 +5038,21 @@ const LiquidityModule = {
       const lomEst = document.getElementById("removeEstLom").textContent;
       
       Utils.showNotification(
-        isChinese ? `移除流动性成功！获得 ${cfxEst} CFX 和 ${lomEst} LOM，自动同步奖励数据...` : 
-                   `Success! Received ${cfxEst} CFX and ${lomEst} LOM, auto-syncing reward data...`,
+        isChinese ? `移除流动性成功！获得 ${cfxEst} CFX 和 ${lomEst} LOM，正在同步奖励数据...` : 
+                   `Success! Received ${cfxEst} CFX and ${lomEst} LOM, syncing reward data...`,
         'success'
       );
       
       // 等待区块确认
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 自动同步LP奖励合约份额
       try {
-        await LPRewardManager.syncContractShares(true);
+        await LPRewardManager.syncContractShares();
         Utils.showNotification('奖励数据同步完成！', 'success');
       } catch (syncError) {
         console.error('自动同步失败:', syncError);
-        // 不显示错误，避免干扰用户
+        Utils.showNotification('同步失败，请手动刷新页面查看最新状态', 'error');
       }
       
       // 刷新数据
@@ -5480,7 +5380,7 @@ const EventHandlers = {
       });
     });
     
-    // 修复滑点切换卡顿问题
+    // 修复滑点切换 - 简化版本
     document.querySelectorAll('.slippage-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const newSlippage = parseFloat(e.target.dataset.slip);
@@ -5489,10 +5389,8 @@ const EventHandlers = {
         document.querySelectorAll('.slippage-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
         
-        // 异步更新滑点，避免阻塞UI
-        setTimeout(async () => {
-          await SwapModule.updateSlippage(newSlippage);
-        }, 10);
+        // 更新滑点
+        SwapModule.updateSlippage(newSlippage);
       });
     });
     
@@ -5871,8 +5769,6 @@ const EventHandlers = {
     }
   },
 
-  handleSearchInput: null,
-
   async updateTokenBalanceInSelector(symbol) {
     try {
       const token = TokenUtils.getToken(symbol);
@@ -6001,6 +5897,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 初始化完成
   console.log('✅ LOMswap 初始化完成');
 });
+
   </script>
 </body>
 </html>
