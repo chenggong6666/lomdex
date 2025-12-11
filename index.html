@@ -3134,7 +3134,6 @@
 
   <script>
 'use strict';
-'use strict';
 
 // ==================== 统一配置 ====================
 const APP_CONFIG = {
@@ -3496,7 +3495,7 @@ const TokenUtils = {
   }
 };
 
-// ==================== LP奖励管理器 - 完全重构 ====================
+// ==================== LP奖励管理器 - 修复自动同步功能 ====================
 const LPRewardManager = {
   // 状态定义
   REWARD_STATES: {
@@ -3561,39 +3560,24 @@ const LPRewardManager = {
       this.resetUI();
     }
   },
-    async fetchCurrentLPBalance() {
-    try {
-      if (!pair || !account) return 0;
-      
-      const lpBal = await pair.balanceOf(account);
-      return parseFloat(ethers.utils.formatUnits(lpBal, 18));
-    } catch (error) {
-      console.error('获取LP余额失败:', error);
-      return 0;
-    }
-  },
   
   // 检查数据一致性
- async checkDataConsistency() {
-    if (!this.userInfo || !pair) return false;
+  async checkDataConsistency() {
+    if (!this.userInfo || !pair) return;
     
     try {
       // 获取当前LP余额
-      const currentLP = await this.fetchCurrentLPBalance();
+      const currentLP = this.lpBalance;
       const contractShares = this.userInfo.shares;
       
-      // 计算百分比差异（更宽容的比较）
+      // 计算差异（考虑浮点数精度）
       const diff = Math.abs(currentLP - contractShares);
-      const percentDiff = contractShares > 0 ? (diff / contractShares) * 100 : 100;
-      
-      // 如果差异超过0.1%或者绝对值超过0.001，则认为需要同步
-      this.needsSync = percentDiff > 0.1 || diff > 0.001;
+      this.needsSync = diff > 0.000001;
       
       console.log('📊 数据一致性检查:', {
         lp余额: currentLP,
         合约份额: contractShares,
-        绝对值差异: diff,
-        百分比差异: percentDiff.toFixed(2) + '%',
+        差异: diff,
         需要同步: this.needsSync
       });
       
@@ -3604,31 +3588,865 @@ const LPRewardManager = {
     }
   },
   
-  // 新增：快速同步检查（用于交易后）
-  async quickSyncCheck() {
-    if (!account || !lpRewardContract) return;
+  // 同步合约份额 - 自动调用（添加/移除流动性后）
+  async syncContractShares(auto = false) {
+    if (!account || !lpRewardContract || this.syncInProgress) {
+      return false;
+    }
+    
+    this.syncInProgress = true;
     
     try {
-      // 快速获取用户信息
-      const userData = await lpRewardContract.users(account);
-      const contractShares = parseFloat(ethers.utils.formatUnits(userData.shares, 18));
+      console.log('🔄 开始同步合约份额...');
       
-      // 快速获取LP余额
-      const currentLP = await this.fetchCurrentLPBalance();
-      
-      const diff = Math.abs(currentLP - contractShares);
-      this.needsSync = diff > 0.001;
-      
-      if (this.needsSync) {
-        console.log('🔄 快速检查：需要同步，差异:', diff);
-        this.currentState = this.REWARD_STATES.NEEDS_SYNC;
-        this.updateUI();
+      if (!auto) {
+        Utils.showNotification('同步持仓数据中...', 'info');
       }
       
-      return this.needsSync;
+      // 调用合约的updateSharesForUser函数（优化版，只更新当前用户）
+      const tx = await lpRewardContract.updateSharesForUser(account);
+      await tx.wait();
+      
+      console.log('✅ 合约份额同步成功');
+      
+      if (!auto) {
+        Utils.showNotification('持仓数据同步成功', 'success');
+      }
+      
+      this.lastSyncTime = Date.now();
+      this.needsSync = false;
+      
+      // 等待区块确认后刷新数据
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await this.refreshAll();
+      
+      return true;
     } catch (error) {
-      console.error('快速同步检查失败:', error);
+      console.error('合约份额同步失败:', error);
+      
+      // 如果自动同步失败，不显示错误通知，避免干扰用户
+      if (!auto) {
+        Utils.showNotification('同步失败: ' + Utils.getErrorMessage(error), 'error');
+      }
+      
       return false;
+    } finally {
+      this.syncInProgress = false;
+    }
+  },
+  
+  // 获取合约信息
+  async fetchContractInfo() {
+    try {
+      const [
+        minActivation,
+        totalShares,
+        rewardPerSecond,
+        pausedStatus,
+        lpTokenAddr,
+        rewardTokenAddr,
+        accRewardPerShare,
+        lastRewardTime
+      ] = await Promise.all([
+        lpRewardContract.minActivation(),
+        lpRewardContract.totalShares(),
+        lpRewardContract.rewardPerSecond(),
+        lpRewardContract.paused(),
+        lpRewardContract.lpToken(),
+        lpRewardContract.rewardToken(),
+        lpRewardContract.accRewardPerShare(),
+        lpRewardContract.lastRewardTime()
+      ]);
+
+      this.contractInfo = {
+        minActivation: parseFloat(ethers.utils.formatUnits(minActivation, 18)),
+        totalShares: parseFloat(ethers.utils.formatUnits(totalShares, 18)),
+        rewardPerSecond: parseFloat(ethers.utils.formatUnits(rewardPerSecond, 18)),
+        paused: pausedStatus,
+        lpTokenAddress: lpTokenAddr,
+        rewardTokenAddress: rewardTokenAddr,
+        accRewardPerShare: parseFloat(ethers.utils.formatUnits(accRewardPerShare, 12)),
+        lastRewardTime: lastRewardTime.toNumber()
+      };
+      
+      console.log('📋 合约信息:', this.contractInfo);
+    } catch (error) {
+      console.error('获取合约信息失败:', error);
+      throw error;
+    }
+  },
+  
+  // 获取用户信息
+  async fetchUserInfo() {
+    try {
+      const userData = await lpRewardContract.users(account);
+      
+      this.userInfo = {
+        shares: parseFloat(ethers.utils.formatUnits(userData.shares, 18)),
+        rewardDebt: parseFloat(ethers.utils.formatUnits(userData.rewardDebt, 12)),
+        pendingReferral: parseFloat(ethers.utils.formatUnits(userData.pendingReferral, 18)),
+        lastClaimTime: userData.lastClaimTime.toNumber(),
+        activeTime: userData.activeTime.toNumber(),
+        lastReduceTime: userData.lastReduceTime.toNumber(),
+        referralUnlockTime: userData.referralUnlockTime.toNumber(),
+        referrer: userData.referrer,
+        cleanInFirst30Days: userData.cleanInFirst30Days
+      };
+      
+      this.contractShares = this.userInfo.shares;
+      
+      console.log('👤 用户信息:', this.userInfo);
+    } catch (error) {
+      console.error('获取用户信息失败:', error);
+      this.userInfo = {
+        shares: 0,
+        rewardDebt: 0,
+        pendingReferral: 0,
+        lastClaimTime: 0,
+        activeTime: 0,
+        lastReduceTime: 0,
+        referralUnlockTime: 0,
+        referrer: '0x0000000000000000000000000000000000000000',
+        cleanInFirst30Days: false
+      };
+      this.contractShares = 0;
+    }
+  },
+  
+  // 获取LP余额
+  async fetchLPBalance() {
+    try {
+      if (!pair || !account) {
+        this.lpBalance = 0;
+        return 0;
+      }
+      
+      const lpBal = await pair.balanceOf(account);
+      this.lpBalance = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+      
+      console.log('💰 LP余额:', this.lpBalance);
+      return this.lpBalance;
+    } catch (error) {
+      console.error('获取LP余额失败:', error);
+      this.lpBalance = 0;
+      return 0;
+    }
+  },
+  
+  // 获取待领取奖励
+  async fetchPendingRewards() {
+    try {
+      const pendingReward = await lpRewardContract.pendingReward(account);
+      this.userInfo.pendingReward = parseFloat(ethers.utils.formatUnits(pendingReward, 18));
+
+      const pendingReferral = await lpRewardContract.pendingReferral(account);
+      this.userInfo.pendingReferral = parseFloat(ethers.utils.formatUnits(pendingReferral, 18));
+      
+      console.log('🎁 待领取奖励:', {
+        奖励: this.userInfo.pendingReward,
+        推荐奖励: this.userInfo.pendingReferral
+      });
+    } catch (error) {
+      console.error('获取奖励数据失败:', error);
+      this.userInfo.pendingReward = 0;
+      this.userInfo.pendingReferral = 0;
+    }
+  },
+  
+  // 确定当前状态
+  determineCurrentState() {
+    if (this.contractInfo && this.contractInfo.paused) {
+      this.currentState = this.REWARD_STATES.PAUSED;
+      return;
+    }
+
+    if (!this.userInfo || this.userInfo.shares <= 0) {
+      this.currentState = this.REWARD_STATES.NOT_ACTIVATED;
+      return;
+    }
+
+    if (this.needsSync) {
+      this.currentState = this.REWARD_STATES.NEEDS_SYNC;
+      return;
+    }
+
+    if (this.lpBalance >= (this.contractInfo?.minActivation || 100)) {
+      this.currentState = this.REWARD_STATES.ACTIVATED;
+    } else {
+      this.currentState = this.REWARD_STATES.NO_LP;
+    }
+  },
+  
+  // 计算奖励倍率
+  calculateMultiplier() {
+    if (!this.userInfo || this.userInfo.activeTime === 0) return 1.0;
+
+    const now = Math.floor(Date.now() / 1000);
+    const duration = now - this.userInfo.activeTime;
+
+    if (this.contractInfo && this.contractInfo.paused) return 1.0;
+    
+    if (duration >= 360 * 24 * 60 * 60) return 3.0;    // 360天以上
+    if (duration >= 180 * 24 * 60 * 60) return 2.0;    // 180-360天
+    if (duration >= 90 * 24 * 60 * 60) return 1.5;     // 90-180天
+    if (duration >= 30 * 24 * 60 * 60) return 1.0;     // 30-90天
+    return 0.8;                                        // 30天内
+  },
+  
+  // 更新UI
+  updateUI() {
+    this.updateStatusPanel();
+    this.updateRewardInfo();
+    this.updateMultiplierDisplay();
+    this.updateButtonStates();
+    this.updateWarnings();
+    this.updateSyncSection();
+    this.updateGlobalStats();
+  },
+  
+  // 更新状态面板
+  updateStatusPanel() {
+    const statusConfig = {
+      [this.REWARD_STATES.NOT_ACTIVATED]: { text: '未激活', className: 'warning' },
+      [this.REWARD_STATES.ACTIVATED]: { text: '已激活', className: 'success' },
+      [this.REWARD_STATES.NEEDS_SYNC]: { text: '需同步', className: 'warning' },
+      [this.REWARD_STATES.NO_LP]: { text: 'LP不足', className: 'warning' },
+      [this.REWARD_STATES.PAUSED]: { text: '已暂停', className: 'warning' }
+    };
+
+    const config = statusConfig[this.currentState] || statusConfig[this.REWARD_STATES.NOT_ACTIVATED];
+    
+    // 更新激活状态
+    const activationStatus = document.getElementById('activationStatus');
+    if (activationStatus) {
+      activationStatus.textContent = config.text;
+      activationStatus.className = `lp-reward-card-value ${config.className}`;
+    }
+    
+    // 更新LP余额
+    const lpBalanceEl = document.getElementById('lpBalance');
+    if (lpBalanceEl) {
+      lpBalanceEl.textContent = `${Utils.formatDisplay(this.lpBalance)} LPT`;
+    }
+    
+    // 更新持有时长
+    const daysHeldEl = document.getElementById('daysHeld');
+    if (daysHeldEl) {
+      if (this.userInfo && this.userInfo.activeTime > 0) {
+        const daysHeld = Math.floor((Date.now() / 1000 - this.userInfo.activeTime) / 86400);
+        daysHeldEl.textContent = `${daysHeld} 天`;
+      } else {
+        daysHeldEl.textContent = '0 天';
+      }
+    }
+    
+    // 更新合约份额显示
+    this.updateSharesDisplay();
+  },
+  
+  // 更新份额显示
+  updateSharesDisplay() {
+    // 查找或创建份额显示卡片
+    let sharesCard = document.querySelector('.shares-card');
+    
+    if (!sharesCard) {
+      // 创建新的份额卡片
+      const panel = document.querySelector('.lp-reward-panel');
+      if (panel) {
+        const sharesHTML = `
+          <div class="lp-reward-card shares-card">
+            <div class="lp-reward-card-title">
+              <span>📊</span>
+              <span>合约份额</span>
+            </div>
+            <div class="lp-reward-card-value" id="contractShares">${Utils.formatDisplay(this.contractShares)} LPT</div>
+          </div>
+        `;
+        panel.insertAdjacentHTML('beforeend', sharesHTML);
+        sharesCard = document.querySelector('.shares-card');
+      }
+    }
+    
+    // 更新份额值
+    const sharesEl = document.getElementById('contractShares');
+    if (sharesEl) {
+      sharesEl.textContent = `${Utils.formatDisplay(this.contractShares)} LPT`;
+      
+      // 如果需要同步，高亮显示
+      if (this.needsSync) {
+        sharesEl.classList.add('warning');
+        sharesEl.classList.remove('success');
+      } else {
+        sharesEl.classList.remove('warning');
+        sharesEl.classList.add('success');
+      }
+    }
+  },
+  
+  // 更新奖励信息
+  updateRewardInfo() {
+    // 更新待领取奖励
+    const pendingRewardEl = document.getElementById('pendingReward');
+    if (pendingRewardEl) {
+      pendingRewardEl.textContent = `${Utils.formatDisplay(this.userInfo?.pendingReward || 0)} LOM`;
+    }
+    
+    // 更新每日预估收益
+    const dailyRewardEl = document.getElementById('dailyReward');
+    if (dailyRewardEl) {
+      if (this.currentState === this.REWARD_STATES.ACTIVATED && 
+          this.userInfo && this.userInfo.shares > 0 && 
+          this.contractInfo && this.contractInfo.totalShares > 0) {
+        
+        const multiplier = this.calculateMultiplier();
+        const dailyReward = this.contractInfo.rewardPerSecond * 
+                          this.userInfo.shares / this.contractInfo.totalShares * 
+                          86400 * multiplier;
+        dailyRewardEl.textContent = `${Utils.formatDisplay(dailyReward)} LOM`;
+      } else {
+        dailyRewardEl.textContent = '0 LOM';
+      }
+    }
+    
+    // 更新下次领取时间
+    const nextClaimTimeEl = document.getElementById('nextClaimTime');
+    if (nextClaimTimeEl) {
+      if (this.userInfo && this.userInfo.lastClaimTime > 0) {
+        const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
+        const now = Math.floor(Date.now() / 1000);
+
+        if (now >= nextClaimTime) {
+          nextClaimTimeEl.textContent = '现在可以领取';
+        } else {
+          const timeLeft = nextClaimTime - now;
+          const daysLeft = Math.floor(timeLeft / 86400);
+          const hoursLeft = Math.floor((timeLeft % 86400) / 3600);
+          nextClaimTimeEl.textContent = `${daysLeft}天${hoursLeft}小时后`;
+        }
+      } else {
+        nextClaimTimeEl.textContent = '--';
+      }
+    }
+    
+    // 更新推荐奖励
+    const pendingReferralEl = document.getElementById('pendingReferral');
+    if (pendingReferralEl) {
+      pendingReferralEl.textContent = `${Utils.formatDisplay(this.userInfo?.pendingReferral || 0)} LOM`;
+    }
+  },
+  
+  // 更新倍率显示
+  updateMultiplierDisplay() {
+    const multiplierEl = document.getElementById('rewardMultiplier');
+    if (multiplierEl) {
+      const multiplier = this.calculateMultiplier();
+      multiplierEl.textContent = `${multiplier.toFixed(1)}x`;
+      multiplierEl.className = 'lp-reward-card-value success';
+    }
+    
+    // 更新倍率高亮
+    this.updateMultiplierHighlight();
+  },
+  
+  // 更新倍率高亮
+  updateMultiplierHighlight() {
+    document.querySelectorAll('.lp-reward-multiplier-item').forEach(item => {
+      item.classList.remove('active');
+    });
+
+    const multiplier = this.calculateMultiplier();
+    if (multiplier >= 3.0) {
+      document.getElementById('multiplier360d')?.classList.add('active');
+    } else if (multiplier >= 2.0) {
+      document.getElementById('multiplier180d')?.classList.add('active');
+    } else if (multiplier >= 1.5) {
+      document.getElementById('multiplier90d')?.classList.add('active');
+    } else if (multiplier >= 1.0) {
+      document.getElementById('multiplier30d')?.classList.add('active');
+    } else {
+      document.getElementById('multiplier30d')?.classList.add('active');
+    }
+  },
+  
+  // 更新按钮状态
+  updateButtonStates() {
+    const activateBtn = document.getElementById('activateBtn');
+    const claimBtn = document.getElementById('claimBtn');
+    const claimReferralBtn = document.getElementById('claimReferralBtn');
+
+    if (!activateBtn || !claimBtn || !claimReferralBtn) return;
+
+    switch (this.currentState) {
+      case this.REWARD_STATES.NOT_ACTIVATED:
+        const canActivate = this.canActivate();
+        activateBtn.disabled = !canActivate || (this.contractInfo && this.contractInfo.paused);
+        activateBtn.innerHTML = (this.contractInfo && this.contractInfo.paused) ? 
+          '<span>⏸️</span><span>合约暂停</span>' : 
+          (canActivate ? 
+            '<span>🚀</span><span>激活奖励</span>' : 
+            '<span>⏳</span><span>LP不足</span>');
+
+        claimBtn.disabled = true;
+        claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
+
+        claimReferralBtn.disabled = true;
+        claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
+        break;
+
+      case this.REWARD_STATES.ACTIVATED:
+      case this.REWARD_STATES.NEEDS_SYNC:
+        activateBtn.disabled = true;
+        activateBtn.innerHTML = '<span>✅</span><span>已激活</span>';
+
+        const now = Math.floor(Date.now() / 1000);
+        const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
+        claimBtn.disabled = now < nextClaimTime || 
+                          (this.userInfo.pendingReward || 0) <= 0 || 
+                          (this.contractInfo && this.contractInfo.paused);
+        claimBtn.innerHTML = (this.contractInfo && this.contractInfo.paused) ? 
+          '<span>⏸️</span><span>合约暂停</span>' : 
+          (now < nextClaimTime ? 
+            '<span>⏳</span><span>等待中</span>' : 
+            '<span>💰</span><span>领取奖励</span>');
+
+        const canClaimReferral = (this.userInfo.pendingReferral || 0) > 0 && 
+                               now >= this.userInfo.referralUnlockTime;
+        claimReferralBtn.disabled = !canClaimReferral || (this.contractInfo && this.contractInfo.paused);
+        claimReferralBtn.innerHTML = (this.contractInfo && this.contractInfo.paused) ? 
+          '<span>⏸️</span><span>合约暂停</span>' : 
+          (canClaimReferral ? 
+            '<span>🎁</span><span>领取推荐</span>' : 
+            '<span>🔒</span><span>锁定中</span>');
+        break;
+
+      case this.REWARD_STATES.NO_LP:
+        activateBtn.disabled = true;
+        activateBtn.innerHTML = '<span>⏸️</span><span>LP不足</span>';
+
+        claimBtn.disabled = (this.userInfo.pendingReward || 0) <= 0 || (this.contractInfo && this.contractInfo.paused);
+        claimBtn.innerHTML = (this.contractInfo && this.contractInfo.paused) ? 
+          '<span>⏸️</span><span>合约暂停</span>' : 
+          '<span>💰</span><span>领取奖励</span>';
+
+        claimReferralBtn.disabled = (this.userInfo.pendingReferral || 0) <= 0 || (this.contractInfo && this.contractInfo.paused);
+        claimReferralBtn.innerHTML = (this.contractInfo && this.contractInfo.paused) ? 
+          '<span>⏸️</span><span>合约暂停</span>' : 
+          '<span>🎁</span><span>领取推荐</span>';
+        break;
+
+      case this.REWARD_STATES.PAUSED:
+        activateBtn.disabled = true;
+        activateBtn.innerHTML = '<span>⏸️</span><span>合约暂停</span>';
+
+        claimBtn.disabled = true;
+        claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
+
+        claimReferralBtn.disabled = true;
+        claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
+        break;
+    }
+  },
+  
+  // 更新警告信息
+  updateWarnings() {
+    const warningElement = document.getElementById('lpWarning');
+    const cooldownTimer = document.getElementById('cooldownTimer');
+
+    if (!warningElement || !cooldownTimer) return;
+
+    warningElement.style.display = 'none';
+    cooldownTimer.style.display = 'none';
+
+    if (this.currentState === this.REWARD_STATES.NO_LP) {
+      warningElement.style.display = 'block';
+      warningElement.innerHTML = `
+        <div class="lp-reward-warning-icon">⚠️</div>
+        <div class="lp-reward-warning-text">
+          LP代币余额不足，奖励已停止累积。
+          <br><small>请添加流动性以继续获取奖励。您的激活状态仍然有效。</small>
+        </div>
+      `;
+    } else if (this.currentState === this.REWARD_STATES.PAUSED) {
+      warningElement.style.display = 'block';
+      warningElement.innerHTML = `
+        <div class="lp-reward-warning-icon">⏸️</div>
+        <div class="lp-reward-warning-text">
+          奖励合约已暂停，所有操作暂时不可用。
+        </div>
+      `;
+    }
+
+    // 检查冷却时间
+    if (this.userInfo && this.userInfo.lastReduceTime > 0) {
+      const cooldownPeriod = 24 * 60 * 60;
+      const now = Math.floor(Date.now() / 1000);
+      const timeLeft = this.userInfo.lastReduceTime + cooldownPeriod - now;
+
+      if (timeLeft > 0) {
+        cooldownTimer.style.display = 'block';
+        document.getElementById('cooldownTime').textContent = Utils.formatTime(timeLeft);
+      }
+    }
+  },
+  
+  // 更新同步区域（现在只显示状态，不显示手动同步按钮）
+  updateSyncSection() {
+    let syncSection = document.getElementById('syncSection');
+    
+    if (!syncSection) {
+      // 创建同步区域（仅显示状态）
+      const rewardStats = document.querySelector('.lp-reward-stats');
+      if (rewardStats) {
+        const syncHTML = `
+          <div id="syncSection" style="margin: 16px 0;">
+            <div class="lp-reward-warning" id="syncWarning" style="display: none;">
+              <div class="lp-reward-warning-icon">🔄</div>
+              <div class="lp-reward-warning-text">
+                <div>持仓数据已自动同步</div>
+                <small>添加或移除流动性后，奖励数据会自动更新</small>
+              </div>
+            </div>
+          </div>
+        `;
+        rewardStats.insertAdjacentHTML('afterend', syncHTML);
+        syncSection = document.getElementById('syncSection');
+      }
+    }
+    
+    const syncWarning = document.getElementById('syncWarning');
+    if (syncWarning) {
+      // 如果当前需要同步，显示提示（3秒后自动隐藏）
+      if (this.currentState === this.REWARD_STATES.NEEDS_SYNC) {
+        syncWarning.style.display = 'flex';
+        setTimeout(() => {
+          syncWarning.style.display = 'none';
+        }, 3000);
+      } else {
+        syncWarning.style.display = 'none';
+      }
+    }
+  },
+  
+  // 更新全局统计
+  updateGlobalStats() {
+    let container = document.getElementById('globalStatsContainer');
+    
+    if (!container) {
+      // 创建全局统计容器
+      const helpSection = document.querySelector('.lp-reward-help');
+      if (helpSection) {
+        const statsHTML = `
+          <div id="globalStatsContainer" style="margin-bottom: 20px;"></div>
+        `;
+        helpSection.insertAdjacentHTML('beforebegin', statsHTML);
+        container = document.getElementById('globalStatsContainer');
+      } else {
+        return;
+      }
+    }
+
+    // 如果合约信息未加载，不显示统计
+    if (!this.contractInfo) {
+      container.innerHTML = '';
+      return;
+    }
+
+    // 估算总奖励发放量
+    const totalSeconds = Date.now() / 1000 - this.contractInfo.lastRewardTime;
+    const estimatedDistributed = this.contractInfo.rewardPerSecond * totalSeconds;
+    const rewardPercentage = (estimatedDistributed / APP_CONFIG.TOTAL_REWARD_POOL * 100).toFixed(2);
+    const remainingReward = Math.max(0, APP_CONFIG.TOTAL_REWARD_POOL - estimatedDistributed);
+
+    const statsHTML = `
+      <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(138, 43, 226, 0.05)); border-radius: 12px; padding: 16px; border: 1px solid rgba(255, 215, 0, 0.3);">
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">
+          📊 全局统计 ${this.contractInfo.paused ? '<span style="color: var(--accent-red);">(暂停)</span>' : ''}
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary);">总质押</div>
+            <div style="color: var(--accent-yellow); font-weight: 600;">${Utils.formatNumber(this.contractInfo.totalShares)} LPT</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary);">每秒奖励</div>
+            <div style="color: var(--primary-blue); font-weight: 600;">${Utils.formatDisplay(this.contractInfo.rewardPerSecond)} LOM</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary);">总奖池</div>
+            <div style="color: var(--success); font-weight: 600;">${Utils.formatNumber(APP_CONFIG.TOTAL_REWARD_POOL)} LOM</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary);">最小激活</div>
+            <div style="color: var(--text-primary); font-weight: 600;">${Utils.formatNumber(this.contractInfo.minActivation)} LPT</div>
+          </div>
+        </div>
+        
+        <!-- 进度条 -->
+        <div style="margin-top: 12px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">发放进度</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">剩余: ${Utils.formatNumber(remainingReward)} LOM</span>
+          </div>
+          <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+            <div style="height: 100%; width: ${Math.min(rewardPercentage, 100)}%; background: linear-gradient(90deg, var(--success), var(--accent-yellow)); border-radius: 3px; transition: width 0.3s ease;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+            <span style="font-size: 10px; color: var(--text-secondary);">已发: ${Utils.formatNumber(estimatedDistributed)} LOM</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">总池: ${Utils.formatNumber(APP_CONFIG.TOTAL_REWARD_POOL)} LOM</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = statsHTML;
+  },
+  
+  // 检查是否可以激活
+  canActivate() {
+    return this.lpBalance >= (this.contractInfo?.minActivation || 100);
+  },
+  
+  // 激活奖励
+  async activate() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
+
+    if (this.currentState !== this.REWARD_STATES.NOT_ACTIVATED) {
+      Utils.showError('您已经激活了奖励系统');
+      return;
+    }
+
+    if (this.contractInfo && this.contractInfo.paused) {
+      Utils.showError('合约已暂停，无法激活');
+      return;
+    }
+
+    // 获取推荐地址
+    const referrerInput = document.getElementById('referrerAddress');
+    let referrerAddress = referrerInput ? referrerInput.value.trim() : '';
+
+    // 验证推荐地址
+    if (referrerAddress && !Utils.isValidAddress(referrerAddress)) {
+      Utils.showError('推荐地址格式错误');
+      return;
+    }
+
+    // 如果推荐地址为空或无效，设置为零地址
+    if (!referrerAddress || referrerAddress === account) {
+      referrerAddress = '0x0000000000000000000000000000000000000000';
+    }
+
+    try {
+      Utils.showNotification('激活LP奖励中...', 'info');
+
+      const tx = await lpRewardContract.activate(referrerAddress);
+      await tx.wait();
+
+      Utils.showNotification('激活成功！7天后可以开始领取奖励', 'success');
+
+      // 保存推荐地址到本地存储
+      if (referrerAddress !== '0x0000000000000000000000000000000000000000') {
+        walletInviteMap[account.toLowerCase()] = referrerAddress;
+        localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
+      }
+
+      // 刷新所有数据
+      await this.refreshAll();
+      await DataManager.refreshAll();
+
+    } catch (error) {
+      console.error('激活失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+    }
+  },
+  
+  // 领取奖励
+  async claimReward() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
+
+    if (this.contractInfo && this.contractInfo.paused) {
+      Utils.showError('合约已暂停，无法领取');
+      return;
+    }
+
+    if ((this.userInfo.pendingReward || 0) <= 0) {
+      Utils.showError('没有可领取的奖励');
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const nextClaimTime = this.userInfo.lastClaimTime + 7 * 24 * 60 * 60;
+    if (now < nextClaimTime) {
+      Utils.showError('领取冷却中，请等待');
+      return;
+    }
+
+    try {
+      Utils.showNotification('领取奖励中...', 'info');
+
+      const tx = await lpRewardContract.claimAll();
+      await tx.wait();
+
+      Utils.showNotification(`奖励领取成功！获得 ${Utils.formatDisplay(this.userInfo.pendingReward)} LOM`, 'success');
+
+      // 刷新数据
+      await this.refreshAll();
+      await DataManager.refreshAll();
+
+    } catch (error) {
+      console.error('领取奖励失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+    }
+  },
+  
+  // 领取推荐奖励
+  async claimReferralReward() {
+    if (!account || !lpRewardContract) {
+      Utils.showError('请先连接钱包');
+      return;
+    }
+
+    if (this.contractInfo && this.contractInfo.paused) {
+      Utils.showError('合约已暂停，无法领取');
+      return;
+    }
+
+    if ((this.userInfo.pendingReferral || 0) <= 0) {
+      Utils.showError('没有可领取的推荐奖励');
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (now < this.userInfo.referralUnlockTime) {
+      Utils.showError('推荐奖励还未解锁');
+      return;
+    }
+
+    try {
+      Utils.showNotification('领取推荐奖励中...', 'info');
+
+      const tx = await lpRewardContract.claimReferral();
+      await tx.wait();
+
+      Utils.showNotification(`推荐奖励领取成功！获得 ${Utils.formatDisplay(this.userInfo.pendingReferral)} LOM`, 'success');
+
+      // 刷新数据
+      await this.refreshAll();
+
+    } catch (error) {
+      console.error('领取推荐奖励失败:', error);
+      Utils.showNotification(Utils.getErrorMessage(error), 'error');
+    }
+  },
+  
+  // 重置UI
+  resetUI() {
+    this.currentState = null;
+    this.userInfo = null;
+    this.contractInfo = null;
+    this.lpBalance = 0;
+    this.contractShares = 0;
+    this.needsSync = false;
+    this.syncInProgress = false;
+
+    const elements = {
+      'activationStatus': { text: '未激活', className: 'lp-reward-card-value warning' },
+      'lpBalance': { text: '0 LPT', className: '' },
+      'daysHeld': { text: '0 天', className: '' },
+      'rewardMultiplier': { text: '1.0x', className: 'lp-reward-card-value success' },
+      'pendingReward': { text: '0 LOM', className: '' },
+      'dailyReward': { text: '0 LOM', className: '' },
+      'nextClaimTime': { text: '--', className: '' },
+      'pendingReferral': { text: '0 LOM', className: '' }
+    };
+
+    Object.entries(elements).forEach(([id, data]) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = data.text;
+        if (data.className) element.className = data.className;
+      }
+    });
+
+    // 更新份额显示
+    const sharesEl = document.getElementById('contractShares');
+    if (sharesEl) {
+      sharesEl.textContent = '0 LPT';
+      sharesEl.className = 'lp-reward-card-value';
+    }
+
+    const activateBtn = document.getElementById('activateBtn');
+    const claimBtn = document.getElementById('claimBtn');
+    const claimReferralBtn = document.getElementById('claimReferralBtn');
+
+    if (activateBtn) {
+      activateBtn.disabled = true;
+      activateBtn.innerHTML = '<span>🚀</span><span>连接钱包</span>';
+    }
+    if (claimBtn) {
+      claimBtn.disabled = true;
+      claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
+    }
+    if (claimReferralBtn) {
+      claimReferralBtn.disabled = true;
+      claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
+    }
+
+    const referralSection = document.getElementById('referralSection');
+    if (referralSection) {
+      referralSection.style.display = 'block';
+    }
+
+    const referralStatsContainer = document.getElementById('referralStatsContainer');
+    if (referralStatsContainer) {
+      referralStatsContainer.innerHTML = '';
+    }
+
+    const globalStatsContainer = document.getElementById('globalStatsContainer');
+    if (globalStatsContainer) {
+      globalStatsContainer.innerHTML = '';
+    }
+
+    const warningElement = document.getElementById('lpWarning');
+    if (warningElement) warningElement.style.display = 'none';
+    
+    const cooldownTimer = document.getElementById('cooldownTimer');
+    if (cooldownTimer) cooldownTimer.style.display = 'none';
+
+    const syncWarning = document.getElementById('syncWarning');
+    if (syncWarning) syncWarning.style.display = 'none';
+
+    this.resetMultiplierHighlight();
+  },
+  
+  // 重置倍率高亮
+  resetMultiplierHighlight() {
+    document.querySelectorAll('.lp-reward-multiplier-item').forEach(item => {
+      item.classList.remove('active');
+    });
+  },
+  
+  // 开始自动刷新
+  startAutoRefresh() {
+    if (this.refreshTimer) clearInterval(this.refreshTimer);
+
+    this.refreshTimer = setInterval(() => {
+      if (account && document.getElementById('lpRewardTab').classList.contains('active')) {
+        this.refreshAll();
+      }
+    }, 15000);
+  },
+  
+  // 停止自动刷新
+  stopAutoRefresh() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
     }
   }
 };
@@ -3736,61 +4554,79 @@ class AppCore {
       console.log('✅ LP奖励合约初始化成功');
       
       // 初始化LP奖励管理器
-       if (APP_CONFIG.CONTRACTS.LP_REWARD) {
-      const contractProvider = signer || provider;
-      
-      lpRewardContract = new ethers.Contract(
-        APP_CONFIG.CONTRACTS.LP_REWARD,
-        LP_REWARD_ABI,
-        contractProvider
-      );
-      
-      console.log('✅ LP奖励合约初始化成功');
-      
-      // 设置交易监听
-      this.setupTransactionListeners();
-      
-      // 初始化LP奖励管理器
       LPRewardManager.init();
     }
   }
-  
-  // 新增：设置交易事件监听
-  static setupTransactionListeners() {
-    // 监听流动性相关交易
-    if (lpRewardContract) {
-      // 监听addLiquidity事件
-      router.on('*', (event) => {
-        console.log('路由合约事件:', event.event, event.args);
-        
-        // 如果事件是添加或移除流动性
-        if (event.event && (event.event.includes('Liquidity') || 
-            event.event.includes('Add') || 
-            event.event.includes('Remove'))) {
-          
-          // 延迟执行同步检查
-          setTimeout(async () => {
-            await LPRewardManager.quickSyncCheck();
-          }, 5000);
-        }
-      });
-      
-      // 监听LP奖励合约事件
-      lpRewardContract.on('*', (event) => {
-        console.log('LP奖励合约事件:', event.event, event.args);
-        
-        // 如果事件涉及用户份额变化
-        if (event.event && (event.event.includes('Update') || 
-            event.event.includes('Claim') || 
-            event.event.includes('Activate'))) {
-          
-          // 延迟刷新数据
-          setTimeout(async () => {
-            await LPRewardManager.refreshAll();
-          }, 3000);
-        }
-      });
+
+  static restoreInviteAddress() {
+    if (account && walletInviteMap[account.toLowerCase()]) {
+      inviteAddress = walletInviteMap[account.toLowerCase()];
+      const referrerInput = document.getElementById('referrerAddress');
+      if (referrerInput) {
+        referrerInput.value = inviteAddress;
+      }
+    } else {
+      inviteAddress = '';
     }
+  }
+
+  static updateUI() {
+    const walletBtn = document.getElementById("walletBtn");
+    const swapBtn = document.getElementById("swapBtn");
+    
+    if (walletBtn) walletBtn.classList.remove('connecting');
+    
+    if (account) {
+      const displayAddress = Utils.formatAddress(account);
+      if (walletBtn) {
+        walletBtn.textContent = displayAddress;
+        walletBtn.classList.add('connected');
+      }
+      if (swapBtn) {
+        swapBtn.textContent = isChinese ? "请输入数量" : "Enter Amount";
+        swapBtn.disabled = false;
+      }
+    } else {
+      if (walletBtn) {
+        walletBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
+        walletBtn.classList.remove('connected');
+      }
+      if (swapBtn) {
+        swapBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
+        swapBtn.disabled = false;
+      }
+    }
+  }
+
+  static disconnect() {
+    account = null;
+    provider = null;
+    signer = null;
+    router = null;
+    pair = null;
+    lom = null;
+    usdc = null;
+    axcnh = null;
+    usdt0 = null;
+    cnht0 = null;
+    axcnhUsdt0Pair = null;
+    lpRewardContract = null;
+    
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      refreshInterval = null;
+    }
+    
+    LPRewardManager.stopAutoRefresh();
+    LPRewardManager.resetUI();
+    DataManager.resetAllData();
+    
+    this.updateUI();
+    
+    Utils.showNotification(
+      isChinese ? "钱包已断开连接" : "Wallet disconnected",
+      'success'
+    );
   }
 }
 
@@ -4160,7 +4996,7 @@ const SwapModule = {
   }
 };
 
-// ==================== 流动性模块 - 修复版本 ====================
+// ==================== 流动性模块 - 修复版本，添加自动同步功能 ====================
 const LiquidityModule = {
   async addLiquidity() {
     const cfxAmount = document.getElementById("addCfx").value;
@@ -4204,16 +5040,23 @@ const LiquidityModule = {
       document.getElementById("addCfx").value = "";
       document.getElementById("addLom").value = "";
       
-      Utils.showNotification(isChinese ? '添加流动性成功！' : 'Liquidity added successfully!', 'success');
+      Utils.showNotification(isChinese ? '添加流动性成功！自动同步奖励数据...' : 'Liquidity added successfully! Auto-syncing reward data...', 'success');
       
       // 等待区块确认
       await new Promise(resolve => setTimeout(resolve, 3000));
       
+      // 自动同步LP奖励合约份额
+      try {
+        await LPRewardManager.syncContractShares(true);
+        Utils.showNotification('奖励数据同步完成！', 'success');
+      } catch (syncError) {
+        console.error('自动同步失败:', syncError);
+        // 不显示错误，避免干扰用户
+      }
+      
       // 刷新数据
       await DataManager.refreshAll();
-      
-      // 自动同步LP奖励合约份额
-      await this.autoSyncRewardShares('add');
+      await LPRewardManager.refreshAll();
       
     } catch (error) {
       console.error('添加流动性失败:', error);
@@ -4260,103 +5103,30 @@ const LiquidityModule = {
       const lomEst = document.getElementById("removeEstLom").textContent;
       
       Utils.showNotification(
-        isChinese ? `移除流动性成功！获得 ${cfxEst} CFX 和 ${lomEst} LOM` : 
-                   `Success! Received ${cfxEst} CFX and ${lomEst} LOM`,
+        isChinese ? `移除流动性成功！获得 ${cfxEst} CFX 和 ${lomEst} LOM，自动同步奖励数据...` : 
+                   `Success! Received ${cfxEst} CFX and ${lomEst} LOM, auto-syncing reward data...`,
         'success'
       );
       
       // 等待区块确认
       await new Promise(resolve => setTimeout(resolve, 3000));
       
+      // 自动同步LP奖励合约份额
+      try {
+        await LPRewardManager.syncContractShares(true);
+        Utils.showNotification('奖励数据同步完成！', 'success');
+      } catch (syncError) {
+        console.error('自动同步失败:', syncError);
+        // 不显示错误，避免干扰用户
+      }
+      
       // 刷新数据
       await DataManager.refreshAll();
-      
-      // 自动同步LP奖励合约份额
-      await this.autoSyncRewardShares('remove');
+      await LPRewardManager.refreshAll();
       
     } catch (error) {
       console.error('移除流动性失败:', error);
       Utils.showNotification(Utils.getErrorMessage(error), 'error');
-    }
-  },
-
-  // 新增：自动同步奖励份额
-  async autoSyncRewardShares(actionType) {
-    if (!lpRewardContract || !account) {
-      console.log('未连接LP奖励合约或钱包');
-      return;
-    }
-    
-    try {
-      // 检查用户是否已激活
-      const userInfo = await lpRewardContract.users(account);
-      const userShares = parseFloat(ethers.utils.formatUnits(userInfo.shares, 18));
-      
-      if (userShares <= 0) {
-        console.log('用户未激活LP奖励，无需同步');
-        return;
-      }
-      
-      console.log(`🔄 开始自动同步${actionType === 'add' ? '添加' : '移除'}流动性后的份额...`);
-      Utils.showNotification('正在同步奖励数据...', 'info');
-      
-      // 检查是否需要同步
-      const currentLP = await LPRewardManager.fetchLPBalance();
-      const needsSync = Math.abs(currentLP - userShares) > 0.000001;
-      
-      if (!needsSync) {
-        console.log('数据一致，无需同步');
-        Utils.showNotification('奖励数据已同步', 'success');
-        return;
-      }
-      
-      // 调用合约的updateSharesForUser函数（更精确地更新单个用户）
-      let syncTx;
-      
-      try {
-        // 首先尝试updateSharesForUser函数
-        syncTx = await lpRewardContract.updateSharesForUser(account);
-      } catch (error) {
-        console.log('updateSharesForUser失败，尝试updateShares...', error);
-        // 如果updateSharesForUser不存在，尝试updateShares
-        syncTx = await lpRewardContract.updateShares();
-      }
-      
-      await syncTx.wait();
-      
-      console.log('✅ 合约份额同步成功');
-      Utils.showNotification('奖励数据同步成功', 'success');
-      
-      // 等待区块确认后刷新LP奖励数据
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 重新获取LP余额和用户信息
-      await LPRewardManager.refreshAll();
-      
-      // 显示同步结果
-      const newUserInfo = await lpRewardContract.users(account);
-      const newShares = parseFloat(ethers.utils.formatUnits(newUserInfo.shares, 18));
-      
-      console.log('同步完成:', {
-        操作类型: actionType,
-        旧份额: userShares,
-        新份额: newShares,
-        当前LP余额: currentLP
-      });
-      
-    } catch (error) {
-      console.error('自动同步奖励份额失败:', error);
-      
-      // 优雅降级：仅显示提示，不阻止后续操作
-      const errorMsg = Utils.getErrorMessage(error);
-      if (errorMsg.includes('gas') || errorMsg.includes('回滚')) {
-        Utils.showNotification('自动同步失败，请稍后手动点击同步按钮', 'warning');
-      } else {
-        Utils.showNotification(`同步失败: ${errorMsg}`, 'error');
-      }
-      
-      // 即使同步失败，也刷新数据
-      await LPRewardManager.refreshAll();
     }
   },
 
@@ -5141,18 +5911,65 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 监听钱包事件
   if (window.ethereum) {
-    // ... 保持原有代码不变
-    
-    // 新增：设置轮询检查数据一致性
-    setInterval(async () => {
-      if (account && lpRewardContract && !LPRewardManager.syncInProgress) {
-        // 只在LP奖励页面显示时进行轮询
-        if (document.getElementById('lpRewardTab').classList.contains('active')) {
-          await LPRewardManager.quickSyncCheck();
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
+        AppCore.disconnect();
+      } else {
+        account = accounts[0];
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        AppCore.initContracts();
+        AppCore.restoreInviteAddress();
+        AppCore.updateUI();
+        DataManager.refreshAll();
+        LPRewardManager.refreshAll();
+        LPRewardManager.startAutoRefresh();
+        if (!refreshInterval) {
+          refreshInterval = setInterval(() => {
+            DataManager.refreshAll();
+            if (document.getElementById('lpRewardTab').classList.contains('active')) {
+              LPRewardManager.refreshAll();
+            }
+          }, 10000);
         }
       }
-    }, 30000); // 每30秒检查一次
+    });
+    
+    window.ethereum.on('chainChanged', () => {
+      location.reload();
+    });
+    
+    window.ethereum.on('disconnect', () => {
+      AppCore.disconnect();
+    });
+    
+    // 检查是否已连接钱包
+    window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
+      if (accounts.length > 0) {
+        account = accounts[0];
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        AppCore.initContracts();
+        AppCore.restoreInviteAddress();
+        AppCore.updateUI();
+        DataManager.refreshAll();
+        LPRewardManager.refreshAll();
+        LPRewardManager.startAutoRefresh();
+        
+        if (!refreshInterval) {
+          refreshInterval = setInterval(() => {
+            DataManager.refreshAll();
+            if (document.getElementById('lpRewardTab').classList.contains('active')) {
+              LPRewardManager.refreshAll();
+            }
+          }, 10000);
+        }
+      }
+    }).catch(console.error);
   }
+  
+  // 初始化完成
+  console.log('✅ LOMswap 初始化完成');
 });
   </script>
 </body>
