@@ -3986,6 +3986,58 @@
         }
         
         confirmButton.disabled = false;
+      },
+
+      async setMaxCfx() {
+        const cfxBal = parseFloat(document.getElementById("addCfxBal").textContent);
+        if (cfxBal <= 0) {
+          Utils.showError(isChinese ? "CFX余额不足" : "Insufficient CFX balance");
+          return;
+        }
+        
+        const maxCfx = Math.max(0, cfxBal - 0.1);
+        document.getElementById("addCfx").value = Utils.formatDisplay(maxCfx);
+        
+        if (currentRatio > 0) {
+          const requiredLom = maxCfx * currentRatio;
+          const lomBal = parseFloat(document.getElementById("addLomBal").textContent);
+          
+          if (requiredLom <= lomBal) {
+            document.getElementById("addLom").value = Utils.formatDisplay(requiredLom);
+          } else {
+            const adjustedCfx = lomBal / currentRatio;
+            document.getElementById("addCfx").value = Utils.formatDisplay(Math.min(adjustedCfx, maxCfx));
+            document.getElementById("addLom").value = Utils.formatDisplay(lomBal);
+          }
+        }
+        
+        this.updateAddButtonState();
+      },
+
+      async setMaxLom() {
+        const lomBal = parseFloat(document.getElementById("addLomBal").textContent);
+        if (lomBal <= 0) {
+          Utils.showError(isChinese ? "LOM余额不足" : "Insufficient LOM balance");
+          return;
+        }
+        
+        document.getElementById("addLom").value = Utils.formatDisplay(lomBal);
+        
+        if (currentRatio > 0) {
+          const requiredCfx = lomBal / currentRatio;
+          const cfxBal = parseFloat(document.getElementById("addCfxBal").textContent);
+          const availableCfx = Math.max(0, cfxBal - 0.1);
+          
+          if (requiredCfx <= availableCfx) {
+            document.getElementById("addCfx").value = Utils.formatDisplay(requiredCfx);
+          } else {
+            const adjustedLom = availableCfx * currentRatio;
+            document.getElementById("addLom").value = Utils.formatDisplay(Math.min(adjustedLom, lomBal));
+            document.getElementById("addCfx").value = Utils.formatDisplay(availableCfx);
+          }
+        }
+        
+        this.updateAddButtonState();
       }
     };
 
@@ -4059,6 +4111,12 @@
         const debouncedLomInput = Utils.debounce(() => LiquidityModule.handleLomInput(), 300);
         document.getElementById("addCfx").addEventListener("input", debouncedCfxInput);
         document.getElementById("addLom").addEventListener("input", debouncedLomInput);
+        
+        // MAX按钮事件
+        document.getElementById("cfxMaxBtn").addEventListener("click", () => LiquidityModule.setMaxCfx());
+        document.getElementById("lomMaxBtn").addEventListener("click", () => LiquidityModule.setMaxLom());
+        
+        // 取消和确认按钮事件
         document.getElementById("cancelAddBtn").addEventListener("click", () => document.getElementById("addModal").style.display = "none");
         document.getElementById("confirmAddBtn").addEventListener("click", () => LiquidityModule.addLiquidity());
         
