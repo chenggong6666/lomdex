@@ -956,6 +956,11 @@
       color: white;
     }
     
+    .lp-reward-action-btn.sync {
+      background: var(--gradient-purple);
+      color: white;
+    }
+    
     .lp-reward-action-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -1523,6 +1528,36 @@
       line-height: 1.5;
     }
     
+    /* ========== 同步状态样式 ========== */
+    .sync-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(138, 43, 226, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+      margin: 12px 0;
+      border: 1px solid var(--accent-purple);
+    }
+    
+    .sync-status-icon {
+      font-size: 14px;
+    }
+    
+    .sync-status-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .sync-status-text.synced {
+      color: var(--success);
+    }
+    
+    .sync-status-text.outdated {
+      color: var(--accent-yellow);
+    }
+    
     /* ========== 风险提示和页脚 ========== */
     .risk-warning {
       background: var(--gradient-card);
@@ -1931,6 +1966,12 @@
           <span>LP持币奖励</span>
         </div>
 
+        <!-- 同步状态 -->
+        <div class="sync-status" id="syncStatus" style="display: none;">
+          <span class="sync-status-icon" id="syncStatusIcon">🔄</span>
+          <span class="sync-status-text" id="syncStatusText">数据同步中...</span>
+        </div>
+
         <!-- 全网统计信息 -->
         <div class="global-stats" id="globalStatsPanel">
           <div class="global-stat-card">
@@ -2072,9 +2113,9 @@
             <span id="claimText">领取奖励</span>
           </button>
           
-          <button class="lp-reward-action-btn referral" id="claimReferralBtn" disabled>
-            <span id="referralIcon">🎁</span>
-            <span id="referralText">领取推荐</span>
+          <button class="lp-reward-action-btn sync" id="syncBtn" style="display: none;">
+            <span id="syncIcon">🔄</span>
+            <span id="syncText">同步LP</span>
           </button>
         </div>
 
@@ -2241,7 +2282,8 @@ const APP_CONFIG = {
   TOTAL_REWARD_POOL: 25555555,
   MIN_ACTIVATION_LP: 100, // 最小激活LP数量
   CLAIM_COOLDOWN: 86400, // 24小时冷却时间（秒）
-  REFERRAL_LOCK_TIME: 2592000 // 30天锁定时间（秒）
+  REFERRAL_LOCK_TIME: 2592000, // 30天锁定时间（秒）
+  SYNC_THRESHOLD: 10 // 需要同步的LP变化阈值（%）
 };
 
 // ==================== 应用状态 ====================
@@ -2269,7 +2311,10 @@ let userRewardData = {
   daysHeld: 0,
   multiplier: 1.0,
   referrer: '',
-  referralUnlockTime: 0
+  referralUnlockTime: 0,
+  lastSyncedLp: 0, // 最后同步时的LP数量
+  needsSync: false, // 是否需要同步
+  syncPercentage: 0 // 需要同步的百分比
 };
 let globalStats = {
   totalActiveUsers: 0,
@@ -2357,6 +2402,7 @@ const LP_REWARD_ABI = [
   "function activate(address referrer)",
   "function claimAll()",
   "function claimReferral()",
+  "function updateShares(address user)",
   "function pendingReward(address user) view returns (uint256)",
   "function pendingReferral(address user) view returns (uint256)",
   "function users(address) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingReferral, uint256 lastClaimTime, uint256 activeTime, uint256 lastReduceTime, uint256 referralUnlockTime, address referrer, bool cleanInFirst30Days)",
@@ -2369,7 +2415,8 @@ const LP_REWARD_ABI = [
   "function paused() view returns (bool)",
   "event Activated(address indexed user, address indexed referrer, uint256 shares, uint256 timestamp)",
   "event Claimed(address indexed user, uint256 amount, uint256 timestamp)",
-  "event ReferralClaimed(address indexed user, uint256 amount, uint256 timestamp)"
+  "event ReferralClaimed(address indexed user, uint256 amount, uint256 timestamp)",
+  "event SharesUpdated(address indexed user, uint256 oldShares, uint256 newShares, uint256 timestamp)"
 ];
 
 // ==================== 工具模块 ====================
@@ -2489,7 +2536,9 @@ const Utils = {
       'Insufficient LP': isChinese ? 'LP数量不足' : 'Insufficient LP tokens',
       'Cooling down': isChinese ? '冷却时间未结束' : 'Cooling down period not over',
       'No reward': isChinese ? '没有可领取的奖励' : 'No reward to claim',
-      'Referral locked': isChinese ? '推荐奖励还在锁定中' : 'Referral reward is still locked'
+      'Referral locked': isChinese ? '推荐奖励还在锁定中' : 'Referral reward is still locked',
+      'No sync needed': isChinese ? '不需要同步' : 'No sync needed',
+      'Sync failed': isChinese ? '同步失败' : 'Sync failed'
     };
     
     for (const [key, value] of Object.entries(errorMap)) {
@@ -2510,6 +2559,11 @@ const Utils = {
 
   async sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  },
+
+  calculatePercentageChange(oldValue, newValue) {
+    if (oldValue === 0) return newValue > 0 ? 100 : 0;
+    return Math.abs((newValue - oldValue) / oldValue) * 100;
   }
 };
 
@@ -2787,6 +2841,9 @@ const DataManager = {
           const lpBal = await pair.balanceOf(account);
           const removeBtn = document.getElementById("removeBtn");
           if (removeBtn) removeBtn.disabled = lpBal.isZero();
+          
+          // 检查是否需要同步LP
+          LPRewardModule.checkSyncNeeded();
         } catch (error) {
           console.error("获取LP余额失败:", error);
         }
@@ -2996,6 +3053,7 @@ const SwapModule = {
       );
       
       await DataManager.refreshAll();
+      await LPRewardModule.checkSyncNeeded();
       
     } catch (error) {
       console.error('兑换失败:', error);
@@ -3143,6 +3201,7 @@ const LiquidityModule = {
       Utils.showNotification(isChinese ? '添加流动性成功！' : 'Liquidity added successfully!', 'success');
       
       await DataManager.refreshAll();
+      await LPRewardModule.checkSyncNeeded();
       
     } catch (error) {
       console.error('添加流动性失败:', error);
@@ -3195,6 +3254,7 @@ const LiquidityModule = {
       );
       
       await DataManager.refreshAll();
+      await LPRewardModule.checkSyncNeeded();
       
     } catch (error) {
       console.error('移除流动性失败:', error);
@@ -3341,8 +3401,13 @@ const LPRewardModule = {
     try {
       // 获取LP余额
       const lpBal = await pair.balanceOf(account);
-      const lpBalance = parseFloat(ethers.utils.formatUnits(lpBal, 18));
-      document.getElementById("lpBalance").textContent = Utils.formatDisplay(lpBalance) + " LPT";
+      const currentLpBalance = parseFloat(ethers.utils.formatUnits(lpBal, 18));
+      document.getElementById("lpBalance").textContent = Utils.formatDisplay(currentLpBalance) + " LPT";
+      
+      // 更新最后同步时的LP数量
+      if (userRewardData.lastSyncedLp === 0 && currentLpBalance > 0) {
+        userRewardData.lastSyncedLp = currentLpBalance;
+      }
       
       // 获取用户信息
       let userData;
@@ -3404,6 +3469,9 @@ const LPRewardModule = {
         }
       }
       
+      // 检查是否需要同步
+      this.checkSyncNeeded();
+      
       // 更新UI
       this.updateRewardUI();
       
@@ -3412,6 +3480,70 @@ const LPRewardModule = {
       
     } catch (error) {
       console.error("刷新LP奖励数据失败:", error);
+    }
+  },
+
+  checkSyncNeeded() {
+    if (!userRewardData.isActivated || !pair || !account) {
+      userRewardData.needsSync = false;
+      this.updateSyncUI();
+      return;
+    }
+    
+    try {
+      // 获取当前LP余额
+      const currentLpBalance = parseFloat(document.getElementById('lpBalance').textContent) || 0;
+      
+      if (userRewardData.lastSyncedLp === 0) {
+        userRewardData.lastSyncedLp = currentLpBalance;
+      }
+      
+      // 计算LP变化百分比
+      const changePercentage = Utils.calculatePercentageChange(userRewardData.lastSyncedLp, currentLpBalance);
+      userRewardData.syncPercentage = changePercentage;
+      
+      // 检查是否需要同步
+      userRewardData.needsSync = changePercentage >= APP_CONFIG.SYNC_THRESHOLD;
+      
+      // 更新同步UI
+      this.updateSyncUI();
+      
+    } catch (error) {
+      console.error("检查同步需求失败:", error);
+    }
+  },
+
+  updateSyncUI() {
+    const syncStatus = document.getElementById('syncStatus');
+    const syncStatusIcon = document.getElementById('syncStatusIcon');
+    const syncStatusText = document.getElementById('syncStatusText');
+    const syncBtn = document.getElementById('syncBtn');
+    
+    if (!syncStatus || !syncStatusIcon || !syncStatusText || !syncBtn) return;
+    
+    if (userRewardData.isActivated && userRewardData.needsSync) {
+      // 需要同步
+      syncStatus.style.display = 'flex';
+      syncStatusIcon.textContent = '⚠️';
+      syncStatusText.textContent = isChinese ? 
+        `LP变化 ${userRewardData.syncPercentage.toFixed(1)}%，需要同步` : 
+        `LP changed ${userRewardData.syncPercentage.toFixed(1)}%，need sync`;
+      syncStatusText.className = 'sync-status-text outdated';
+      
+      syncBtn.style.display = 'flex';
+      syncBtn.disabled = false;
+    } else if (userRewardData.isActivated && !userRewardData.needsSync) {
+      // 已同步
+      syncStatus.style.display = 'flex';
+      syncStatusIcon.textContent = '✅';
+      syncStatusText.textContent = isChinese ? '数据已同步' : 'Data synced';
+      syncStatusText.className = 'sync-status-text synced';
+      
+      syncBtn.style.display = 'none';
+    } else {
+      // 未激活或不需要同步
+      syncStatus.style.display = 'none';
+      syncBtn.style.display = 'none';
     }
   },
 
@@ -3538,10 +3670,9 @@ const LPRewardModule = {
   updateButtonStates() {
     const activateBtn = document.getElementById('activateBtn');
     const claimBtn = document.getElementById('claimBtn');
-    const claimReferralBtn = document.getElementById('claimReferralBtn');
     const activationWarning = document.getElementById('activationWarning');
     
-    if (!activateBtn || !claimBtn || !claimReferralBtn) return;
+    if (!activateBtn || !claimBtn) return;
     
     // 获取LP余额
     const lpBalanceText = document.getElementById('lpBalance').textContent;
@@ -3552,7 +3683,6 @@ const LPRewardModule = {
       activateBtn.disabled = false;
       activateBtn.innerHTML = '<span>🚀</span><span>连接钱包</span>';
       claimBtn.disabled = true;
-      claimReferralBtn.disabled = true;
       if (activationWarning) activationWarning.style.display = 'none';
       return;
     }
@@ -3571,9 +3701,7 @@ const LPRewardModule = {
       }
       
       claimBtn.disabled = true;
-      claimReferralBtn.disabled = true;
       claimBtn.innerHTML = '<span>💰</span><span>领取奖励</span>';
-      claimReferralBtn.innerHTML = '<span>🎁</span><span>领取推荐</span>';
     } else {
       // 已激活状态
       activateBtn.disabled = true;
@@ -3588,15 +3716,6 @@ const LPRewardModule = {
       claimBtn.innerHTML = canClaimReward ? 
         '<span>💰</span><span>领取奖励</span>' : 
         '<span>⏳</span><span>冷却中</span>';
-      
-      // 检查是否可领取推荐奖励
-      const canClaimReferral = userRewardData.pendingReferral > 0 && 
-                              now >= userRewardData.referralUnlockTime;
-      
-      claimReferralBtn.disabled = !canClaimReferral;
-      claimReferralBtn.innerHTML = canClaimReferral ? 
-        '<span>🎁</span><span>领取推荐</span>' : 
-        '<span>🔒</span><span>锁定中</span>';
       
       if (activationWarning) activationWarning.style.display = 'none';
     }
@@ -3712,6 +3831,10 @@ const LPRewardModule = {
         localStorage.setItem('lomswap_wallet_invite_map', JSON.stringify(walletInviteMap));
       }
       
+      // 更新最后同步的LP数量
+      const currentLpBalance = parseFloat(document.getElementById('lpBalance').textContent) || 0;
+      userRewardData.lastSyncedLp = currentLpBalance;
+      
       Utils.showNotification(isChinese ? '激活成功！' : 'Activation successful!', 'success');
       
       // 刷新数据
@@ -3779,7 +3902,7 @@ const LPRewardModule = {
     }
   },
 
-  async claimReferralReward() {
+  async syncLPShares() {
     if (!account || !lpRewardContract) {
       Utils.showError(isChinese ? '请先连接钱包' : 'Please connect wallet first');
       return;
@@ -3790,21 +3913,13 @@ const LPRewardModule = {
       return;
     }
     
-    if (userRewardData.pendingReferral <= 0) {
-      Utils.showError(isChinese ? '没有可领取的推荐奖励' : 'No referral reward to claim');
-      return;
-    }
-    
-    const now = Math.floor(Date.now() / 1000);
-    if (now < userRewardData.referralUnlockTime) {
-      const timeLeft = userRewardData.referralUnlockTime - now;
-      Utils.showError(isChinese ? `推荐奖励还在锁定中，请等待 ${Utils.formatTime(timeLeft)}` : 
-                       `Referral reward is locked, please wait ${Utils.formatTime(timeLeft)}`);
+    if (!userRewardData.needsSync) {
+      Utils.showError(isChinese ? '不需要同步LP数据' : 'No need to sync LP data');
       return;
     }
     
     try {
-      Utils.showNotification(isChinese ? '领取推荐奖励中...' : 'Claiming referral reward...', 'info');
+      Utils.showNotification(isChinese ? '同步LP数据中...' : 'Syncing LP data...', 'info');
       
       // 检查合约是否暂停
       try {
@@ -3817,17 +3932,23 @@ const LPRewardModule = {
         console.log("检查合约暂停状态失败:", error);
       }
       
-      const tx = await lpRewardContract.claimReferral();
+      // 调用合约的updateShares函数
+      const tx = await lpRewardContract.updateShares(account);
       await tx.wait();
       
-      Utils.showNotification(isChinese ? '推荐奖励领取成功！' : 'Referral reward claimed successfully!', 'success');
+      // 更新最后同步的LP数量
+      const currentLpBalance = parseFloat(document.getElementById('lpBalance').textContent) || 0;
+      userRewardData.lastSyncedLp = currentLpBalance;
+      userRewardData.needsSync = false;
+      
+      Utils.showNotification(isChinese ? 'LP数据同步成功！' : 'LP data synced successfully!', 'success');
       
       // 刷新数据
       await Utils.sleep(2000);
       await this.refreshLPRewardData();
       
     } catch (error) {
-      console.error('领取推荐奖励失败:', error);
+      console.error('同步LP数据失败:', error);
       Utils.showNotification(Utils.getErrorMessage(error), 'error');
     }
   },
@@ -3845,7 +3966,10 @@ const LPRewardModule = {
       daysHeld: 0,
       multiplier: 1.0,
       referrer: '',
-      referralUnlockTime: 0
+      referralUnlockTime: 0,
+      lastSyncedLp: 0,
+      needsSync: false,
+      syncPercentage: 0
     };
     
     globalStats = {
@@ -3856,6 +3980,7 @@ const LPRewardModule = {
     
     this.updateRewardUI();
     this.updateButtonStates();
+    this.updateSyncUI();
   }
 };
 
@@ -3889,11 +4014,11 @@ const EventHandlers = {
       });
     }
     
-    // 领取推荐按钮
-    const claimReferralBtn = document.getElementById("claimReferralBtn");
-    if (claimReferralBtn) {
-      claimReferralBtn.addEventListener("click", () => {
-        LPRewardModule.claimReferralReward();
+    // 同步按钮
+    const syncBtn = document.getElementById("syncBtn");
+    if (syncBtn) {
+      syncBtn.addEventListener("click", () => {
+        LPRewardModule.syncLPShares();
       });
     }
     
@@ -4396,7 +4521,7 @@ const EventHandlers = {
     // 更新按钮文本
     const activateBtn = document.getElementById("activateBtn");
     const claimBtn = document.getElementById("claimBtn");
-    const claimReferralBtn = document.getElementById("claimReferralBtn");
+    const syncBtn = document.getElementById("syncBtn");
     
     if (activateBtn && activateBtn.querySelector('#activateText')) {
       if (!account) {
@@ -4427,17 +4552,8 @@ const EventHandlers = {
       }
     }
     
-    if (claimReferralBtn && claimReferralBtn.querySelector('#referralText')) {
-      if (userRewardData.isActivated && userRewardData.pendingReferral > 0) {
-        const now = Math.floor(Date.now() / 1000);
-        if (now >= userRewardData.referralUnlockTime) {
-          claimReferralBtn.querySelector('#referralText').textContent = isChinese ? "领取推荐" : "Claim Referral";
-        } else {
-          claimReferralBtn.querySelector('#referralText').textContent = isChinese ? "锁定中" : "Locked";
-        }
-      } else {
-        claimReferralBtn.querySelector('#referralText').textContent = isChinese ? "领取推荐" : "Claim Referral";
-      }
+    if (syncBtn && syncBtn.querySelector('#syncText')) {
+      syncBtn.querySelector('#syncText').textContent = isChinese ? "同步LP" : "Sync LP";
     }
     
     // 更新警告文本
