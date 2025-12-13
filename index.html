@@ -886,6 +886,10 @@
       border: none;
       transition: all 0.2s ease;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
     
     .add-btn {
@@ -912,7 +916,7 @@
     .farm-panel {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
     
     /* 四列统计网格 */
@@ -920,7 +924,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
     .farm-stat-card {
@@ -980,13 +984,12 @@
       margin-top: 4px;
     }
     
-    /* 用户信息卡片优化 - 双排布局 */
+    /* 用户信息卡片优化 */
     .farm-user-info {
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(26, 115, 232, 0.03));
       border-radius: 16px;
-      padding: 18px;
+      padding: 16px;
       border: 1px solid rgba(255, 215, 0, 0.3);
-      margin-bottom: 12px;
       position: relative;
       overflow: hidden;
     }
@@ -1006,27 +1009,20 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
     
     .user-avatar {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       border: 2px solid var(--accent-yellow);
       flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .user-avatar::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(26, 115, 232, 0.2));
+      background: rgba(255, 215, 0, 0.1);
     }
     
     .user-avatar.gold {
@@ -1054,25 +1050,25 @@
     }
     
     .user-name {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     
     .user-level {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--accent-yellow);
-      font-weight: 700;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     
-    /* 收益信息网格 - 双排布局 */
+    /* 收益信息网格优化 */
     .revenue-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1087,13 +1083,14 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       position: relative;
       overflow: hidden;
-    }
-    
-    .revenue-card.with-button {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       min-height: 100px;
+    }
+    
+    .revenue-card.with-button {
+      min-height: 120px;
     }
     
     .revenue-card::before {
@@ -1148,7 +1145,7 @@
       transition: all 0.2s ease;
       background: var(--gradient-green);
       color: white;
-      margin-top: 4px;
+      margin-top: auto;
     }
     
     .revenue-action-btn:disabled {
@@ -1169,7 +1166,7 @@
       opacity: 0.8;
     }
     
-    /* 用户统计网格 - 三列布局 */
+    /* 用户统计网格优化 */
     .user-stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1213,7 +1210,7 @@
       color: var(--accent-yellow);
     }
     
-    /* 同步时间显示 - 优化 */
+    /* 同步时间显示优化 */
     .countdown-display {
       font-family: 'SF Mono', Monaco, monospace;
       font-size: 13px;
@@ -1242,19 +1239,12 @@
       font-size: 12px;
     }
     
-    /* 农场操作按钮 - 新的四列布局，模仿流动性页面 */
-    .farm-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 16px;
-    }
-    
+    /* 农场操作按钮优化 - 使用类似流动性页面的布局 */
     .farm-action-btn {
-      height: 48px;
+      height: 36px;
       padding: 0 12px;
-      border-radius: 12px;
-      font-size: 14px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 700;
       border: none;
       cursor: pointer;
@@ -1262,7 +1252,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
       min-width: 0;
       position: relative;
@@ -1284,41 +1274,24 @@
       left: 100%;
     }
     
-    /* 同步按钮更大，占据两列 */
-    .farm-action-btn.sync {
-      grid-column: span 2;
-      height: 52px;
-      font-size: 16px;
-      background: var(--gradient-yellow);
-      color: #0f172a;
-      font-weight: 800;
-      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-    }
-    
-    .farm-action-btn.sync:disabled {
-      background: rgba(255, 215, 0, 0.3);
-      color: var(--text-secondary);
-      box-shadow: none;
-    }
-    
     .farm-action-btn.primary {
       background: var(--gradient-primary);
       color: white;
-      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
     }
     
     .farm-action-btn.success {
       background: var(--gradient-green);
       color: white;
       border: 1px solid rgba(46, 160, 67, 0.3);
-      box-shadow: 0 4px 12px rgba(46, 160, 67, 0.3);
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.3);
     }
     
     .farm-action-btn.warning {
       background: var(--gradient-yellow);
       color: #0f172a;
       font-weight: 800;
-      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
     }
     
     .farm-action-btn:disabled {
@@ -1329,8 +1302,8 @@
     }
     
     .farm-action-btn:not(:disabled):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     
     .farm-action-btn:not(:disabled):active {
@@ -1338,7 +1311,7 @@
     }
     
     .farm-btn-icon {
-      font-size: 16px;
+      font-size: 14px;
       flex-shrink: 0;
     }
     
@@ -1348,7 +1321,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 13px;
+      font-size: 11px;
     }
     
     /* 操作状态提示 */
@@ -2202,37 +2175,18 @@
         font-size: 11px;
       }
       
-      .farm-actions {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-      
-      .farm-action-btn {
-        height: 44px;
-        font-size: 13px;
-      }
-      
-      .farm-action-btn.sync {
-        height: 48px;
-        font-size: 15px;
-      }
-      
-      .farm-btn-text {
-        font-size: 12px;
-      }
-      
       .user-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
       }
       
       .user-name {
-        font-size: 14px;
+        font-size: 12px;
       }
       
       .user-level {
-        font-size: 11px;
+        font-size: 10px;
       }
       
       .project-intro-card {
@@ -2290,22 +2244,9 @@
       .user-stats-grid {
         grid-template-columns: repeat(3, 1fr);
       }
-      
-      .farm-actions {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
     
     @media (max-width: 350px) {
-      .farm-actions {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-      
-      .farm-action-btn.sync {
-        grid-column: span 1;
-      }
-      
       .user-stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -2590,14 +2531,16 @@
         </div>
 
         <div class="farm-panel">
-          <!-- 农场统计网格 -->
+          <!-- 顶部统计网格 - 类似流动性页面的简洁布局 -->
           <div class="farm-stats-grid">
+            <!-- 总奖励池卡片 -->
             <div class="farm-stat-card">
               <div class="farm-stat-label">🏆 总奖励池</div>
               <div class="farm-stat-value" id="totalRewardPool">-- LOM</div>
               <div class="farm-stat-desc">全部可用于奖励</div>
             </div>
             
+            <!-- 剩余奖励卡片 -->
             <div class="farm-stat-card">
               <div class="farm-stat-label">⏳ 剩余奖励</div>
               <div class="farm-stat-value warning" id="remainingRewards">-- LOM</div>
@@ -2605,7 +2548,7 @@
             </div>
           </div>
 
-          <!-- 用户信息卡片 -->
+          <!-- 用户信息卡片 - 简化布局 -->
           <div class="farm-user-info">
             <div class="user-header">
               <div class="user-avatar" id="userAvatar">👤</div>
@@ -2613,16 +2556,23 @@
                 <div class="user-name" id="userName">未连接钱包</div>
                 <div class="user-level" id="userLevel">请连接钱包查看数据</div>
               </div>
+              <!-- 激活按钮放在用户信息卡片内 -->
+              <button class="farm-action-btn primary" id="activateBtn" style="margin-left: auto; padding: 8px 12px; font-size: 12px; min-width: 80px;">
+                <span class="farm-btn-icon">✅</span>
+                <span class="farm-btn-text" id="activateBtnText">激活账户</span>
+              </button>
             </div>
             
-            <!-- 收益信息网格 - 双排布局 -->
+            <!-- 用户收益网格 -->
             <div class="revenue-grid">
+              <!-- 日收益率卡片 -->
               <div class="revenue-card">
                 <div class="revenue-label">📊 日收益率</div>
                 <div class="revenue-value warning" id="dailyRewardRate">--%</div>
-                <div class="revenue-sub">每日奖励比例</div>
+                <div class="revenue-sub" id="dailyRateSource">合约数据</div>
               </div>
               
+              <!-- 已领取收益卡片 -->
               <div class="revenue-card">
                 <div class="revenue-label">💎 已领取收益</div>
                 <div class="revenue-value success" id="totalEarned">-- LOM</div>
@@ -2633,15 +2583,25 @@
               <div class="revenue-card with-button">
                 <div class="revenue-label">🎁 待领取收益</div>
                 <div class="revenue-value warning" id="pendingRewards">-- LOM</div>
-                <button class="revenue-action-btn" id="claimInCardBtn" disabled>
+                <button class="revenue-action-btn" id="claimInCardBtn" disabled style="margin-top: 8px;">
                   领取奖励
                 </button>
               </div>
               
+              <!-- 日收益预估卡片 -->
               <div class="revenue-card">
                 <div class="revenue-label">📈 日收益预估</div>
                 <div class="revenue-value" id="dailyEstimate">-- LOM</div>
                 <div class="revenue-sub">基于当前质押</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 用户统计和操作卡片 -->
+          <div class="farm-user-info" style="margin-top: 12px;">
+            <div class="user-header" style="margin-bottom: 16px;">
+              <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">
+                📊 用户统计
               </div>
             </div>
             
@@ -2662,31 +2622,25 @@
             </div>
             
             <!-- 同步时间显示 -->
-            <div class="countdown-display">
+            <div class="countdown-display" style="margin-top: 16px;">
               <span class="countdown-label">下次同步:</span>
               <span class="countdown-value" id="nextSyncTime">--</span>
             </div>
             
+            <!-- 操作按钮 - 放在卡片底部 -->
+            <div class="position-actions" style="margin-top: 16px;">
+              <button class="position-btn add-btn" id="syncBtn" disabled>
+                <span>🔄</span>
+                <span id="syncBtnText">同步奖励</span>
+              </button>
+              <button class="position-btn add-btn" id="checkinBtn" disabled style="background: var(--gradient-yellow); color: #0f172a;">
+                <span>📅</span>
+                <span id="checkinBtnText">每日签到</span>
+              </button>
+            </div>
+            
             <!-- 操作状态提示 -->
             <div class="action-status" id="actionStatus"></div>
-          </div>
-
-          <!-- 农场操作按钮 - 类似流动性页面布局 -->
-          <div class="farm-actions">
-            <button class="farm-action-btn primary" id="activateBtn">
-              <span class="farm-btn-icon">✅</span>
-              <span class="farm-btn-text" id="activateBtnText">激活账户</span>
-            </button>
-            
-            <button class="farm-action-btn sync" id="syncBtn" disabled>
-              <span class="farm-btn-icon">🔄</span>
-              <span class="farm-btn-text" id="syncBtnText">同步奖励</span>
-            </button>
-            
-            <button class="farm-action-btn warning" id="checkinBtn" disabled>
-              <span class="farm-btn-icon">📅</span>
-              <span class="farm-btn-text" id="checkinBtnText">每日签到</span>
-            </button>
           </div>
         </div>
       </div>
@@ -3450,55 +3404,77 @@ const FarmManager = {
   },
 
   async updatePoolParameters() {
-  try {
-    if (!lpRewardFarm) return;
-    
-    // 获取池子参数
-    const [
-      dailyRewardRate,
-      maxDailyLOMPerUser,
-      dailyCheckinBonus,
-      currentDailyRate,  // 从合约获取当前日收益率
-      currentDailyLimit  // 获取每日限额
-    ] = await Promise.all([
-      lpRewardFarm.dailyRewardRate().catch(() => ethers.BigNumber.from(0)),
-      lpRewardFarm.maxDailyLOMPerUser().catch(() => ethers.BigNumber.from(0)),
-      lpRewardFarm.DAILY_CHECKIN_BONUS().catch(() => ethers.BigNumber.from(0)),
-      lpRewardFarm.dailyRewardRate ? lpRewardFarm.dailyRewardRate().catch(() => ethers.BigNumber.from(0)) : Promise.resolve(ethers.BigNumber.from(0)),
-      lpRewardFarm.maxDailyLOMPerUser ? lpRewardFarm.maxDailyLOMPerUser().catch(() => ethers.BigNumber.from(0)) : Promise.resolve(ethers.BigNumber.from(0))
-    ]);
-    
-    // 优先使用合约返回的当前日收益率，如果没有则使用基础日收益率
-    const dailyRate = parseFloat(ethers.utils.formatUnits(currentDailyRate || dailyRewardRate, 18));
-    const dailyRatePercent = (dailyRate * 100).toFixed(2);
-    
-    // 更新UI
-    document.getElementById('dailyRewardRate').textContent = `${dailyRatePercent}%`;
-    
-    // 显示数据来源
-    const sourceEl = document.getElementById('dailyRateSource');
-    if (sourceEl) {
-      sourceEl.textContent = currentDailyRate ? '实时数据' : '基础数据';
+    try {
+      if (!lpRewardFarm) return;
+      
+      // 获取池子参数
+      const [
+        dailyRewardRate,
+        maxDailyLOMPerUser,
+        dailyCheckinBonus,
+        currentDailyRate  // 从合约获取当前日收益率
+      ] = await Promise.all([
+        lpRewardFarm.dailyRewardRate ? lpRewardFarm.dailyRewardRate().catch(() => ethers.BigNumber.from(0)) : Promise.resolve(ethers.BigNumber.from(0)),
+        lpRewardFarm.maxDailyLOMPerUser ? lpRewardFarm.maxDailyLOMPerUser().catch(() => ethers.BigNumber.from(0)) : Promise.resolve(ethers.BigNumber.from(0)),
+        lpRewardFarm.DAILY_CHECKIN_BONUS ? lpRewardFarm.DAILY_CHECKIN_BONUS().catch(() => ethers.BigNumber.from(0)) : Promise.resolve(ethers.BigNumber.from(0)),
+        // 尝试从不同方法获取日收益率
+        this.getCurrentDailyRate()
+      ]);
+      
+      // 优先使用合约返回的当前日收益率，如果没有则使用基础日收益率
+      const dailyRate = parseFloat(ethers.utils.formatUnits(currentDailyRate || dailyRewardRate, 18));
+      const dailyRatePercent = (dailyRate * 100).toFixed(2);
+      
+      // 更新UI
+      document.getElementById('dailyRewardRate').textContent = `${dailyRatePercent}%`;
+      
+      // 显示数据来源
+      const sourceEl = document.getElementById('dailyRateSource');
+      if (sourceEl) {
+        sourceEl.textContent = currentDailyRate ? '实时数据' : '基础数据';
+      }
+      
+      // 更新缓存
+      if (!farmDataCache.data) farmDataCache.data = {};
+      farmDataCache.data.poolParameters = {
+        dailyRewardRate: dailyRate,
+        maxDailyLOMPerUser: parseFloat(ethers.utils.formatUnits(maxDailyLOMPerUser, 18)),
+        dailyCheckinBonus: parseFloat(ethers.utils.formatUnits(dailyCheckinBonus, 18)),
+        currentDailyRate: dailyRate
+      };
+      
+    } catch (error) {
+      console.error('获取池子参数失败:', error);
+      // 如果失败，设置默认值
+      document.getElementById('dailyRewardRate').textContent = '0.00%';
+      const sourceEl = document.getElementById('dailyRateSource');
+      if (sourceEl) {
+        sourceEl.textContent = '数据异常';
+      }
     }
-    
-    // 更新缓存
-    if (!farmDataCache.data) farmDataCache.data = {};
-    farmDataCache.data.poolParameters = {
-      dailyRewardRate: dailyRate,
-      maxDailyLOMPerUser: parseFloat(ethers.utils.formatUnits(maxDailyLOMPerUser, 18)),
-      dailyCheckinBonus: parseFloat(ethers.utils.formatUnits(dailyCheckinBonus, 18)),
-      currentDailyRate: dailyRate
-    };
-    
-  } catch (error) {
-    console.error('获取池子参数失败:', error);
-    // 如果失败，设置默认值
-    document.getElementById('dailyRewardRate').textContent = '0.00%';
-    const sourceEl = document.getElementById('dailyRateSource');
-    if (sourceEl) {
-      sourceEl.textContent = '数据异常';
+  },
+
+  async getCurrentDailyRate() {
+    try {
+      // 尝试从getPoolInfo获取
+      if (lpRewardFarm.getPoolInfo) {
+        const poolInfo = await lpRewardFarm.getPoolInfo();
+        if (poolInfo && poolInfo[4]) {
+          return poolInfo[4]; // currentDailyRate
+        }
+      }
+      
+      // 尝试从dailyRewardRate获取
+      if (lpRewardFarm.dailyRewardRate) {
+        return await lpRewardFarm.dailyRewardRate();
+      }
+      
+      return ethers.BigNumber.from(0);
+    } catch (error) {
+      console.warn('获取当前日收益率失败:', error);
+      return ethers.BigNumber.from(0);
     }
-  }
+  },
 
   async updateUserInfo() {
     try {
@@ -3608,6 +3584,7 @@ const FarmManager = {
       // 禁用卡片内领取按钮
       if (claimInCardBtn) {
         claimInCardBtn.disabled = true;
+        claimInCardBtn.textContent = '暂无奖励';
       }
       
       // 更新按钮状态
@@ -3731,16 +3708,16 @@ const FarmManager = {
       // 同步按钮
       syncBtn.disabled = !canSync;
       if (canSync) {
-        syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
+        syncBtn.querySelector('span:last-child').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
       } else {
         // 显示剩余时间
         const nextSyncTime = document.getElementById('nextSyncTime').textContent;
-        syncBtn.querySelector('.farm-btn-text').textContent = nextSyncTime;
+        syncBtn.querySelector('span:last-child').textContent = nextSyncTime;
       }
       
       // 签到按钮
       checkinBtn.disabled = !canCheckIn;
-      checkinBtn.querySelector('.farm-btn-text').textContent = isChinese ? '每日签到' : 'Daily Check-in';
+      checkinBtn.querySelector('span:last-child').textContent = isChinese ? '每日签到' : 'Daily Check-in';
       
     } else {
       // 未激活状态
@@ -3748,10 +3725,10 @@ const FarmManager = {
       activateBtn.querySelector('.farm-btn-text').textContent = isChinese ? '激活账户' : 'Activate Account';
       
       syncBtn.disabled = true;
-      syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '需要先激活' : 'Need Activation';
+      syncBtn.querySelector('span:last-child').textContent = isChinese ? '需要先激活' : 'Need Activation';
       
       checkinBtn.disabled = true;
-      checkinBtn.querySelector('.farm-btn-text').textContent = isChinese ? '未激活账户' : 'Inactive Account';
+      checkinBtn.querySelector('span:last-child').textContent = isChinese ? '未激活账户' : 'Inactive Account';
     }
   },
 
@@ -5565,4 +5542,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
   </script>
 </body>
-              </html>
+  </html>
