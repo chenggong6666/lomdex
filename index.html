@@ -3844,97 +3844,273 @@ const LP_REWARD_FARM_ABI = [
       }
     };
 
-    // ==================== 钱包管理器 ====================
-    const WalletManager = {
-      async connect() {
-        try {
-          if (!window.ethereum) {
-            Utils.showError(isChinese ? "请安装TP或web3钱包" : "Please install TP or WEB3 wallet");
-            return false;
-          }
-          
-          const walletBtn = document.getElementById('walletBtn');
-          walletBtn.textContent = isChinese ? '连接中...' : 'Connecting...';
-          walletBtn.classList.add('connecting');
-          
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts'
-          });
-          
-          if (!accounts || accounts.length === 0) {
-            throw new Error(isChinese ? '用户拒绝连接' : 'User rejected connection');
-          }
-          
-          account = accounts[0];
-          provider = new ethers.providers.Web3Provider(window.ethereum);
-          signer = provider.getSigner();
-          
-          await this.checkNetwork();
-          this.initContracts();
-          this.updateUI();
-          
-          // 立即刷新数据
-          await DataManager.refreshAll();
-          await FarmManager.refreshFarmData();
-          
-          // 设置定时刷新
-          if (refreshInterval) clearInterval(refreshInterval);
-          refreshInterval = setInterval(() => DataManager.refreshAll(), 10000);
-          
-          if (farmRefreshInterval) clearInterval(farmRefreshInterval);
-          farmRefreshInterval = setInterval(() => FarmManager.refreshFarmData(), 15000);
-          
-          Utils.showNotification(
-            isChinese ? '钱包连接成功' : 'Wallet connected successfully',
-            'success'
-          );
-          
-          return true;
-        } catch (error) {
-          console.error("钱包连接失败:", error);
-          Utils.showError(
-            isChinese ? `连接失败: ${error.message}` : `Connection failed: ${error.message}`
-          );
-          return false;
-        } finally {
-          this.updateUI();
-        }
-      },
-
-      disconnect() {
-        account = null;
-        provider = null;
-        signer = null;
-        router = null;
-        pair = null;
-        lom = null;
-        usdc = null;
-        axcnh = null;
-        usdt0 = null;
-        cnht0 = null;
-        axcnhUsdt0Pair = null;
-        lpRewardFarm = null;
-        
-        if (refreshInterval) {
-          clearInterval(refreshInterval);
-          refreshInterval = null;
-        }
-        
-        if (farmRefreshInterval) {
-          clearInterval(farmRefreshInterval);
-          farmRefreshInterval = null;
-        }
-        
-        this.updateUI();
-        DataManager.resetAllData();
-        FarmManager.clearUI(); // 清空农场数据
-        
-        Utils.showNotification(
-          isChinese ? "钱包已断开连接" : "Wallet disconnected",
-          'success'
-        );
+   // ==================== 钱包管理器 ====================
+const WalletManager = {
+  async checkNetwork() {
+    try {
+      if (!window.ethereum) {
+        throw new Error(isChinese ? "未检测到钱包" : "No wallet detected");
       }
-    };
+      
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const targetChainId = '0x' + APP_CONFIG.CHAIN_ID.toString(16);
+      
+      if (chainId !== targetChainId) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: targetChainId }]
+          });
+        } catch (switchError) {
+          // 如果网络不存在，添加网络
+          if (switchError.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: targetChainId,
+                chainName: 'Conflux eSpace',
+                nativeCurrency: {
+                  name: 'CFX',
+                  symbol: 'CFX',
+                  decimals: 18
+                },
+                rpcUrls: ['https://evm.confluxrpc.com'],
+                blockExplorerUrls: ['https://evm.confluxscan.io']
+              }]
+            });
+          } else {
+            throw switchError;
+          }
+        }
+      }
+      return true;
+    } catch (error) {
+      console.error("网络切换失败:", error);
+      const errorMsg = isChinese ? 
+        `请切换到Conflux eSpace网络 (ChainID: ${APP_CONFIG.CHAIN_ID})` :
+        `Please switch to Conflux eSpace network (ChainID: ${APP_CONFIG.CHAIN_ID})`;
+      Utils.showError(errorMsg);
+      return false;
+    }
+  },
+
+  initContracts() {
+    try {
+      if (!provider) {
+        throw new Error('Provider not initialized');
+      }
+      
+      signer = provider.getSigner();
+      
+      // 初始化合约
+      router = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.ROUTER,
+        ROUTER_ABI,
+        signer
+      );
+      
+      pair = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.PAIR,
+        PAIR_ABI,
+        provider
+      );
+      
+      lom = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.LOM,
+        ERC20_ABI,
+        signer
+      );
+      
+      usdc = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.USDC,
+        ERC20_ABI,
+        signer
+      );
+      
+      axcnh = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.AXCNH,
+        ERC20_ABI,
+        signer
+      );
+      
+      usdt0 = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.USDT0,
+        ERC20_ABI,
+        signer
+      );
+      
+      cnht0 = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.CNHT0,
+        ERC20_ABI,
+        signer
+      );
+      
+      axcnhUsdt0Pair = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.AXCNH_USDT0_PAIR,
+        PAIR_ABI,
+        provider
+      );
+      
+      // 初始化LP挖矿合约
+      lpRewardFarm = new ethers.Contract(
+        APP_CONFIG.CONTRACTS.LP_REWARD_FARM,
+        LP_REWARD_FARM_ABI,
+        signer
+      );
+      
+      console.log('所有合约已初始化');
+      return true;
+    } catch (error) {
+      console.error('初始化合约失败:', error);
+      return false;
+    }
+  },
+
+  async connect() {
+    try {
+      const walletBtn = document.getElementById('walletBtn');
+      
+      // 检查钱包是否存在
+      if (!window.ethereum) {
+        Utils.showError(isChinese ? 
+          "请安装TP钱包或MetaMask等Web3钱包" : 
+          "Please install TP Wallet, MetaMask or other Web3 wallet"
+        );
+        walletBtn.textContent = isChinese ? '连接钱包' : 'Connect Wallet';
+        return false;
+      }
+      
+      // 更新按钮状态为连接中
+      walletBtn.textContent = isChinese ? '连接中...' : 'Connecting...';
+      walletBtn.classList.add('connecting');
+      walletBtn.disabled = true;
+      
+      // 1. 请求账户连接
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+      
+      if (!accounts || accounts.length === 0) {
+        throw new Error(isChinese ? '用户拒绝连接' : 'User rejected connection');
+      }
+      
+      account = accounts[0];
+      console.log('连接账户:', account);
+      
+      // 2. 初始化provider和signer
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      
+      // 3. 检查并切换到正确网络
+      const networkOk = await this.checkNetwork();
+      if (!networkOk) {
+        throw new Error(isChinese ? '网络切换失败' : 'Network switch failed');
+      }
+      
+      // 4. 初始化合约
+      const contractsOk = this.initContracts();
+      if (!contractsOk) {
+        throw new Error(isChinese ? '合约初始化失败' : 'Contract initialization failed');
+      }
+      
+      // 5. 更新UI
+      this.updateUI();
+      
+      // 6. 立即刷新数据
+      await DataManager.refreshAll();
+      await FarmManager.refreshFarmData();
+      
+      // 7. 设置定时刷新
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(() => DataManager.refreshAll(), 10000);
+      
+      if (farmRefreshInterval) clearInterval(farmRefreshInterval);
+      farmRefreshInterval = setInterval(() => FarmManager.refreshFarmData(), 15000);
+      
+      Utils.showNotification(
+        isChinese ? '钱包连接成功' : 'Wallet connected successfully',
+        'success'
+      );
+      
+      return true;
+      
+    } catch (error) {
+      console.error("钱包连接失败:", error);
+      
+      let errorMessage;
+      if (error.code === 4001) {
+        errorMessage = isChinese ? '用户拒绝连接请求' : 'User rejected connection request';
+      } else if (error.code === -32002) {
+        errorMessage = isChinese ? '已有连接请求在处理中' : 'Connection request already processing';
+      } else {
+        errorMessage = isChinese ? `连接失败: ${error.message}` : `Connection failed: ${error.message}`;
+      }
+      
+      Utils.showError(errorMessage);
+      return false;
+      
+    } finally {
+      // 无论成功失败，都要恢复按钮状态
+      this.updateUI();
+    }
+  },
+
+  disconnect() {
+    account = null;
+    provider = null;
+    signer = null;
+    router = null;
+    pair = null;
+    lom = null;
+    usdc = null;
+    axcnh = null;
+    usdt0 = null;
+    cnht0 = null;
+    axcnhUsdt0Pair = null;
+    lpRewardFarm = null;
+    
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      refreshInterval = null;
+    }
+    
+    if (farmRefreshInterval) {
+      clearInterval(farmRefreshInterval);
+      farmRefreshInterval = null;
+    }
+    
+    this.updateUI();
+    DataManager.resetAllData();
+    FarmManager.clearUI(); // 清空农场数据
+    
+    Utils.showNotification(
+      isChinese ? "钱包已断开连接" : "Wallet disconnected",
+      'success'
+    );
+  },
+
+  updateUI() {
+    const walletBtn = document.getElementById('walletBtn');
+    
+    if (walletBtn) {
+      walletBtn.disabled = false;
+      walletBtn.classList.remove('connecting');
+      
+      if (account) {
+        const displayAddress = Utils.formatAddress(account);
+        walletBtn.textContent = displayAddress;
+        walletBtn.classList.add('connected');
+      } else {
+        walletBtn.textContent = isChinese ? "连接钱包" : "Connect Wallet";
+        walletBtn.classList.remove('connected');
+      }
+    }
+    
+    // 更新其他UI元素
+    UIManager.updateAllTexts();
+    DataManager.updateSwapButtonState();
+  }
+};
 
     // ==================== 数据管理器 ====================
     const DataManager = {
