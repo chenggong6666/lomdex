@@ -3052,7 +3052,6 @@ const ContractHealth = {
     }
   }
 };
-
 // ==================== LP奖励农场管理器 ====================
 const FarmManager = {
   async refreshFarmData() {
@@ -3069,9 +3068,11 @@ const FarmManager = {
       const lpBalance = await pair.balanceOf(account).catch(e => ethers.BigNumber.from(0));
       farmDataCache.lpBalance = parseFloat(ethers.utils.formatUnits(lpBalance, 18));
       
+      // 并行获取所有必要数据
       await Promise.allSettled([
         this.updateFarmInfo(),
-        this.updateUserInfo()
+        this.updateUserInfo(),
+        this.updatePoolStatus()
       ]);
       
       console.log('农场数据获取完成');
@@ -3080,38 +3081,6 @@ const FarmManager = {
       console.error('获取农场数据失败:', error);
       this.showError(isChinese ? '获取数据失败，请检查网络' : 'Failed to fetch data, check network');
     }
-  },
-
-  clearUI() {
-    document.getElementById('totalRewardPool').textContent = '--';
-    document.getElementById('totalDistributed').textContent = '--';
-    document.getElementById('remainingRewards').textContent = '--';
-    document.getElementById('totalActiveUsers').textContent = '--';
-    document.getElementById('rewardProgress').style.width = '0%';
-    
-    document.getElementById('lpBalance').textContent = '--';
-    document.getElementById('pendingRewards').textContent = '--';
-    document.getElementById('activityScore').textContent = '--';
-    document.getElementById('consecutiveDays').textContent = '--';
-    document.getElementById('dailyLOMLeft').textContent = '--';
-    document.getElementById('totalSyncs').textContent = '--';
-    document.getElementById('nextSyncTime').textContent = '--';
-    document.getElementById('checkinStatus').textContent = '--';
-    
-    document.getElementById('userStatusIcon').textContent = '⏳';
-    document.getElementById('userStatusTitle').textContent = isChinese ? '未连接' : 'Not Connected';
-    document.getElementById('userStatusDesc').textContent = isChinese ? '请连接钱包查看数据' : 'Connect wallet to view data';
-    document.getElementById('userLevelBadge').textContent = isChinese ? '未连接' : 'Not Connected';
-    document.getElementById('userLevelBadge').className = 'user-level-badge';
-    
-    this.disableAllButtons();
-  },
-
-  disableAllButtons() {
-    document.getElementById('activateBtn').disabled = true;
-    document.getElementById('syncBtn').disabled = true;
-    document.getElementById('claimBtn').disabled = true;
-    document.getElementById('checkinBtn').disabled = true;
   },
 
   async updateFarmInfo() {
@@ -3123,95 +3092,40 @@ const FarmManager = {
         throw new Error('LP挖矿合约未初始化');
       }
       
-      let totalRewardPool = 0;
-      let totalDistributed = 0;
-      let remainingRewards = 0;
-      let totalActiveUsers = 0;
-      let isActive = true;
-      let isPaused = false;
+      // 使用getPoolInfo获取完整信息
+      const poolInfo = await lpRewardFarm.getPoolInfo();
+      console.log('getPoolInfo结果:', poolInfo);
       
-      try {
-        // 方法1: 使用getPoolInfo获取完整信息
-        const poolInfo = await lpRewardFarm.getPoolInfo();
-        console.log('getPoolInfo结果:', poolInfo);
-        
-        [
-          totalActiveUsers,
-          totalRewardPool,  // totalLOMDeposited
-          totalDistributed, // totalLOMDistributed
-          remainingRewards, // remainingLOM
-          , , // currentDailyRate, currentDailyLimit
-          isActive,
-          isPaused
-        ] = poolInfo;
-        
-        console.log('从getPoolInfo获取的数据:', {
-          totalRewardPool: totalRewardPool.toString(),
-          totalDistributed: totalDistributed.toString(),
-          remainingRewards: remainingRewards.toString(),
-          totalActiveUsers: totalActiveUsers.toString(),
-          isActive,
-          isPaused
-        });
-        
-      } catch (poolInfoError) {
-        console.error('getPoolInfo调用失败，尝试备用方案:', poolInfoError);
-        
-        try {
-          // 方法2: 单独调用各个函数
-          const [
-            totalDepositedBN,
-            totalDistributedBN,
-            remainingBN,
-            totalUsers
-          ] = await Promise.all([
-            lpRewardFarm.totalLOMDeposited(),
-            lpRewardFarm.totalLOMDistributed(),
-            lpRewardFarm.remainingLOM(),
-            lpRewardFarm.totalActiveUsers()
-          ]);
-          
-          console.log('从单独调用获取的数据:', {
-            totalDeposited: totalDepositedBN.toString(),
-            totalDistributed: totalDistributedBN.toString(),
-            remaining: remainingBN.toString(),
-            totalUsers: totalUsers.toString()
-          });
-          
-          totalRewardPool = parseFloat(ethers.utils.formatUnits(totalDepositedBN, 18));
-          totalDistributed = parseFloat(ethers.utils.formatUnits(totalDistributedBN, 18));
-          remainingRewards = parseFloat(ethers.utils.formatUnits(remainingBN, 18));
-          totalActiveUsers = parseInt(totalUsers.toString());
-          
-          // 尝试获取活动状态
-          try {
-            isActive = await lpRewardFarm.farmingActive();
-            isPaused = await lpRewardFarm.paused();
-          } catch (statusError) {
-            console.warn('获取状态失败，使用默认值:', statusError);
-            isActive = true;
-            isPaused = false;
-          }
-          
-        } catch (fallbackError) {
-          console.error('备用方案也失败:', fallbackError);
-          throw new Error('获取农场信息失败');
-        }
-      }
-      
-      // 验证数据
-      if (isNaN(totalRewardPool) || isNaN(totalDistributed) || isNaN(remainingRewards)) {
-        throw new Error('数据格式错误');
-      }
-      
-      console.log('最终解析后的数据:', {
-        totalRewardPool,
-        totalDistributed,
-        remainingRewards,
+      // 解析poolInfo返回值
+      const [
         totalActiveUsers,
+        totalLOMDeposited,   // 总质押LOM
+        totalLOMDistributed, // 已分发LOM
+        remainingLOM,        // 剩余LOM
+        currentDailyRate,    // 当前日利率
+        currentDailyLimit,   // 当前日限额
+        isActive,
+        isPaused
+      ] = poolInfo;
+      
+      console.log('解析后的农场信息:', {
+        totalActiveUsers: totalActiveUsers.toString(),
+        totalLOMDeposited: totalLOMDeposited.toString(),
+        totalLOMDistributed: totalLOMDistributed.toString(),
+        remainingLOM: remainingLOM.toString(),
+        currentDailyRate: currentDailyRate.toString(),
+        currentDailyLimit: currentDailyLimit.toString(),
         isActive,
         isPaused
       });
+      
+      // 转换数据格式
+      const totalRewardPool = parseFloat(ethers.utils.formatUnits(totalLOMDeposited, 18));
+      const totalDistributed = parseFloat(ethers.utils.formatUnits(totalLOMDistributed, 18));
+      const remainingRewards = parseFloat(ethers.utils.formatUnits(remainingLOM, 18));
+      const activeUsers = parseInt(totalActiveUsers.toString());
+      const dailyRate = parseFloat(ethers.utils.formatUnits(currentDailyRate, 18));
+      const dailyLimit = parseFloat(ethers.utils.formatUnits(currentDailyLimit, 18));
       
       // 更新UI
       document.getElementById('totalRewardPool').textContent = 
@@ -3221,7 +3135,14 @@ const FarmManager = {
       document.getElementById('remainingRewards').textContent = 
         Utils.formatDisplay(remainingRewards) + ' LOM';
       document.getElementById('totalActiveUsers').textContent = 
-        totalActiveUsers.toString();
+        activeUsers.toString();
+      
+      // 更新进度条
+      let progressPercentage = 0;
+      if (totalRewardPool > 0) {
+        progressPercentage = Math.min(100, (totalDistributed / totalRewardPool) * 100);
+      }
+      document.getElementById('rewardProgress').style.width = `${progressPercentage}%`;
       
       // 更新状态
       let statusText, statusClass = '';
@@ -3242,44 +3163,21 @@ const FarmManager = {
         statusBadge.classList.add(statusClass);
       }
       
-      // 更新进度条 - 只有总奖励池大于0时才计算百分比
-      let progressPercentage = 0;
-      if (totalRewardPool > 0) {
-        progressPercentage = Math.min(100, (totalDistributed / totalRewardPool) * 100);
-      }
-      document.getElementById('rewardProgress').style.width = `${progressPercentage}%`;
-      
       // 更新缓存
       farmDataCache.totalRewardPool = totalRewardPool;
       farmDataCache.totalDistributed = totalDistributed;
       farmDataCache.remainingRewards = remainingRewards;
+      farmDataCache.totalActiveUsers = activeUsers;
       farmDataCache.isActive = isActive;
-      farmDataCache.totalActiveUsers = totalActiveUsers;
+      farmDataCache.isPaused = isPaused;
+      farmDataCache.dailyRate = dailyRate;
+      farmDataCache.dailyLimit = dailyLimit;
+      
+      console.log('农场信息更新完成');
       
     } catch (error) {
       console.error('更新农场信息失败:', error);
-      
-      // 显示错误状态，不更新数据
-      document.getElementById('farmStatusBadge').textContent = isChinese ? '数据错误' : 'Data Error';
-      document.getElementById('farmStatusBadge').className = 'farm-pool-status error';
-      
-      // 如果缓存有数据，使用缓存数据，否则显示"--"
-      if (farmDataCache.totalRewardPool > 0) {
-        document.getElementById('totalRewardPool').textContent = 
-          Utils.formatDisplay(farmDataCache.totalRewardPool) + ' LOM';
-        document.getElementById('totalDistributed').textContent = 
-          Utils.formatDisplay(farmDataCache.totalDistributed) + ' LOM';
-        document.getElementById('remainingRewards').textContent = 
-          Utils.formatDisplay(farmDataCache.remainingRewards) + ' LOM';
-        document.getElementById('totalActiveUsers').textContent = 
-          (farmDataCache.totalActiveUsers || 0).toString();
-      } else {
-        document.getElementById('totalRewardPool').textContent = '--';
-        document.getElementById('totalDistributed').textContent = '--';
-        document.getElementById('remainingRewards').textContent = '--';
-        document.getElementById('totalActiveUsers').textContent = '--';
-        document.getElementById('rewardProgress').style.width = '0%';
-      }
+      this.showDefaultFarmState();
     }
   },
 
@@ -3293,97 +3191,117 @@ const FarmManager = {
       const lpBalance = await pair.balanceOf(account).catch(e => ethers.BigNumber.from(0));
       const lpBalanceFormatted = parseFloat(ethers.utils.formatUnits(lpBalance, 18));
       
-      // 初始化用户信息
-      let isActive = false;
-      let pendingRewards = 0;
-      let activityScore = 0;
-      let consecutiveDays = 0;
-      let nextSyncAvailable = 0;
-      let dailyLOMLeft = 0;
-      let totalSyncs = 0;
-      let canCheckInToday = false;
-      let levelStr = "INACTIVE";
+      // 2. 使用getUserInfo获取完整用户信息
+      const userInfo = await lpRewardFarm.getUserInfo(account);
+      console.log('getUserInfo结果:', userInfo);
       
+      // 解析userInfo返回值
+      const [
+        currentBalance,
+        pendingRewards,
+        activityScore,
+        levelStr,
+        consecutiveDays,
+        nextSyncAvailable,
+        dailyLOMLeft,
+        canCheckInToday
+      ] = userInfo;
+      
+      // 格式化数据
+      const pendingRewardsFormatted = parseFloat(ethers.utils.formatUnits(pendingRewards, 18));
+      const dailyLOMLeftFormatted = parseFloat(ethers.utils.formatUnits(dailyLOMLeft, 18));
+      const activityScoreNum = parseInt(activityScore.toString());
+      const consecutiveDaysNum = parseInt(consecutiveDays.toString());
+      
+      console.log('解析后的用户信息:', {
+        pendingRewards: pendingRewardsFormatted,
+        activityScore: activityScoreNum,
+        level: levelStr,
+        consecutiveDays: consecutiveDaysNum,
+        nextSyncAvailable: nextSyncAvailable.toString(),
+        dailyLOMLeft: dailyLOMLeftFormatted,
+        canCheckInToday
+      });
+      
+      // 3. 获取用户详细数据
+      let totalSyncs = 0;
+      let userIsActive = false;
       try {
-        // 尝试使用getUserInfo获取完整用户信息
-        const userInfo = await lpRewardFarm.getUserInfo(account);
-        console.log('getUserInfo结果:', userInfo);
+        const userDetails = await lpRewardFarm.users(account);
+        console.log('users函数结果:', userDetails);
         
-        if (userInfo && userInfo.length >= 8) {
-          [
-            , // currentBalance
-            pendingRewards,
-            activityScore,
-            levelStr,
-            consecutiveDays,
-            nextSyncAvailable,
-            dailyLOMLeft,
-            canCheckInToday
-          ] = userInfo;
-          
-          // 格式化数据
-          pendingRewards = parseFloat(ethers.utils.formatUnits(pendingRewards, 18));
-          dailyLOMLeft = parseFloat(ethers.utils.formatUnits(dailyLOMLeft, 18));
-          activityScore = parseInt(activityScore.toString());
-          consecutiveDays = parseInt(consecutiveDays.toString());
-          
-          // 检查用户是否激活
-          try {
-            const userDetails = await lpRewardFarm.users(account);
-            isActive = userDetails[8]; // 第9个元素是isActive
-            totalSyncs = parseInt(userDetails[6].toString()); // 第7个元素是totalSyncs
-          } catch (userError) {
-            console.warn('users函数调用失败:', userError);
-            // 根据levelStr判断是否激活
-            isActive = levelStr !== "INACTIVE";
-          }
-        }
-      } catch (getUserInfoError) {
-        console.error('getUserInfo调用失败，尝试备用方案:', getUserInfoError);
+        // 解析users函数返回值
+        const [
+          lastSyncTime,
+          lastCheckInTime,
+          firstJoinTime,
+          lastRewardDay,
+          userActivityScore,
+          userConsecutiveDays,
+          userTotalSyncs,
+          level,
+          isActive
+        ] = userDetails;
         
-        try {
-          // 备用方案：使用users函数
-          const userDetails = await lpRewardFarm.users(account);
-          console.log('users函数结果:', userDetails);
-          
-          if (userDetails && userDetails.length >= 9) {
-            isActive = userDetails[8];
-            activityScore = parseInt(userDetails[4].toString());
-            consecutiveDays = parseInt(userDetails[5].toString());
-            totalSyncs = parseInt(userDetails[6].toString());
-            
-            // 尝试获取待领奖励
-            try {
-              const pendingRewardsBN = await lpRewardFarm.getPendingRewardsEstimate(account);
-              if (pendingRewardsBN && pendingRewardsBN.length >= 1) {
-                pendingRewards = parseFloat(ethers.utils.formatUnits(pendingRewardsBN[0], 18));
-              }
-            } catch (rewardError) {
-              console.warn('获取待领奖励失败:', rewardError);
-            }
-          }
-        } catch (fallbackError) {
-          console.error('备用方案也失败:', fallbackError);
-          // 使用默认值
-          isActive = false;
-          pendingRewards = 0;
-          activityScore = 0;
-          consecutiveDays = 0;
-          totalSyncs = 0;
-          nextSyncAvailable = 0;
-          dailyLOMLeft = 0;
-          canCheckInToday = false;
-          levelStr = "INACTIVE";
-        }
+        totalSyncs = parseInt(userTotalSyncs.toString());
+        userIsActive = isActive;
+        
+        // 更新缓存
+        farmDataCache.lastSyncTime = parseInt(lastSyncTime.toString());
+        farmDataCache.lastCheckInTime = parseInt(lastCheckInTime.toString());
+        farmDataCache.firstJoinTime = parseInt(firstJoinTime.toString());
+        farmDataCache.lastRewardDay = parseInt(lastRewardDay.toString());
+        
+      } catch (userError) {
+        console.warn('获取用户详情失败:', userError);
+        // 根据levelStr判断是否激活
+        userIsActive = levelStr !== "INACTIVE";
       }
       
-      // 更新用户状态显示
+      // 4. 获取用户奖励数据
+      try {
+        const userRewardsInfo = await lpRewardFarm.userRewards(account);
+        console.log('userRewards结果:', userRewardsInfo);
+        
+        // 解析userRewards返回值
+        const [
+          accumulatedLOM,
+          totalLOMEarned,
+          dailyLOMEarned,
+          lastRewardDayNum
+        ] = userRewardsInfo;
+        
+        // 更新缓存
+        farmDataCache.accumulatedLOM = parseFloat(ethers.utils.formatUnits(accumulatedLOM, 18));
+        farmDataCache.totalLOMEarned = parseFloat(ethers.utils.formatUnits(totalLOMEarned, 18));
+        farmDataCache.dailyLOMEarned = parseFloat(ethers.utils.formatUnits(dailyLOMEarned, 18));
+        
+      } catch (rewardsError) {
+        console.warn('获取用户奖励数据失败:', rewardsError);
+      }
+      
+      // 5. 获取待领奖励预估
+      let rewardEstimate = pendingRewardsFormatted;
+      try {
+        const estimate = await lpRewardFarm.getPendingRewardsEstimate(account);
+        console.log('待领奖励预估:', estimate);
+        
+        if (estimate && estimate.length >= 1) {
+          const safeRewards = parseFloat(ethers.utils.formatUnits(estimate[0], 18));
+          // 使用预估值更新待领奖励
+          rewardEstimate = safeRewards;
+        }
+      } catch (estimateError) {
+        console.warn('获取奖励预估失败:', estimateError);
+      }
+      
+      // 6. 更新UI
       const userStatusIcon = document.getElementById('userStatusIcon');
       const userStatusTitle = document.getElementById('userStatusTitle');
       const userStatusDesc = document.getElementById('userStatusDesc');
       const userLevelBadge = document.getElementById('userLevelBadge');
       
-      if (isActive) {
+      if (userIsActive) {
         userStatusIcon.textContent = '✅';
         userStatusTitle.textContent = isChinese ? '已激活' : 'Activated';
         
@@ -3391,15 +3309,14 @@ const FarmManager = {
         const levelClass = Utils.getLevelClass(levelStr);
         
         userStatusDesc.textContent = isChinese ? 
-          `等级: ${levelDisplay}` : 
-          `Level: ${levelDisplay}`;
+          `等级: ${levelDisplay} | 活动分: ${activityScoreNum}` : 
+          `Level: ${levelDisplay} | Score: ${activityScoreNum}`;
         
         userLevelBadge.textContent = levelDisplay;
         userLevelBadge.className = 'user-level-badge ' + levelClass;
         
         farmDataCache.userIsActive = true;
         farmDataCache.userLevel = levelStr;
-        farmDataCache.pendingRewards = pendingRewards;
         
       } else {
         userStatusIcon.textContent = '⏳';
@@ -3411,17 +3328,16 @@ const FarmManager = {
         
         farmDataCache.userIsActive = false;
         farmDataCache.userLevel = "INACTIVE";
-        farmDataCache.pendingRewards = 0;
       }
       
       // 更新统计数据
       document.getElementById('lpBalance').textContent = Utils.formatDisplay(lpBalanceFormatted);
       document.getElementById('pendingRewards').textContent = 
-        Utils.formatDisplay(pendingRewards) + ' LOM';
-      document.getElementById('activityScore').textContent = activityScore.toString();
-      document.getElementById('consecutiveDays').textContent = consecutiveDays.toString();
+        Utils.formatDisplay(rewardEstimate) + ' LOM';
+      document.getElementById('activityScore').textContent = activityScoreNum.toString();
+      document.getElementById('consecutiveDays').textContent = consecutiveDaysNum.toString();
       document.getElementById('dailyLOMLeft').textContent = 
-        Utils.formatDisplay(dailyLOMLeft) + ' LOM';
+        Utils.formatDisplay(dailyLOMLeftFormatted) + ' LOM';
       document.getElementById('totalSyncs').textContent = totalSyncs.toString();
       
       // 计算下次同步时间
@@ -3430,13 +3346,6 @@ const FarmManager = {
       
       if (nextSyncAvailable > 0) {
         secondsLeft = nextSyncAvailable > now ? nextSyncAvailable - now : 0;
-      } else if (isActive) {
-        // 如果没有nextSyncAvailable，使用12小时冷却时间
-        const lastSyncTime = await this.getLastSyncTime();
-        if (lastSyncTime > 0) {
-          const nextSync = lastSyncTime + (12 * 60 * 60); // 12小时
-          secondsLeft = nextSync > now ? nextSync - now : 0;
-        }
       }
       
       document.getElementById('nextSyncTime').textContent = Utils.formatTime(secondsLeft);
@@ -3444,21 +3353,31 @@ const FarmManager = {
       // 更新签到状态
       document.getElementById('checkinStatus').textContent = canCheckInToday ? 
         (isChinese ? '可签到' : 'Can Check-in') : 
-        (isChinese ? '已签到' : 'Checked-in');
+        (isChinese ? '今日已签到' : 'Checked-in Today');
       
       // 更新缓存
-      farmDataCache.activityScore = activityScore;
-      farmDataCache.consecutiveDays = consecutiveDays;
+      farmDataCache.pendingRewards = rewardEstimate;
+      farmDataCache.activityScore = activityScoreNum;
+      farmDataCache.consecutiveDays = consecutiveDaysNum;
       farmDataCache.nextSyncTime = nextSyncAvailable;
-      farmDataCache.dailyLOMLeft = dailyLOMLeft;
+      farmDataCache.dailyLOMLeft = dailyLOMLeftFormatted;
       farmDataCache.canCheckInToday = canCheckInToday;
       farmDataCache.totalSyncs = totalSyncs;
       farmDataCache.lpBalance = lpBalanceFormatted;
       
+      // 更新按钮状态
+      this.updateButtons(
+        userIsActive,
+        lpBalanceFormatted,
+        secondsLeft,
+        canCheckInToday,
+        rewardEstimate
+      );
+      
+      // 更新缓存到本地存储
       this.updateCache();
       
-      // 更新按钮状态
-      this.updateButtons(isActive, lpBalanceFormatted, secondsLeft, canCheckInToday, pendingRewards);
+      console.log('用户信息更新完成');
       
     } catch (error) {
       console.error('更新用户信息失败:', error);
@@ -3466,36 +3385,169 @@ const FarmManager = {
     }
   },
 
-  async getLastSyncTime() {
+  async updatePoolStatus() {
     try {
-      if (!account || !lpRewardFarm) return 0;
+      console.log('=== 更新奖池状态 ===');
       
-      const userDetails = await lpRewardFarm.users(account);
-      if (userDetails && userDetails.length > 0) {
-        return parseInt(userDetails[0].toString()); // lastSyncTime
-      }
+      if (!lpRewardFarm) return;
+      
+      // 使用getLOMPoolStatus获取奖池状态
+      const poolStatus = await lpRewardFarm.getLOMPoolStatus();
+      console.log('奖池状态:', poolStatus);
+      
+      // 解析返回值
+      const [
+        maxSupply,
+        totalDeposited,
+        totalDistributed,
+        remaining,
+        depositProgress,
+        distributionProgress,
+        estimatedDaysLeft,
+        status
+      ] = poolStatus;
+      
+      console.log('解析后的奖池状态:', {
+        maxSupply: ethers.utils.formatUnits(maxSupply, 18),
+        totalDeposited: ethers.utils.formatUnits(totalDeposited, 18),
+        totalDistributed: ethers.utils.formatUnits(totalDistributed, 18),
+        remaining: ethers.utils.formatUnits(remaining, 18),
+        depositProgress: depositProgress.toString(),
+        distributionProgress: distributionProgress.toString(),
+        estimatedDaysLeft: estimatedDaysLeft.toString(),
+        status
+      });
+      
+      // 可以在这里更新额外的UI元素或缓存
+      farmDataCache.poolStatus = status;
+      farmDataCache.estimatedDaysLeft = parseInt(estimatedDaysLeft.toString());
+      farmDataCache.depositProgress = parseInt(depositProgress.toString());
+      farmDataCache.distributionProgress = parseInt(distributionProgress.toString());
+      
+      console.log('奖池状态更新完成');
+      
     } catch (error) {
-      console.error('获取最后同步时间失败:', error);
+      console.warn('获取奖池状态失败:', error);
+      // 这不是关键功能，失败不影响主要流程
     }
-    return 0;
   },
 
-  showDefaultUserState() {
-    document.getElementById('userStatusIcon').textContent = '⏳';
-    document.getElementById('userStatusTitle').textContent = isChinese ? '未激活' : 'Inactive';
-    document.getElementById('userStatusDesc').textContent = isChinese ? 
-      '账户未激活或数据获取失败' : 'Account not active or data fetch failed';
-    document.getElementById('userLevelBadge').textContent = isChinese ? '未激活' : 'Inactive';
-    
-    document.getElementById('pendingRewards').textContent = '0 LOM';
-    document.getElementById('activityScore').textContent = '0';
-    document.getElementById('consecutiveDays').textContent = '0';
-    document.getElementById('dailyLOMLeft').textContent = '0 LOM';
-    document.getElementById('totalSyncs').textContent = '0';
-    document.getElementById('nextSyncTime').textContent = isChinese ? '随时' : 'Now';
-    document.getElementById('checkinStatus').textContent = isChinese ? '未签到' : 'Not Checked-in';
-    
-    this.updateButtons(false, 0, 0, false, 0);
+  async getContractConstants() {
+    try {
+      console.log('=== 获取合约常量 ===');
+      
+      if (!lpRewardFarm) return;
+      
+      // 获取合约常量
+      const [
+        dailyCheckinBonus,
+        lomDecimals,
+        maxLomSupply,
+        syncActivityPoints,
+        syncBonusRate,
+        adminAddress,
+        dailyRewardRate,
+        firstDepositTime,
+        lpTokenAddress,
+        maxDailyLOMPerUser,
+        minSyncInterval,
+        rewardTokenAddress
+      ] = await Promise.all([
+        lpRewardFarm.DAILY_CHECKIN_BONUS(),
+        lpRewardFarm.LOM_DECIMALS(),
+        lpRewardFarm.MAX_LOM_SUPPLY(),
+        lpRewardFarm.SYNC_ACTIVITY_POINTS(),
+        lpRewardFarm.SYNC_BONUS_RATE(),
+        lpRewardFarm.admin(),
+        lpRewardFarm.dailyRewardRate(),
+        lpRewardFarm.firstDepositTime(),
+        lpRewardFarm.lpToken(),
+        lpRewardFarm.maxDailyLOMPerUser(),
+        lpRewardFarm.minSyncInterval(),
+        lpRewardFarm.rewardToken()
+      ]);
+      
+      console.log('合约常量:', {
+        dailyCheckinBonus: dailyCheckinBonus.toString(),
+        lomDecimals: lomDecimals.toString(),
+        maxLomSupply: ethers.utils.formatUnits(maxLomSupply, 18),
+        syncActivityPoints: syncActivityPoints.toString(),
+        syncBonusRate: syncBonusRate.toString(),
+        adminAddress,
+        dailyRewardRate: ethers.utils.formatUnits(dailyRewardRate, 18),
+        firstDepositTime: firstDepositTime.toString(),
+        lpTokenAddress,
+        maxDailyLOMPerUser: ethers.utils.formatUnits(maxDailyLOMPerUser, 18),
+        minSyncInterval: minSyncInterval.toString(),
+        rewardTokenAddress
+      });
+      
+      // 缓存常量
+      farmDataCache.contractConstants = {
+        dailyCheckinBonus: parseInt(dailyCheckinBonus.toString()),
+        lomDecimals: parseInt(lomDecimals.toString()),
+        maxLomSupply: parseFloat(ethers.utils.formatUnits(maxLomSupply, 18)),
+        syncActivityPoints: parseInt(syncActivityPoints.toString()),
+        syncBonusRate: parseInt(syncBonusRate.toString()),
+        adminAddress,
+        dailyRewardRate: parseFloat(ethers.utils.formatUnits(dailyRewardRate, 18)),
+        firstDepositTime: parseInt(firstDepositTime.toString()),
+        lpTokenAddress,
+        maxDailyLOMPerUser: parseFloat(ethers.utils.formatUnits(maxDailyLOMPerUser, 18)),
+        minSyncInterval: parseInt(minSyncInterval.toString()),
+        rewardTokenAddress
+      };
+      
+      console.log('合约常量获取完成');
+      
+    } catch (error) {
+      console.warn('获取合约常量失败:', error);
+    }
+  },
+
+  async getSecurityStatus() {
+    try {
+      console.log('=== 获取安全状态 ===');
+      
+      if (!lpRewardFarm) return;
+      
+      const securityStatus = await lpRewardFarm.getSecurityStatus();
+      console.log('安全状态:', securityStatus);
+      
+      // 解析返回值
+      const [
+        isAdminSet,
+        currentAdmin,
+        lomContractBalance,
+        excessLOM
+      ] = securityStatus;
+      
+      console.log('安全状态详情:', {
+        isAdminSet,
+        currentAdmin,
+        lomContractBalance: ethers.utils.formatUnits(lomContractBalance, 18),
+        excessLOM: ethers.utils.formatUnits(excessLOM, 18)
+      });
+      
+      // 缓存安全状态
+      farmDataCache.securityStatus = {
+        isAdminSet,
+        currentAdmin,
+        lomContractBalance: parseFloat(ethers.utils.formatUnits(lomContractBalance, 18)),
+        excessLOM: parseFloat(ethers.utils.formatUnits(excessLOM, 18))
+      };
+      
+      // 如果合约余额异常，显示警告
+      if (farmDataCache.securityStatus.lomContractBalance < farmDataCache.totalRewardPool * 0.9) {
+        console.warn('合约LOM余额低于总质押量的90%');
+        // 可以在这里添加UI警告
+      }
+      
+      console.log('安全状态获取完成');
+      
+    } catch (error) {
+      console.warn('获取安全状态失败:', error);
+    }
   },
 
   updateButtons(isActive, lpBalance, nextSyncSeconds, canCheckIn, pendingRewards) {
@@ -3510,10 +3562,11 @@ const FarmManager = {
     const checkinBtnText = checkinBtn.querySelector('.farm-btn-text');
     
     if (isActive) {
+      // 已激活状态
       activateBtn.disabled = true;
       activateBtnText.textContent = isChinese ? '已激活' : 'Activated';
       
-      // 同步按钮状态 - 修复：只有有LP余额且冷却时间到了才能点击
+      // 同步按钮
       if (lpBalance > 0 && nextSyncSeconds <= 0) {
         syncBtn.disabled = false;
         syncBtnText.textContent = isChinese ? '同步奖励' : 'Sync Rewards';
@@ -3522,23 +3575,23 @@ const FarmManager = {
         if (lpBalance <= 0) {
           syncBtnText.textContent = isChinese ? '需要LP代币' : 'Need LP Tokens';
         } else {
-          // 显示剩余时间
           syncBtnText.textContent = Utils.formatTime(nextSyncSeconds);
         }
       }
       
-      // 领取按钮状态
-      if (pendingRewards > 0.000001) { // 考虑到精度问题
+      // 领取按钮
+      if (pendingRewards > 0.000001) {
         claimBtn.disabled = false;
+        const displayAmount = Utils.formatDisplay(pendingRewards);
         claimBtnText.textContent = isChinese ? 
-          `领取 ${Utils.formatDisplay(pendingRewards)} LOM` : 
-          `Claim ${Utils.formatDisplay(pendingRewards)} LOM`;
+          `领取 ${displayAmount} LOM` : 
+          `Claim ${displayAmount} LOM`;
       } else {
         claimBtn.disabled = true;
         claimBtnText.textContent = isChinese ? '暂无奖励' : 'No Rewards';
       }
       
-      // 签到按钮状态
+      // 签到按钮
       if (canCheckIn) {
         checkinBtn.disabled = false;
         checkinBtnText.textContent = isChinese ? '每日签到' : 'Daily Check-in';
@@ -3549,7 +3602,7 @@ const FarmManager = {
       
     } else {
       // 未激活状态
-      activateBtn.disabled = lpBalance <= 0.000001; // 需要有LP才能激活
+      activateBtn.disabled = lpBalance <= 0.000001;
       activateBtnText.textContent = isChinese ? '激活账户' : 'Activate Account';
       
       syncBtn.disabled = true;
@@ -3563,197 +3616,38 @@ const FarmManager = {
     }
   },
 
-  updateCache() {
-    try {
-      localStorage.setItem('farmDataCache', JSON.stringify(farmDataCache));
-      console.log('缓存已更新:', farmDataCache);
-    } catch (e) {
-      console.error('保存缓存失败:', e);
-    }
+  showDefaultFarmState() {
+    // 显示默认农场状态
+    document.getElementById('farmStatusBadge').textContent = isChinese ? '数据错误' : 'Data Error';
+    document.getElementById('farmStatusBadge').className = 'farm-pool-status error';
+    
+    document.getElementById('totalRewardPool').textContent = '--';
+    document.getElementById('totalDistributed').textContent = '--';
+    document.getElementById('remainingRewards').textContent = '--';
+    document.getElementById('totalActiveUsers').textContent = '--';
+    document.getElementById('rewardProgress').style.width = '0%';
   },
 
-  loadCache() {
-    try {
-      const cached = localStorage.getItem('farmDataCache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        console.log('加载缓存:', parsed);
-        
-        Object.assign(farmDataCache, parsed);
-        return true;
-      }
-    } catch (e) {
-      console.error('加载缓存失败:', e);
-    }
-    return false;
+  showDefaultUserState() {
+    // 显示默认用户状态
+    document.getElementById('userStatusIcon').textContent = '⏳';
+    document.getElementById('userStatusTitle').textContent = isChinese ? '未激活' : 'Inactive';
+    document.getElementById('userStatusDesc').textContent = isChinese ? 
+      '账户未激活或数据获取失败' : 'Account not active or data fetch failed';
+    document.getElementById('userLevelBadge').textContent = isChinese ? '未激活' : 'Inactive';
+    
+    document.getElementById('lpBalance').textContent = '--';
+    document.getElementById('pendingRewards').textContent = '0 LOM';
+    document.getElementById('activityScore').textContent = '0';
+    document.getElementById('consecutiveDays').textContent = '0';
+    document.getElementById('dailyLOMLeft').textContent = '0 LOM';
+    document.getElementById('totalSyncs').textContent = '0';
+    document.getElementById('nextSyncTime').textContent = isChinese ? '随时' : 'Now';
+    document.getElementById('checkinStatus').textContent = isChinese ? '未签到' : 'Not Checked-in';
+    
+    this.updateButtons(false, 0, 0, false, 0);
   },
 
-  updateUIWithCache() {
-    console.log('使用缓存数据更新UI:', farmDataCache);
-    
-    document.getElementById('totalRewardPool').textContent = 
-      Utils.formatDisplay(farmDataCache.totalRewardPool) + ' LOM';
-    document.getElementById('totalDistributed').textContent = 
-      Utils.formatDisplay(farmDataCache.totalDistributed) + ' LOM';
-    document.getElementById('remainingRewards').textContent = 
-      Utils.formatDisplay(farmDataCache.remainingRewards) + ' LOM';
-    
-    const statusText = farmDataCache.isActive ? 
-      (isChinese ? '活跃' : 'Active') : 
-      (isChinese ? '停止' : 'Stopped');
-    document.getElementById('farmStatusBadge').textContent = statusText;
-    
-    const progressPercentage = farmDataCache.totalRewardPool > 0 ? 
-      Math.min(100, (farmDataCache.totalDistributed / farmDataCache.totalRewardPool) * 100) : 0;
-    document.getElementById('rewardProgress').style.width = `${progressPercentage}%`;
-    
-    const userStatusIcon = document.getElementById('userStatusIcon');
-    const userStatusTitle = document.getElementById('userStatusTitle');
-    const userStatusDesc = document.getElementById('userStatusDesc');
-    const userLevelBadge = document.getElementById('userLevelBadge');
-    
-    if (farmDataCache.userIsActive) {
-      userStatusIcon.textContent = '✅';
-      userStatusTitle.textContent = isChinese ? '已激活' : 'Activated';
-      
-      const levelDisplay = Utils.formatLevel(farmDataCache.userLevel);
-      const levelClass = Utils.getLevelClass(farmDataCache.userLevel);
-      
-      userStatusDesc.textContent = isChinese ? 
-        `等级: ${levelDisplay}` : 
-        `Level: ${levelDisplay}`;
-      
-      userLevelBadge.textContent = levelDisplay;
-      userLevelBadge.className = 'user-level-badge ' + levelClass;
-    } else {
-      userStatusIcon.textContent = '⏳';
-      userStatusTitle.textContent = isChinese ? '未激活' : 'Inactive';
-      userStatusDesc.textContent = isChinese ? 
-        '激活账户开始挖矿' : 'Activate account to start farming';
-      userLevelBadge.textContent = isChinese ? '未激活' : 'Inactive';
-      userLevelBadge.className = 'user-level-badge';
-    }
-    
-    document.getElementById('pendingRewards').textContent = 
-      Utils.formatDisplay(farmDataCache.pendingRewards || 0) + ' LOM';
-    document.getElementById('activityScore').textContent = 
-      (farmDataCache.activityScore || 0).toString();
-    document.getElementById('consecutiveDays').textContent = 
-      (farmDataCache.consecutiveDays || 0).toString();
-    document.getElementById('dailyLOMLeft').textContent = 
-      Utils.formatDisplay(farmDataCache.dailyLOMLeft || 0) + ' LOM';
-    document.getElementById('totalSyncs').textContent = 
-      (farmDataCache.totalSyncs || 0).toString();
-    
-    const now = Math.floor(Date.now() / 1000);
-    const nextSyncTime = farmDataCache.nextSyncTime || 0;
-    const secondsLeft = nextSyncTime > now ? nextSyncTime - now : 0;
-    
-    document.getElementById('nextSyncTime').textContent = Utils.formatTime(secondsLeft);
-    document.getElementById('checkinStatus').textContent = 
-      (farmDataCache.canCheckInToday ? 
-        (isChinese ? '可签到' : 'Can Check-in') : 
-        (isChinese ? '已签到' : 'Checked-in'));
-    
-    this.updateButtons(
-      farmDataCache.userIsActive || false,
-      farmDataCache.lpBalance || 0,
-      secondsLeft,
-      farmDataCache.canCheckInToday || false,
-      farmDataCache.pendingRewards || 0
-    );
-  },
-
-  async activateAccount() {
-    const operation = {
-      type: 'activate',
-      icon: '✅',
-      title: isChinese ? '激活账户确认' : 'Activate Account Confirmation',
-      processingMessage: isChinese ? '激活账户中...' : 'Activating account...',
-      successMessage: isChinese ? '账户激活成功！现在可以开始挖矿了' : 'Account activated successfully! You can now start farming.',
-      execute: async () => {
-        const tx = await lpRewardFarm.activate();
-        await tx.wait();
-      }
-    };
-    
-    await TransactionManager.executeFarmTransaction(operation);
-  },
-
-  async syncRewards() {
-    const operation = {
-      type: 'sync',
-      icon: '🔄',
-      title: isChinese ? '同步奖励确认' : 'Sync Rewards Confirmation',
-      processingMessage: isChinese ? '同步奖励中...' : 'Syncing rewards...',
-      successMessage: isChinese ? '奖励同步成功！' : 'Rewards synced successfully!',
-      execute: async () => {
-        const tx = await lpRewardFarm.sync();
-        const receipt = await tx.wait();
-        
-        try {
-          if (receipt.logs && receipt.logs.length > 0) {
-            console.log('同步交易日志:', receipt.logs);
-            operation.successMessage = isChinese ? 
-              `奖励同步成功！请检查您的奖励余额` : 
-              `Rewards synced successfully! Please check your reward balance`;
-          }
-        } catch (error) {
-          console.error('解析交易日志失败:', error);
-        }
-      }
-    };
-    
-    await TransactionManager.executeFarmTransaction(operation);
-  },
-
-  async claimRewards() {
-    const operation = {
-      type: 'claim',
-      icon: '💰',
-      title: isChinese ? '领取奖励确认' : 'Claim Rewards Confirmation',
-      processingMessage: isChinese ? '领取奖励中...' : 'Claiming rewards...',
-      successMessage: isChinese ? `奖励领取成功！获得 ${Utils.formatDisplay(farmDataCache.pendingRewards)} LOM` : 
-                               `Rewards claimed successfully! Received ${Utils.formatDisplay(farmDataCache.pendingRewards)} LOM`,
-      execute: async () => {
-        const tx = await lpRewardFarm.claimLOMRewards();
-        await tx.wait();
-      }
-    };
-    
-    await TransactionManager.executeFarmTransaction(operation);
-  },
-
-  async dailyCheckIn() {
-    const operation = {
-      type: 'checkin',
-      icon: '📅',
-      title: isChinese ? '每日签到确认' : 'Daily Check-in Confirmation',
-      processingMessage: isChinese ? '签到中...' : 'Checking in...',
-      successMessage: isChinese ? '签到成功！获得奖励加成' : 'Check-in successful! Bonus awarded.',
-      execute: async () => {
-        const tx = await lpRewardFarm.dailyCheckIn();
-        await tx.wait();
-      }
-    };
-    
-    await TransactionManager.executeFarmTransaction(operation);
-  },
-
-  showError(message) {
-    const errorBox = document.getElementById('swapErrorBox');
-    if (errorBox) {
-      const errorText = document.getElementById('swapErrorText');
-      if (errorText) {
-        errorText.textContent = message;
-        errorBox.classList.add('show');
-        
-        setTimeout(() => {
-          errorBox.classList.remove('show');
-        }, 5000);
-      }
-    }
-  }
 };
 
 // ==================== 交易管理器 ====================
