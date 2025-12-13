@@ -1235,7 +1235,7 @@
       color: var(--accent-yellow);
     }
     
-    /* 同步时间显示 - 优化 */
+    /* 收割时间显示 - 优化 */
     .countdown-display {
       font-family: 'SF Mono', Monaco, monospace;
       font-size: 13px;
@@ -1306,7 +1306,7 @@
       left: 100%;
     }
     
-    /* 同步按钮更大，占据两列 */
+    /* 收割按钮更大，占据两列 */
     .farm-action-btn.sync {
       grid-column: span 2;
       height: 48px;
@@ -2692,9 +2692,9 @@
               </div>
             </div>
             
-            <!-- 同步时间显示 -->
+            <!-- 收割时间显示 -->
             <div class="countdown-display">
-              <span class="countdown-label">下次同步:</span>
+              <span class="countdown-label">下次收割:</span>
               <span class="countdown-value" id="nextSyncTime">--</span>
             </div>
             
@@ -2711,7 +2711,7 @@
             
             <button class="farm-action-btn sync" id="syncBtn" disabled>
               <span class="farm-btn-icon">🔄</span>
-              <span class="farm-btn-text" id="syncBtnText">同步奖励</span>
+              <span class="farm-btn-text" id="syncBtnText">收割奖励</span>
             </button>
             
             
@@ -3216,7 +3216,7 @@ const Utils = {
       'underflow': isChinese ? '数量太小' : 'Amount too small',
       'No LP tokens': isChinese ? '您没有LP代币' : 'You have no LP tokens',
       'Not active': isChinese ? '账户未激活' : 'Account not active',
-      'Sync too frequent': isChinese ? '同步太频繁' : 'Sync too frequent',
+      'Sync too frequent': isChinese ? '收割太频繁' : 'Sync too frequent',
       'Daily limit reached': isChinese ? '达到每日上限' : 'Daily limit reached',
       'Insufficient LOM rewards': isChinese ? 'LOM奖励不足' : 'Insufficient LOM rewards',
       'Transaction failed': isChinese ? '交易失败' : 'Transaction failed'
@@ -3242,7 +3242,7 @@ const Utils = {
   },
 
   formatTime(seconds) {
-    if (seconds <= 0) return isChinese ? '现在可同步' : 'Ready to sync';
+    if (seconds <= 0) return isChinese ? '现在可收割' : 'Ready to sync';
     
     if (seconds < 60) {
       return isChinese ? `${Math.ceil(seconds)}秒后` : `in ${Math.ceil(seconds)}s`;
@@ -3659,7 +3659,7 @@ const FarmManager = {
     document.getElementById('activityScore').textContent = userData.activityScore.toString();
     document.getElementById('consecutiveDays').textContent = userData.consecutiveDays.toString();
     
-    // 更新同步时间
+    // 更新收割时间
     const nextSyncTime = userData.nextSyncAvailable;
     document.getElementById('nextSyncTime').textContent = Utils.formatTime(nextSyncTime);
     
@@ -3730,10 +3730,10 @@ const FarmManager = {
       activateBtn.disabled = true;
       activateBtn.querySelector('.farm-btn-text').textContent = isChinese ? '已激活' : 'Activated';
       
-      // 同步按钮
+      // 收割按钮
       syncBtn.disabled = !canSync;
       if (canSync) {
-        syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
+        syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '收割奖励' : 'Sync Rewards';
       } else {
         // 显示剩余时间
         const nextSyncTime = document.getElementById('nextSyncTime').textContent;
@@ -3861,10 +3861,10 @@ const FarmManager = {
             const level = userInfo[3];
             if (level === "INACTIVE" || level === "0") return '请先激活账户';
             
-            // 检查同步时间
+            // 检查收割时间
             const nextSyncAvailable = parseInt(userInfo[5].toString());
             if (nextSyncAvailable > 0) {
-              return `距离下次同步还有 ${Utils.formatTime(nextSyncAvailable)}`;
+              return `距离下次收割还有 ${Utils.formatTime(nextSyncAvailable)}`;
             }
           } catch (e) {
             return '无法获取用户信息';
@@ -3872,12 +3872,12 @@ const FarmManager = {
           
           // 检查LP余额
           const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-          if (lpBalance <= 0.000001) return '需要LP代币才能同步';
+          if (lpBalance <= 0.000001) return '需要LP代币才能收割';
           
           return null;
         },
-        processingMessage: isChinese ? '同步奖励中...' : 'Syncing...',
-        successMessage: isChinese ? '奖励同步成功！' : 'Rewards synced!'
+        processingMessage: isChinese ? '收割奖励中...' : 'Syncing...',
+        successMessage: isChinese ? '奖励收割成功！' : 'Rewards synced!'
       },
       
       'claim': {
@@ -4101,7 +4101,7 @@ const ConfirmDialog = {
       return `
         <div class="confirm-amount-row">
           <div class="confirm-amount-logo" style="background-image: url('${APP_CONFIG.TOKEN_LOGOS.LOM}')"></div>
-          <div class="confirm-amount-text">同步LOM奖励</div>
+          <div class="confirm-amount-text">收割LOM奖励</div>
         </div>
       `;
     } else if (operation.type === 'claim') {
@@ -4143,7 +4143,7 @@ const ConfirmDialog = {
       return `
         <div class="confirm-detail-item">
           <div class="confirm-detail-label">${isChinese ? '操作类型' : 'Action Type'}</div>
-          <div class="confirm-detail-value">${isChinese ? '同步奖励' : 'Sync Rewards'}</div>
+          <div class="confirm-detail-value">${isChinese ? '收割奖励' : 'Sync Rewards'}</div>
         </div>
         <div class="confirm-detail-item">
           <div class="confirm-detail-label">${isChinese ? '要求' : 'Requirement'}</div>
@@ -5470,7 +5470,7 @@ const UIManager = {
     document.getElementById("cancelRemoveBtn").textContent = isChinese ? "取消" : "Cancel";
     
     document.getElementById('activateBtnText').textContent = isChinese ? '激活账户' : 'Activate Account';
-    document.getElementById('syncBtnText').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
+    document.getElementById('syncBtnText').textContent = isChinese ? '收割奖励' : 'Sync Rewards';
     document.getElementById('claimBtnText').textContent = isChinese ? '领取' : 'Claim';
     document.getElementById('checkinBtnText').textContent = isChinese ? '签到' : 'Check-in';
     
