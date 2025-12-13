@@ -839,19 +839,25 @@
     }
     
     .liquidity-stats {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       margin-bottom: 16px;
     }
     
     .stat-item {
       text-align: center;
+      background: rgba(26, 115, 232, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
     }
     
     .stat-label-small {
       font-size: 11px;
       color: var(--text-secondary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      font-weight: 600;
     }
     
     .stat-value-large {
@@ -865,12 +871,13 @@
     }
     
     .position-actions {
-      display: flex;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
     }
     
     .position-btn {
-      flex: 1;
       padding: 12px;
       border-radius: 12px;
       font-size: 14px;
@@ -973,7 +980,7 @@
       margin-top: 4px;
     }
     
-    /* 用户信息卡片优化 */
+    /* 用户信息卡片优化 - 双排布局 */
     .farm-user-info {
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(26, 115, 232, 0.03));
       border-radius: 16px;
@@ -1065,21 +1072,28 @@
       gap: 6px;
     }
     
-    /* 收益信息网格 - 优化布局 */
+    /* 收益信息网格 - 双排布局 */
     .revenue-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
     
     .revenue-card {
       background: rgba(255, 255, 255, 0.03);
-      border-radius: 10px;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 14px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       position: relative;
       overflow: hidden;
+    }
+    
+    .revenue-card.with-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100px;
     }
     
     .revenue-card::before {
@@ -1093,9 +1107,9 @@
     }
     
     .revenue-label {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -1103,13 +1117,14 @@
     }
     
     .revenue-value {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--text-primary);
       line-height: 1.2;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 8px;
     }
     
     .revenue-value.success {
@@ -1122,80 +1137,43 @@
       text-shadow: 0 1px 2px rgba(255, 215, 0, 0.2);
     }
     
+    .revenue-action-btn {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--gradient-green);
+      color: white;
+      margin-top: 4px;
+    }
+    
+    .revenue-action-btn:disabled {
+      background: rgba(46, 160, 67, 0.3);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+    }
+    
+    .revenue-action-btn:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(46, 160, 67, 0.3);
+    }
+    
     .revenue-sub {
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      opacity: 0.8;
-    }
-    
-    /* 预估收益网格 - 优化 */
-    .estimates-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    
-    .estimate-card {
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 10px;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .estimate-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
-    }
-    
-    .estimate-label {
       font-size: 10px;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-weight: 600;
-    }
-    
-    .estimate-value {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--text-primary);
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .estimate-value.success {
-      color: var(--success);
-    }
-    
-    .estimate-value.warning {
-      color: var(--accent-yellow);
-    }
-    
-    .estimate-sub {
-      font-size: 9px;
       color: var(--text-muted);
       margin-top: 4px;
       opacity: 0.8;
     }
     
-    /* 用户统计网格 - 优化 */
+    /* 用户统计网格 - 三列布局 */
     .user-stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 16px;
     }
     
@@ -1235,7 +1213,7 @@
       color: var(--accent-yellow);
     }
     
-    /* 收割时间显示 - 优化 */
+    /* 同步时间显示 - 优化 */
     .countdown-display {
       font-family: 'SF Mono', Monaco, monospace;
       font-size: 13px;
@@ -1264,19 +1242,19 @@
       font-size: 12px;
     }
     
-    /* 农场操作按钮 - 新的三列布局 */
+    /* 农场操作按钮 - 新的四列布局，模仿流动性页面 */
     .farm-actions {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 16px;
     }
     
     .farm-action-btn {
-      height: 44px;
-      padding: 0 10px;
-      border-radius: 10px;
-      font-size: 12px;
+      height: 48px;
+      padding: 0 12px;
+      border-radius: 12px;
+      font-size: 14px;
       font-weight: 700;
       border: none;
       cursor: pointer;
@@ -1284,7 +1262,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
       min-width: 0;
       position: relative;
@@ -1306,11 +1284,11 @@
       left: 100%;
     }
     
-    /* 收割按钮更大，占据两列 */
+    /* 同步按钮更大，占据两列 */
     .farm-action-btn.sync {
       grid-column: span 2;
-      height: 48px;
-      font-size: 14px;
+      height: 52px;
+      font-size: 16px;
       background: var(--gradient-yellow);
       color: #0f172a;
       font-weight: 800;
@@ -1360,7 +1338,7 @@
     }
     
     .farm-btn-icon {
-      font-size: 14px;
+      font-size: 16px;
       flex-shrink: 0;
     }
     
@@ -1370,7 +1348,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 11px;
+      font-size: 13px;
     }
     
     /* 操作状态提示 */
@@ -2200,10 +2178,9 @@
         font-size: 14px;
       }
       
-      .revenue-grid,
-      .estimates-grid {
+      .revenue-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 8px;
       }
       
       .user-stats-grid {
@@ -2211,16 +2188,18 @@
         gap: 6px;
       }
       
-      .revenue-card,
-      .estimate-card,
-      .user-stat-item {
-        padding: 10px;
+      .revenue-card {
+        padding: 12px;
+        min-height: 90px;
       }
       
-      .revenue-value,
-      .estimate-value,
-      .user-stat-value {
-        font-size: 14px;
+      .revenue-value {
+        font-size: 16px;
+      }
+      
+      .revenue-action-btn {
+        padding: 6px 10px;
+        font-size: 11px;
       }
       
       .farm-actions {
@@ -2228,22 +2207,18 @@
         gap: 8px;
       }
       
-      .farm-action-btn.sync {
-        grid-column: span 2;
-      }
-      
       .farm-action-btn {
-        height: 40px;
-        font-size: 11px;
-      }
-      
-      .farm-action-btn.sync {
         height: 44px;
         font-size: 13px;
       }
       
+      .farm-action-btn.sync {
+        height: 48px;
+        font-size: 15px;
+      }
+      
       .farm-btn-text {
-        font-size: 10px;
+        font-size: 12px;
       }
       
       .user-avatar {
@@ -2308,8 +2283,7 @@
         grid-template-columns: 1fr;
       }
       
-      .revenue-grid,
-      .estimates-grid {
+      .revenue-grid {
         grid-template-columns: 1fr;
       }
       
@@ -2319,10 +2293,6 @@
       
       .farm-actions {
         grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .farm-action-btn.sync {
-        grid-column: span 2;
       }
     }
     
@@ -2645,7 +2615,7 @@
               </div>
             </div>
             
-            <!-- 收益信息网格 -->
+            <!-- 收益信息网格 - 双排布局 -->
             <div class="revenue-grid">
               <div class="revenue-card">
                 <div class="revenue-label">📊 日收益率</div>
@@ -2659,14 +2629,13 @@
                 <div class="revenue-sub">累计已领取</div>
               </div>
               
-              <div class="revenue-card">
+              <!-- 待领取收益卡片 - 包含领取按钮 -->
+              <div class="revenue-card with-button">
                 <div class="revenue-label">🎁 待领取收益</div>
                 <div class="revenue-value warning" id="pendingRewards">-- LOM</div>
-                <div class="revenue-sub">可立即领取</div>
-                <button class="farm-action-btn success" id="claimBtn" disabled>
-              <span class="farm-btn-icon">💰</span>
-              <span class="farm-btn-text" id="claimBtnText">领取</span>
-            </button>
+                <button class="revenue-action-btn" id="claimInCardBtn" disabled>
+                  领取奖励
+                </button>
               </div>
               
               <div class="revenue-card">
@@ -2692,9 +2661,9 @@
               </div>
             </div>
             
-            <!-- 收割时间显示 -->
+            <!-- 同步时间显示 -->
             <div class="countdown-display">
-              <span class="countdown-label">下次收割:</span>
+              <span class="countdown-label">下次同步:</span>
               <span class="countdown-value" id="nextSyncTime">--</span>
             </div>
             
@@ -2702,7 +2671,7 @@
             <div class="action-status" id="actionStatus"></div>
           </div>
 
-          <!-- 农场操作按钮 -->
+          <!-- 农场操作按钮 - 类似流动性页面布局 -->
           <div class="farm-actions">
             <button class="farm-action-btn primary" id="activateBtn">
               <span class="farm-btn-icon">✅</span>
@@ -2711,14 +2680,12 @@
             
             <button class="farm-action-btn sync" id="syncBtn" disabled>
               <span class="farm-btn-icon">🔄</span>
-              <span class="farm-btn-text" id="syncBtnText">收割奖励</span>
+              <span class="farm-btn-text" id="syncBtnText">同步奖励</span>
             </button>
-            
-            
             
             <button class="farm-action-btn warning" id="checkinBtn" disabled>
               <span class="farm-btn-icon">📅</span>
-              <span class="farm-btn-text" id="checkinBtnText">签到</span>
+              <span class="farm-btn-text" id="checkinBtnText">每日签到</span>
             </button>
           </div>
         </div>
@@ -3216,7 +3183,7 @@ const Utils = {
       'underflow': isChinese ? '数量太小' : 'Amount too small',
       'No LP tokens': isChinese ? '您没有LP代币' : 'You have no LP tokens',
       'Not active': isChinese ? '账户未激活' : 'Account not active',
-      'Sync too frequent': isChinese ? '收割太频繁' : 'Sync too frequent',
+      'Sync too frequent': isChinese ? '同步太频繁' : 'Sync too frequent',
       'Daily limit reached': isChinese ? '达到每日上限' : 'Daily limit reached',
       'Insufficient LOM rewards': isChinese ? 'LOM奖励不足' : 'Insufficient LOM rewards',
       'Transaction failed': isChinese ? '交易失败' : 'Transaction failed'
@@ -3242,7 +3209,7 @@ const Utils = {
   },
 
   formatTime(seconds) {
-    if (seconds <= 0) return isChinese ? '现在可收割' : 'Ready to sync';
+    if (seconds <= 0) return isChinese ? '现在可同步' : 'Ready to sync';
     
     if (seconds < 60) {
       return isChinese ? `${Math.ceil(seconds)}秒后` : `in ${Math.ceil(seconds)}s`;
@@ -3428,8 +3395,8 @@ const FarmManager = {
   disableAllButtons() {
     document.getElementById('activateBtn').disabled = true;
     document.getElementById('syncBtn').disabled = true;
-    document.getElementById('claimBtn').disabled = true;
     document.getElementById('checkinBtn').disabled = true;
+    document.getElementById('claimInCardBtn').disabled = true;
   },
 
   async updateFarmInfo() {
@@ -3603,6 +3570,7 @@ const FarmManager = {
     const userAvatar = document.getElementById('userAvatar');
     const userName = document.getElementById('userName');
     const userLevel = document.getElementById('userLevel');
+    const claimInCardBtn = document.getElementById('claimInCardBtn');
     
     if (!userData || !userData.isActive) {
       // 未激活状态
@@ -3620,6 +3588,11 @@ const FarmManager = {
       document.getElementById('activityScore').textContent = '--';
       document.getElementById('consecutiveDays').textContent = '--';
       document.getElementById('nextSyncTime').textContent = isChinese ? '未激活' : 'Inactive';
+      
+      // 禁用卡片内领取按钮
+      if (claimInCardBtn) {
+        claimInCardBtn.disabled = true;
+      }
       
       // 更新按钮状态
       this.updateButtonStates(false, false, 0, false, 0);
@@ -3659,9 +3632,19 @@ const FarmManager = {
     document.getElementById('activityScore').textContent = userData.activityScore.toString();
     document.getElementById('consecutiveDays').textContent = userData.consecutiveDays.toString();
     
-    // 更新收割时间
+    // 更新同步时间
     const nextSyncTime = userData.nextSyncAvailable;
     document.getElementById('nextSyncTime').textContent = Utils.formatTime(nextSyncTime);
+    
+    // 更新卡片内领取按钮
+    if (claimInCardBtn) {
+      claimInCardBtn.disabled = userData.pendingRewards < 0.000001;
+      if (userData.pendingRewards >= 0.000001) {
+        claimInCardBtn.textContent = `领取 ${Utils.formatDisplay(userData.pendingRewards)} LOM`;
+      } else {
+        claimInCardBtn.textContent = '暂无奖励';
+      }
+    }
     
     // 更新按钮状态
     const canSync = nextSyncTime <= 0 && userData.currentBalance > 0;
@@ -3722,7 +3705,6 @@ const FarmManager = {
   updateButtonStates(isActive, hasLPBalance, canSync, canCheckIn, pendingRewards) {
     const activateBtn = document.getElementById('activateBtn');
     const syncBtn = document.getElementById('syncBtn');
-    const claimBtn = document.getElementById('claimBtn');
     const checkinBtn = document.getElementById('checkinBtn');
     
     if (isActive) {
@@ -3730,30 +3712,19 @@ const FarmManager = {
       activateBtn.disabled = true;
       activateBtn.querySelector('.farm-btn-text').textContent = isChinese ? '已激活' : 'Activated';
       
-      // 收割按钮
+      // 同步按钮
       syncBtn.disabled = !canSync;
       if (canSync) {
-        syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '收割奖励' : 'Sync Rewards';
+        syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
       } else {
         // 显示剩余时间
         const nextSyncTime = document.getElementById('nextSyncTime').textContent;
         syncBtn.querySelector('.farm-btn-text').textContent = nextSyncTime;
       }
       
-      // 领取按钮
-      claimBtn.disabled = pendingRewards < 0.000001;
-      if (pendingRewards >= 0.000001) {
-        const displayAmount = Utils.formatDisplay(pendingRewards);
-        claimBtn.querySelector('.farm-btn-text').textContent = isChinese ? 
-          `领取 ${displayAmount}` : 
-          `Claim ${displayAmount}`;
-      } else {
-        claimBtn.querySelector('.farm-btn-text').textContent = isChinese ? '暂无奖励' : 'No Rewards';
-      }
-      
       // 签到按钮
       checkinBtn.disabled = !canCheckIn;
-      checkinBtn.querySelector('.farm-btn-text').textContent = isChinese ? '签到' : 'Check-in';
+      checkinBtn.querySelector('.farm-btn-text').textContent = isChinese ? '每日签到' : 'Daily Check-in';
       
     } else {
       // 未激活状态
@@ -3762,9 +3733,6 @@ const FarmManager = {
       
       syncBtn.disabled = true;
       syncBtn.querySelector('.farm-btn-text').textContent = isChinese ? '需要先激活' : 'Need Activation';
-      
-      claimBtn.disabled = true;
-      claimBtn.querySelector('.farm-btn-text').textContent = isChinese ? '暂无奖励' : 'No Rewards';
       
       checkinBtn.disabled = true;
       checkinBtn.querySelector('.farm-btn-text').textContent = isChinese ? '未激活账户' : 'Inactive Account';
@@ -3861,10 +3829,10 @@ const FarmManager = {
             const level = userInfo[3];
             if (level === "INACTIVE" || level === "0") return '请先激活账户';
             
-            // 检查收割时间
+            // 检查同步时间
             const nextSyncAvailable = parseInt(userInfo[5].toString());
             if (nextSyncAvailable > 0) {
-              return `距离下次收割还有 ${Utils.formatTime(nextSyncAvailable)}`;
+              return `距离下次同步还有 ${Utils.formatTime(nextSyncAvailable)}`;
             }
           } catch (e) {
             return '无法获取用户信息';
@@ -3872,12 +3840,12 @@ const FarmManager = {
           
           // 检查LP余额
           const lpBalance = parseFloat(document.getElementById('lpBalance').textContent);
-          if (lpBalance <= 0.000001) return '需要LP代币才能收割';
+          if (lpBalance <= 0.000001) return '需要LP代币才能同步';
           
           return null;
         },
-        processingMessage: isChinese ? '收割奖励中...' : 'Syncing...',
-        successMessage: isChinese ? '奖励收割成功！' : 'Rewards synced!'
+        processingMessage: isChinese ? '同步奖励中...' : 'Syncing...',
+        successMessage: isChinese ? '奖励同步成功！' : 'Rewards synced!'
       },
       
       'claim': {
@@ -4101,7 +4069,7 @@ const ConfirmDialog = {
       return `
         <div class="confirm-amount-row">
           <div class="confirm-amount-logo" style="background-image: url('${APP_CONFIG.TOKEN_LOGOS.LOM}')"></div>
-          <div class="confirm-amount-text">收割LOM奖励</div>
+          <div class="confirm-amount-text">同步LOM奖励</div>
         </div>
       `;
     } else if (operation.type === 'claim') {
@@ -4143,7 +4111,7 @@ const ConfirmDialog = {
       return `
         <div class="confirm-detail-item">
           <div class="confirm-detail-label">${isChinese ? '操作类型' : 'Action Type'}</div>
-          <div class="confirm-detail-value">${isChinese ? '收割奖励' : 'Sync Rewards'}</div>
+          <div class="confirm-detail-value">${isChinese ? '同步奖励' : 'Sync Rewards'}</div>
         </div>
         <div class="confirm-detail-item">
           <div class="confirm-detail-label">${isChinese ? '要求' : 'Requirement'}</div>
@@ -5111,6 +5079,11 @@ const UIManager = {
       Utils.hideNotification();
     });
     
+    // 添加卡片内领取按钮的事件监听
+    document.getElementById('claimInCardBtn').addEventListener('click', () => {
+      this.handleFarmAction('claim');
+    });
+    
     this.showFooterAndRiskWarning();
   },
 
@@ -5146,7 +5119,6 @@ const UIManager = {
     
     document.getElementById("activateBtn").addEventListener("click", () => this.handleFarmAction('activate'));
     document.getElementById("syncBtn").addEventListener("click", () => this.handleFarmAction('sync'));
-    document.getElementById("claimBtn").addEventListener("click", () => this.handleFarmAction('claim'));
     document.getElementById("checkinBtn").addEventListener("click", () => this.handleFarmAction('checkin'));
     
     document.addEventListener("click", (e) => {
@@ -5470,9 +5442,13 @@ const UIManager = {
     document.getElementById("cancelRemoveBtn").textContent = isChinese ? "取消" : "Cancel";
     
     document.getElementById('activateBtnText').textContent = isChinese ? '激活账户' : 'Activate Account';
-    document.getElementById('syncBtnText').textContent = isChinese ? '收割奖励' : 'Sync Rewards';
-    document.getElementById('claimBtnText').textContent = isChinese ? '领取' : 'Claim';
-    document.getElementById('checkinBtnText').textContent = isChinese ? '签到' : 'Check-in';
+    document.getElementById('syncBtnText').textContent = isChinese ? '同步奖励' : 'Sync Rewards';
+    document.getElementById('checkinBtnText').textContent = isChinese ? '每日签到' : 'Daily Check-in';
+    
+    const claimInCardBtn = document.getElementById('claimInCardBtn');
+    if (claimInCardBtn) {
+      claimInCardBtn.textContent = isChinese ? '领取奖励' : 'Claim Rewards';
+    }
     
     document.getElementById("riskTitle").textContent = isChinese ? "风险提示" : "Risk Warning";
     document.getElementById("riskText").textContent = isChinese ? 
@@ -5511,7 +5487,7 @@ const UIManager = {
 
   async handleFarmAction(action) {
     const btn = document.getElementById(action + 'Btn');
-    if (btn.disabled) {
+    if (btn && btn.disabled) {
       return;
     }
     
@@ -5573,4 +5549,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
   </script>
 </body>
-    </html>
+              </html>
