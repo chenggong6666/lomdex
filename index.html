@@ -2254,7 +2254,7 @@
           <div class="farm-pool-stats">
             <div class="pool-stat-item">
               <div class="pool-stat-label">总奖励池</div>
-              <div class="pool-stat-value" id="totalRewardPool">200 LOM</div>
+              <div class="pool-stat-value" id="totalRewardPool">--</div>
               <div class="pool-stat-progress">
                 <div class="progress-bar">
                   <div class="progress-fill" id="rewardProgress" style="width: 0%"></div>
@@ -2265,15 +2265,15 @@
             <div class="pool-stat-row">
               <div class="pool-stat-col">
                 <div class="pool-stat-label-small">已分发</div>
-                <div class="pool-stat-value-small" id="totalDistributed">0 LOM</div>
+                <div class="pool-stat-value-small" id="totalDistributed">--</div>
               </div>
               <div class="pool-stat-col">
                 <div class="pool-stat-label-small">剩余</div>
-                <div class="pool-stat-value-small success" id="remainingRewards">200 LOM</div>
+                <div class="pool-stat-value-small success" id="remainingRewards">--</div>
               </div>
               <div class="pool-stat-col">
                 <div class="pool-stat-label-small">活跃用户</div>
-                <div class="pool-stat-value-small" id="totalActiveUsers">0</div>
+                <div class="pool-stat-value-small" id="totalActiveUsers">--</div>
               </div>
             </div>
           </div>
@@ -2285,48 +2285,48 @@
             <div class="user-status">
               <div class="user-status-icon" id="userStatusIcon">⏳</div>
               <div class="user-status-text">
-                <div class="user-status-title" id="userStatusTitle">未激活</div>
-                <div class="user-status-desc" id="userStatusDesc">激活账户开始挖矿</div>
+                <div class="user-status-title" id="userStatusTitle">未连接</div>
+                <div class="user-status-desc" id="userStatusDesc">请连接钱包查看数据</div>
               </div>
             </div>
-            <div class="user-level-badge" id="userLevelBadge">未激活</div>
+            <div class="user-level-badge" id="userLevelBadge">未连接</div>
           </div>
           
           <div class="user-stats-grid">
             <div class="user-stat-item">
               <div class="user-stat-label">LP余额</div>
-              <div class="user-stat-value highlight" id="lpBalance">0</div>
+              <div class="user-stat-value highlight" id="lpBalance">--</div>
             </div>
             <div class="user-stat-item">
               <div class="user-stat-label">待领奖励</div>
-              <div class="user-stat-value success" id="pendingRewards">0 LOM</div>
+              <div class="user-stat-value success" id="pendingRewards">--</div>
             </div>
             <div class="user-stat-item">
               <div class="user-stat-label">活动分数</div>
-              <div class="user-stat-value" id="activityScore">0</div>
+              <div class="user-stat-value" id="activityScore">--</div>
             </div>
             <div class="user-stat-item">
               <div class="user-stat-label">连续天数</div>
-              <div class="user-stat-value" id="consecutiveDays">0</div>
+              <div class="user-stat-value" id="consecutiveDays">--</div>
             </div>
           </div>
           
           <div class="user-details-grid">
             <div class="user-detail-item">
               <div class="user-detail-label">今日限额</div>
-              <div class="user-detail-value" id="dailyLOMLeft">0 LOM</div>
+              <div class="user-detail-value" id="dailyLOMLeft">--</div>
             </div>
             <div class="user-detail-item">
               <div class="user-detail-label">总同步次数</div>
-              <div class="user-detail-value" id="totalSyncs">0</div>
+              <div class="user-detail-value" id="totalSyncs">--</div>
             </div>
             <div class="user-detail-item">
               <div class="user-detail-label">下次同步</div>
-              <div class="user-detail-value" id="nextSyncTime">随时</div>
+              <div class="user-detail-value" id="nextSyncTime">--</div>
             </div>
             <div class="user-detail-item">
               <div class="user-detail-label">签到状态</div>
-              <div class="user-detail-value" id="checkinStatus">未签到</div>
+              <div class="user-detail-value" id="checkinStatus">--</div>
             </div>
           </div>
         </div>
@@ -2548,7 +2548,6 @@
         }
       });
     });
-   
 
 // ==================== 统一配置 ====================
 const APP_CONFIG = {
@@ -2562,7 +2561,7 @@ const APP_CONFIG = {
     USDT0: "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
     CNHT0: "0xDEd1660192d4d82e7c0B628ba556861EdBB5CAda",
     AXCNH_USDT0_PAIR: "0x50b095DF7a8f856C6fA07fF89bcBC2dF8491A8df",
-    // LP奖励农场合约 - 确保地址正确
+    // LP奖励农场合约
     LP_REWARD_FARM: "0xD1a50fB7DbDE52a180Ab6Dc83a6969869259D32a"
   },
   TOKEN_LOGOS: {
@@ -2576,7 +2575,7 @@ const APP_CONFIG = {
   CHAIN_ID: 1030 // Conflux eSpace
 };
 
-// ==================== LP奖励农场 ABI - 已根据您提供的ABI完整更新 ====================
+// ==================== LP奖励农场 ABI ====================
 const LP_REWARD_FARM_ABI = [
   // 构造函数
   {"inputs":[{"internalType":"address","name":"_lpToken","type":"address"},{"internalType":"address","name":"_rewardToken","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
@@ -2650,9 +2649,9 @@ let currentReserves = { cfx: 0, lom: 0 };
 let lastInputWasFrom = true;
 let farmRefreshInterval;
 let farmDataCache = {
-  totalRewardPool: 200,
+  totalRewardPool: 0,
   totalDistributed: 0,
-  remainingRewards: 200,
+  remainingRewards: 0,
   isActive: true,
   userIsActive: false,
   userLevel: "INACTIVE",
@@ -3121,13 +3120,12 @@ const FarmManager = {
       
       if (!lpRewardFarm) {
         console.error('LP挖矿合约未初始化');
-        return;
+        throw new Error('LP挖矿合约未初始化');
       }
       
-      // 尝试多种方法获取农场信息
-      let totalRewardPool = 200;
+      let totalRewardPool = 0;
       let totalDistributed = 0;
-      let remainingRewards = 200;
+      let remainingRewards = 0;
       let totalActiveUsers = 0;
       let isActive = true;
       let isPaused = false;
@@ -3139,18 +3137,22 @@ const FarmManager = {
         
         [
           totalActiveUsers,
-          totalRewardPool,
-          totalDistributed,
-          remainingRewards,
+          totalRewardPool,  // totalLOMDeposited
+          totalDistributed, // totalLOMDistributed
+          remainingRewards, // remainingLOM
           , , // currentDailyRate, currentDailyLimit
           isActive,
           isPaused
         ] = poolInfo;
         
-        // 转换为数值
-        totalRewardPool = parseFloat(ethers.utils.formatUnits(totalRewardPool, 18));
-        totalDistributed = parseFloat(ethers.utils.formatUnits(totalDistributed, 18));
-        remainingRewards = parseFloat(ethers.utils.formatUnits(remainingRewards, 18));
+        console.log('从getPoolInfo获取的数据:', {
+          totalRewardPool: totalRewardPool.toString(),
+          totalDistributed: totalDistributed.toString(),
+          remainingRewards: remainingRewards.toString(),
+          totalActiveUsers: totalActiveUsers.toString(),
+          isActive,
+          isPaused
+        });
         
       } catch (poolInfoError) {
         console.error('getPoolInfo调用失败，尝试备用方案:', poolInfoError);
@@ -3158,39 +3160,51 @@ const FarmManager = {
         try {
           // 方法2: 单独调用各个函数
           const [
-            totalDeposited,
+            totalDepositedBN,
             totalDistributedBN,
-            remaining,
+            remainingBN,
             totalUsers
           ] = await Promise.all([
-            lpRewardFarm.totalLOMDeposited().catch(e => ethers.BigNumber.from(0)),
-            lpRewardFarm.totalLOMDistributed().catch(e => ethers.BigNumber.from(0)),
-            lpRewardFarm.remainingLOM().catch(e => ethers.BigNumber.from(0)),
-            lpRewardFarm.totalActiveUsers().catch(e => ethers.BigNumber.from(0))
+            lpRewardFarm.totalLOMDeposited(),
+            lpRewardFarm.totalLOMDistributed(),
+            lpRewardFarm.remainingLOM(),
+            lpRewardFarm.totalActiveUsers()
           ]);
           
-          totalRewardPool = parseFloat(ethers.utils.formatUnits(totalDeposited, 18));
+          console.log('从单独调用获取的数据:', {
+            totalDeposited: totalDepositedBN.toString(),
+            totalDistributed: totalDistributedBN.toString(),
+            remaining: remainingBN.toString(),
+            totalUsers: totalUsers.toString()
+          });
+          
+          totalRewardPool = parseFloat(ethers.utils.formatUnits(totalDepositedBN, 18));
           totalDistributed = parseFloat(ethers.utils.formatUnits(totalDistributedBN, 18));
-          remainingRewards = parseFloat(ethers.utils.formatUnits(remaining, 18));
+          remainingRewards = parseFloat(ethers.utils.formatUnits(remainingBN, 18));
           totalActiveUsers = parseInt(totalUsers.toString());
+          
+          // 尝试获取活动状态
+          try {
+            isActive = await lpRewardFarm.farmingActive();
+            isPaused = await lpRewardFarm.paused();
+          } catch (statusError) {
+            console.warn('获取状态失败，使用默认值:', statusError);
+            isActive = true;
+            isPaused = false;
+          }
           
         } catch (fallbackError) {
           console.error('备用方案也失败:', fallbackError);
-          // 使用默认值
-          totalRewardPool = 200;
-          totalDistributed = 0;
-          remainingRewards = 200;
-          totalActiveUsers = 0;
+          throw new Error('获取农场信息失败');
         }
       }
       
-      // 确保数值有效
-      if (isNaN(totalRewardPool) || totalRewardPool <= 0) totalRewardPool = 200;
-      if (isNaN(totalDistributed)) totalDistributed = 0;
-      if (isNaN(remainingRewards)) remainingRewards = 200;
-      if (isNaN(totalActiveUsers)) totalActiveUsers = 0;
+      // 验证数据
+      if (isNaN(totalRewardPool) || isNaN(totalDistributed) || isNaN(remainingRewards)) {
+        throw new Error('数据格式错误');
+      }
       
-      console.log('解析后的数据:', {
+      console.log('最终解析后的数据:', {
         totalRewardPool,
         totalDistributed,
         remainingRewards,
@@ -3228,9 +3242,11 @@ const FarmManager = {
         statusBadge.classList.add(statusClass);
       }
       
-      // 更新进度条
-      const progressPercentage = totalRewardPool > 0 ? 
-        Math.min(100, (totalDistributed / totalRewardPool) * 100) : 0;
+      // 更新进度条 - 只有总奖励池大于0时才计算百分比
+      let progressPercentage = 0;
+      if (totalRewardPool > 0) {
+        progressPercentage = Math.min(100, (totalDistributed / totalRewardPool) * 100);
+      }
       document.getElementById('rewardProgress').style.width = `${progressPercentage}%`;
       
       // 更新缓存
@@ -3238,11 +3254,32 @@ const FarmManager = {
       farmDataCache.totalDistributed = totalDistributed;
       farmDataCache.remainingRewards = remainingRewards;
       farmDataCache.isActive = isActive;
+      farmDataCache.totalActiveUsers = totalActiveUsers;
       
     } catch (error) {
       console.error('更新农场信息失败:', error);
-      document.getElementById('farmStatusBadge').textContent = isChinese ? '错误' : 'Error';
-      document.getElementById('farmStatusBadge').classList.add('error');
+      
+      // 显示错误状态，不更新数据
+      document.getElementById('farmStatusBadge').textContent = isChinese ? '数据错误' : 'Data Error';
+      document.getElementById('farmStatusBadge').className = 'farm-pool-status error';
+      
+      // 如果缓存有数据，使用缓存数据，否则显示"--"
+      if (farmDataCache.totalRewardPool > 0) {
+        document.getElementById('totalRewardPool').textContent = 
+          Utils.formatDisplay(farmDataCache.totalRewardPool) + ' LOM';
+        document.getElementById('totalDistributed').textContent = 
+          Utils.formatDisplay(farmDataCache.totalDistributed) + ' LOM';
+        document.getElementById('remainingRewards').textContent = 
+          Utils.formatDisplay(farmDataCache.remainingRewards) + ' LOM';
+        document.getElementById('totalActiveUsers').textContent = 
+          (farmDataCache.totalActiveUsers || 0).toString();
+      } else {
+        document.getElementById('totalRewardPool').textContent = '--';
+        document.getElementById('totalDistributed').textContent = '--';
+        document.getElementById('remainingRewards').textContent = '--';
+        document.getElementById('totalActiveUsers').textContent = '--';
+        document.getElementById('rewardProgress').style.width = '0%';
+      }
     }
   },
 
@@ -5315,4 +5352,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
   </script>       
 </body>
-  </html>
+</html>
